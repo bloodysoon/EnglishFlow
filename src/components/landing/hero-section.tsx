@@ -1,16 +1,18 @@
 import Link from "next/link";
 
 import { HeroDecorations } from "@/components/landing/hero-decorations";
+import { SectionScrollLink } from "./section-scroll-link";
 
-export function HeroSection() {
+type HeroSectionProps = {
+  isAuthenticated: boolean;
+};
+
+export function HeroSection({ isAuthenticated }: HeroSectionProps) {
   return (
     <section className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col items-center justify-center px-4 pb-28 pt-10 text-center sm:px-8 sm:pb-32">
-      {/* Animated side decorations */}
       <HeroDecorations />
 
-      {/* Main content */}
       <div className="relative z-10 flex w-full flex-col items-center gap-7">
-        {/* Welcome sticker */}
         <span className="brutal-sticker text-xs sm:text-sm">
           No more boring flashcards
           <span className="brutal-sticker__icon" aria-hidden="true">
@@ -18,7 +20,6 @@ export function HeroSection() {
           </span>
         </span>
 
-        {/* Heading */}
         <h1 className="flex w-full max-w-5xl flex-col items-center gap-3 text-[clamp(2rem,6vw,5.5rem)] leading-[0.98] font-black tracking-tighter uppercase">
           <span>Learn words.</span>
 
@@ -27,7 +28,6 @@ export function HeroSection() {
           </span>
         </h1>
 
-        {/* Description */}
         <p className="max-w-xl text-base leading-relaxed font-bold sm:text-xl">
           Learn English smarter with spaced repetition.
           <span className="mt-2 block">
@@ -41,9 +41,8 @@ export function HeroSection() {
           <span className="block">Remember a lot.</span>
         </p>
 
-        {/* Main CTA */}
         <Link
-          href="/register"
+          href={isAuthenticated ? "/dashboard" : "/register"}
           className="
             inline-flex items-center gap-3
             border-[3px] border-brand-ink
@@ -61,7 +60,7 @@ export function HeroSection() {
             motion-reduce:transition-none
           "
         >
-          Start learning
+          {isAuthenticated ? "Continue learning" : "Start learning"}
           <span aria-hidden="true">↗</span>
         </Link>
 
@@ -70,40 +69,11 @@ export function HeroSection() {
         </p>
       </div>
 
-      {/* Scroll to next section */}
-      <a
+      <SectionScrollLink
         href="#how-it-works"
-        aria-label="Scroll to How it works"
-        className="
-          group absolute bottom-5 left-1/2 z-20
-          flex -translate-x-1/2 flex-col items-center gap-2
-          whitespace-nowrap text-xs font-black uppercase
-          tracking-widest text-brand-ink
-          transition-transform duration-200
-          hover:scale-110
-          focus-visible:outline-2
-          focus-visible:outline-offset-4
-          focus-visible:outline-brand-ink
-          sm:bottom-8
-          motion-reduce:transition-none
-        "
-      >
-        <span>Scroll to explore</span>
-
-        <span
-          aria-hidden="true"
-          className="
-            flex h-10 w-10 items-center justify-center
-            rounded-full border-[3px] border-brand-ink
-            bg-brand-green text-xl
-            shadow-[3px_3px_0_#171717]
-            animate-bounce
-            motion-reduce:animate-none
-          "
-        >
-          ↓
-        </span>
-      </a>
+        label="Explore the method"
+        variant="green"
+      />
     </section>
   );
 }

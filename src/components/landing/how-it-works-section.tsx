@@ -1,4 +1,5 @@
 import { LeitnerDecorations } from "@/components/landing/leitner-decorations";
+import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 
 const steps = [
   {
@@ -29,10 +30,12 @@ export function HowItWorksSection() {
     <section
       id="how-it-works"
       className="
-        relative flex min-h-dvh scroll-mt-20 flex-col justify-center
+        relative flex min-h-[calc(100dvh-83px)] scroll-mt-20
+        flex-col justify-center
         overflow-hidden border-t-[3px] border-brand-ink
-        bg-brand-cream px-4 py-16
-        sm:px-8 lg:py-24
+        bg-brand-cream px-4
+        pt-12 pb-36
+        sm:px-8 sm:pt-16 sm:pb-40
       "
     >
       {/* Animated Leitner decorations */}
@@ -87,6 +90,13 @@ export function HowItWorksSection() {
           ))}
         </div>
       </div>
+
+      {/* Bottom scroll navigation */}
+      <SectionScrollLink
+        href="#join-us"
+        label="Ready to start?"
+        variant="purple"
+      />
     </section>
   );
 }

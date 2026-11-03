@@ -1,19 +1,25 @@
 import Link from "next/link";
+import { SectionScrollLink } from "./section-scroll-link";
 
-export function FinalCtaSection() {
+type FinalCtaSectionProps = {
+  isAuthenticated: boolean;
+};
+
+export function FinalCtaSection({ isAuthenticated }: FinalCtaSectionProps) {
   return (
     <section
       id="join-us"
       className="
-        relative flex min-h-dvh scroll-mt-20
+        relative flex min-h-[calc(100dvh-83px)] scroll-mt-20
         flex-col items-center justify-center
         overflow-hidden border-t-[3px] border-brand-ink
-        bg-brand-purple px-4 py-20
+        bg-brand-purple px-4
+        pt-12 pb-36
         text-center text-white
-        sm:px-8
+        sm:px-8 sm:pt-16 sm:pb-40
       "
     >
-      {/* Decorative elements */}
+      {/* Animated decorations */}
       <div
         aria-hidden="true"
         className="
@@ -46,7 +52,7 @@ export function FinalCtaSection() {
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main section content */}
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8">
         <span className="-rotate-3 border-[3px] border-brand-ink bg-brand-green px-4 py-2 text-xs font-black uppercase text-brand-ink shadow-[5px_5px_0_#171717] sm:text-sm">
           Your next chapter starts here ✳
@@ -64,7 +70,7 @@ export function FinalCtaSection() {
         </p>
 
         <Link
-          href="/register"
+          href={isAuthenticated ? "/dashboard" : "/register"}
           className="
             inline-flex items-center justify-center gap-3
             border-[3px] border-brand-ink
@@ -83,7 +89,7 @@ export function FinalCtaSection() {
             motion-reduce:transition-none
           "
         >
-          Let&apos;s get started
+          {isAuthenticated ? "Go to dashboard" : "Let's get started"}
           <span aria-hidden="true">↗</span>
         </Link>
 
@@ -91,6 +97,14 @@ export function FinalCtaSection() {
           Free to start. Built to last.
         </p>
       </div>
+
+      {/* Bottom scroll navigation */}
+      <SectionScrollLink
+        href="#top"
+        label="Back to top"
+        direction="up"
+        variant="green"
+      />
     </section>
   );
 }

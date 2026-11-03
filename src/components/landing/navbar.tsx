@@ -5,7 +5,12 @@ import Link from "next/link";
 
 type ActiveSection = "hero" | "how-it-works" | "join-us";
 
-export function Navbar() {
+type NavbarProps = {
+  isAuthenticated: boolean;
+  email: string;
+};
+
+export function Navbar({ isAuthenticated, email }: NavbarProps) {
   const [activeSection, setActiveSection] = useState<ActiveSection>("hero");
 
   useEffect(() => {
@@ -46,6 +51,8 @@ export function Navbar() {
   const backgroundClass =
     activeSection === "how-it-works" ? "bg-brand-orange" : "bg-brand-cream";
 
+  const initial = email.charAt(0).toUpperCase() || "U";
+
   return (
     <header
       className={`
@@ -58,7 +65,6 @@ export function Navbar() {
       `}
     >
       <nav className="relative flex w-full items-center justify-between gap-3 px-4 py-5 sm:px-8 lg:px-10 xl:px-14">
-        {/* Logo */}
         <Link
           href="/"
           className="
@@ -77,7 +83,6 @@ export function Navbar() {
           <span className="text-brand-purple">✳</span>
         </Link>
 
-        {/* Center navigation */}
         <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
           <a
             href="#how-it-works"
@@ -104,34 +109,54 @@ export function Navbar() {
               focus-visible:outline-brand-purple
             "
           >
-            Join us
+            {isAuthenticated ? "Keep learning" : "Join us"}
           </a>
         </div>
 
-        {/* Login button */}
-        <Link
-          href="/login"
-          className="
-            inline-flex items-center justify-center
-            border-[3px] border-brand-ink
-            bg-brand-purple px-5 py-2
-            text-sm font-black uppercase text-white
-            shadow-[4px_4px_0_#171717]
-            transition-[transform,box-shadow,background-color] duration-150
-            hover:-translate-y-1
-            hover:bg-brand-pink
-            hover:shadow-[6px_6px_0_#171717]
-            active:translate-x-1 active:translate-y-1
-            active:shadow-none
-            focus-visible:outline-4
-            focus-visible:outline-offset-4
-            focus-visible:outline-brand-purple
-            sm:px-6
-            motion-reduce:transition-none
-          "
-        >
-          Log in
-        </Link>
+        <div className="flex items-center gap-3">
+          {isAuthenticated && (
+            <Link
+              href="/dashboard"
+              title={email}
+              aria-label={`Open dashboard for ${email || "your account"}`}
+              className="
+                flex h-10 w-10 items-center justify-center
+                border-[3px] border-brand-ink
+                bg-brand-green text-sm font-black
+                shadow-[3px_3px_0_#171717]
+                transition-transform duration-150
+                hover:-translate-y-1
+                motion-reduce:transition-none
+              "
+            >
+              {initial}
+            </Link>
+          )}
+
+          <Link
+            href={isAuthenticated ? "/dashboard" : "/login"}
+            className="
+              inline-flex items-center justify-center
+              border-[3px] border-brand-ink
+              bg-brand-purple px-5 py-2
+              text-sm font-black uppercase text-white
+              shadow-[4px_4px_0_#171717]
+              transition-[transform,box-shadow,background-color] duration-150
+              hover:-translate-y-1
+              hover:bg-brand-pink
+              hover:shadow-[6px_6px_0_#171717]
+              active:translate-x-1 active:translate-y-1
+              active:shadow-none
+              focus-visible:outline-4
+              focus-visible:outline-offset-4
+              focus-visible:outline-brand-purple
+              sm:px-6
+              motion-reduce:transition-none
+            "
+          >
+            {isAuthenticated ? "Dashboard" : "Log in"}
+          </Link>
+        </div>
       </nav>
     </header>
   );
