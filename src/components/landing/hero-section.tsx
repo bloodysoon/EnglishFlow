@@ -2,6 +2,7 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
 
 import { HeroDecorations } from "@/components/landing/hero-decorations";
+import { HeroShelf } from "@/components/landing/hero-shelf";
 import { SectionScrollLink } from "./section-scroll-link";
 
 type HeroSectionProps = {
@@ -15,7 +16,7 @@ export function HeroSection({ isAuthenticated }: HeroSectionProps) {
 
       <div className="relative z-10 flex w-full flex-col items-center gap-7">
         <span className="brutal-sticker text-xs sm:text-sm">
-          No more boring flashcards
+          Flashcards that know when you&apos;ll forget
           <span className="brutal-sticker__icon" aria-hidden="true">
             ✳
           </span>
@@ -41,6 +42,8 @@ export function HeroSection({ isAuthenticated }: HeroSectionProps) {
           </span>
           <span className="block">Remember a lot.</span>
         </p>
+
+        <HeroShelf />
 
         <Link
           href={isAuthenticated ? "/dashboard" : "/register"}

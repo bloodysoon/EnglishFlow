@@ -5,16 +5,10 @@ import {
   LEITNER_BOXES,
   formatReviewInterval,
 } from "@/features/leitner/boxes";
-
-// Visual identity per box: loud and warm while a word is new, calm and
-// dark once it is mastered.
-const boxStyles: Record<number, string> = {
-  1: "bg-brand-pink text-brand-ink",
-  2: "bg-brand-orange text-brand-ink",
-  3: "bg-brand-purple text-white",
-  4: "bg-brand-green text-brand-ink",
-  5: "bg-brand-ink text-brand-cream",
-};
+import {
+  LEITNER_HOP_STEP_SECONDS,
+  leitnerBoxStyles as boxStyles,
+} from "@/components/landing/leitner-box-styles";
 
 export function HowItWorksSection() {
   return (
@@ -71,7 +65,7 @@ export function HowItWorksSection() {
                 >
                   <span
                     className={`leitner-hop ${box === 3 ? "leitner-hop--rest" : ""} absolute inset-0 m-auto flex h-9 w-20 -rotate-3 items-center justify-center border-[2px] border-brand-ink bg-white text-sm font-black text-brand-ink shadow-brutal-sm`}
-                    style={{ animationDelay: `${index * 1.6}s` }}
+                    style={{ animationDelay: `${index * LEITNER_HOP_STEP_SECONDS}s` }}
                   >
                     HELLO
                   </span>
