@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PASSWORD_MAX_LENGTH } from "../constants";
 
 export const registerSchema = z.object({
   email: z.email("Invalid email address"),
@@ -6,7 +7,7 @@ export const registerSchema = z.object({
   password: z
     .string()
     .min(8, "Password must contain at least 8 characters")
-    .max(72, "Password must not exceed 72 characters"),
+    .max(PASSWORD_MAX_LENGTH, `Password must not exceed ${PASSWORD_MAX_LENGTH} characters`),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

@@ -1,6 +1,9 @@
 
 @import "tailwindcss";
 
+/* Hover/press feedback only for controls that can act right now. */
+@custom-variant interactive (&:not(:disabled, [aria-disabled="true"]));
+
 /* ========================================
    1. DESIGN TOKENS
 ======================================== */

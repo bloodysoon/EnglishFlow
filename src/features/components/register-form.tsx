@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { PASSWORD_MAX_LENGTH } from "@/features/auth/constants";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -34,6 +36,13 @@ export function RegisterForm() {
     event.preventDefault();
 
     if (isLoading || retryAfter > 0) return;
+
+    // Checked here instead of maxLength: maxLength silently cuts a pasted
+    // password, so the saved one would never match. Mirrors registerSchema.
+    if (password.length > PASSWORD_MAX_LENGTH) {
+      setError(`Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`);
+      return;
+    }
 
     setError(null);
     setRetryEndedMessage("");
@@ -108,7 +117,10 @@ export function RegisterForm() {
           autoComplete="email"
           required
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            setError(null); // the countdown, if any, stays visible
+          }}
           aria-describedby={error ? "register-error" : undefined}
           placeholder="you@example.com"
         />
@@ -116,22 +128,23 @@ export function RegisterForm() {
 
       <div>
         <Label htmlFor="password">Password</Label>
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="new-password"
           minLength={8}
-          maxLength={72}
           required
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          onChange={(event) => {
+            setPassword(event.target.value);
+            setError(null);
+          }}
           aria-describedby={
             error ? "password-hint register-error" : "password-hint"
           }
         />
         {/* Visible hint: a placeholder disappears as soon as you type. */}
         <p id="password-hint" className="mt-2 text-sm font-semibold text-brand-ink">
-          At least 8 characters.
+          8 to {PASSWORD_MAX_LENGTH} characters.
         </p>
       </div>
 
@@ -157,7 +170,8 @@ export function RegisterForm() {
         {retryEndedMessage}
       </p>
 
-      <Button type="submit" disabled={isLoading || retryAfter > 0}>
+      {/* aria-disabled keeps focus here; handleSubmit guards. */}
+      <Button type="submit" aria-disabled={isLoading || retryAfter > 0}>
         {isLoading
           ? "Creating account..."
           : retryAfter > 0

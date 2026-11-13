@@ -6,6 +6,7 @@ import Link from "next/link";
 import { loginAction } from "@/features/auth/actions/login.action";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 
 type LoginFormProps = {
   // Server-validated message from the email confirmation callback, if any.
@@ -59,7 +60,10 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
           autoComplete="email"
           required
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            setError(null); // a stale error shouldn't linger while fixing it
+          }}
           aria-describedby={error ? "login-error" : undefined}
           placeholder="you@example.com"
         />
@@ -68,13 +72,15 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
       {/* Password */}
       <div>
         <Label htmlFor="password">Password</Label>
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="current-password"
           required
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          onChange={(event) => {
+            setPassword(event.target.value);
+            setError(null);
+          }}
           aria-describedby={error ? "login-error" : undefined}
           placeholder="Your password"
         />
@@ -92,7 +98,8 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
       )}
 
       {/* Submit */}
-      <Button type="submit" disabled={isLoading}>
+      {/* aria-disabled keeps focus here while loading; handleSubmit guards. */}
+      <Button type="submit" aria-disabled={isLoading}>
         {isLoading ? "Signing in..." : "Sign in →"}
       </Button>
 

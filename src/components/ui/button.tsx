@@ -6,22 +6,24 @@ type ButtonSize = "sm" | "md" | "lg";
 const base =
   "font-display inline-flex cursor-pointer items-center justify-center gap-3 border-[3px] border-brand-ink font-black uppercase " +
   "transition-[transform,box-shadow,background-color] duration-150 motion-reduce:transition-none " +
-  "not-disabled:hover:-translate-y-1 " +
-  "not-disabled:active:translate-x-1 not-disabled:active:translate-y-1 not-disabled:active:shadow-none " +
-  "disabled:cursor-not-allowed disabled:opacity-50";
+  "interactive:hover:-translate-y-1 " +
+  "interactive:active:translate-x-1 interactive:active:translate-y-1 interactive:active:shadow-none " +
+  // Prefer aria-disabled for temporarily blocked submits: unlike `disabled`
+  // it keeps keyboard focus on the button. The submit handler must guard.
+  "disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
 
 const variants: Record<ButtonVariant, string> = {
   primary: "bg-brand-purple text-white",
-  secondary: "bg-brand-green text-brand-ink not-disabled:hover:bg-brand-cream",
+  secondary: "bg-brand-green text-brand-ink interactive:hover:bg-brand-cream",
 };
 
 // Pick padding through `size`, not `className`: a px-* passed in className
 // does not reliably override the one here (Tailwind orders by CSS, not by
 // class string), so tight spots like the mobile navbar use `sm`.
 const sizes: Record<ButtonSize, string> = {
-  sm: "px-4 py-3 text-sm shadow-brutal-md not-disabled:hover:shadow-brutal sm:px-6",
-  md: "px-6 py-3 text-sm shadow-brutal-md not-disabled:hover:shadow-brutal",
-  lg: "px-5 py-4 text-sm shadow-brutal not-disabled:hover:shadow-brutal-lg sm:px-7 sm:text-base",
+  sm: "px-4 py-3 text-sm shadow-brutal-md interactive:hover:shadow-brutal sm:px-6",
+  md: "px-6 py-3 text-sm shadow-brutal-md interactive:hover:shadow-brutal",
+  lg: "px-5 py-4 text-sm shadow-brutal interactive:hover:shadow-brutal-lg sm:px-7 sm:text-base",
 };
 
 // Class string for anything that should look like a button. Use it on
