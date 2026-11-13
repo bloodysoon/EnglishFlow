@@ -40,7 +40,7 @@ export default async function LoginPage({
         </span>
 
         <h1 className="flex w-full flex-col items-center gap-3 text-[clamp(1.5rem,6.5vw,4.5rem)] leading-none font-black tracking-tight uppercase text-brand-ink">
-          <span className="whitespace-nowrap">Back for more?</span>
+          <span className="whitespace-nowrap">Back for more?</span>{" "}
           <span className="brutal-lift">Let&apos;s keep going.</span>
         </h1>
 

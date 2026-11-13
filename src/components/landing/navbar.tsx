@@ -69,7 +69,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
         <Link
           href="/"
           className="
-            inline-flex items-center
+            inline-flex min-h-11 items-center
             text-lg font-black tracking-tighter
             transition-transform duration-200
             hover:-rotate-2
@@ -85,7 +85,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
           <a
             href="#how-it-works"
             className="
-              text-sm font-black uppercase
+              inline-flex min-h-11 items-center text-sm font-black uppercase
               transition-colors duration-150
               hover:text-brand-purple
             "
@@ -96,7 +96,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
           <a
             href="#join-us"
             className="
-              text-sm font-black uppercase
+              inline-flex min-h-11 items-center text-sm font-black uppercase
               transition-colors duration-150
               hover:text-brand-purple
             "

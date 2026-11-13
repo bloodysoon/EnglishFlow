@@ -181,8 +181,8 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-brand-ink">
         Already have an account?{" "}
-        <Link href="/login" className="font-black underline">
-          Sign in
+        <Link href="/login" className="inline-flex min-h-11 items-center px-1 font-black underline underline-offset-4">
+          Log in
         </Link>
       </p>
     </form>

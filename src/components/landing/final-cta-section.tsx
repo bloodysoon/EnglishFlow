@@ -60,8 +60,8 @@ export function FinalCtaSection({ isAuthenticated }: FinalCtaSectionProps) {
         </span>
 
         <h2 className="text-[clamp(2rem,5.5vw,4.75rem)] leading-[0.98] font-black tracking-tight uppercase">
-          Ready to make
-          <span className="block">your English</span>
+          Ready to make{" "}
+          <span className="block">your English</span>{" "}
           <span className="block text-brand-green">stick?</span>
         </h2>
 

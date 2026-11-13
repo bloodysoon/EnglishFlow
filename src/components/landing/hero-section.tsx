@@ -23,8 +23,7 @@ export function HeroSection({ isAuthenticated }: HeroSectionProps) {
         </span>
 
         <h1 className="flex w-full max-w-5xl flex-col items-center gap-3 text-[clamp(2rem,6vw,5.5rem)] leading-[0.98] font-black tracking-tight uppercase">
-          <span>Learn words.</span>
-
+          <span>Learn words.</span>{" "}
           <span className="brutal-lift text-[clamp(1.3rem,5vw,4rem)]">
             Remember forever.
           </span>

@@ -100,13 +100,13 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
       {/* Submit */}
       {/* aria-disabled keeps focus here while loading; handleSubmit guards. */}
       <Button type="submit" aria-disabled={isLoading}>
-        {isLoading ? "Signing in..." : "Sign in →"}
+        {isLoading ? "Logging in..." : "Log in →"}
       </Button>
 
       {/* Registration */}
       <p className="text-center text-sm text-brand-ink">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-black underline">
+        <Link href="/register" className="inline-flex min-h-11 items-center px-1 font-black underline underline-offset-4">
           Create account
         </Link>
       </p>
