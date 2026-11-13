@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { buttonClasses } from "@/components/ui/button";
 
 type ActiveSection = "hero" | "how-it-works" | "join-us";
 
@@ -72,9 +73,6 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
             text-xl font-black tracking-tighter
             transition-transform duration-200
             hover:-rotate-2
-            focus-visible:outline-4
-            focus-visible:outline-offset-4
-            focus-visible:outline-brand-purple
             sm:text-2xl
             motion-reduce:transition-none
           "
@@ -90,9 +88,6 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
               text-sm font-black uppercase
               transition-colors duration-150
               hover:text-brand-purple
-              focus-visible:outline-2
-              focus-visible:outline-offset-4
-              focus-visible:outline-brand-purple
             "
           >
             How it works
@@ -104,9 +99,6 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
               text-sm font-black uppercase
               transition-colors duration-150
               hover:text-brand-purple
-              focus-visible:outline-2
-              focus-visible:outline-offset-4
-              focus-visible:outline-brand-purple
             "
           >
             {isAuthenticated ? "Keep learning" : "Join us"}
@@ -123,7 +115,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
                 flex h-10 w-10 items-center justify-center
                 border-[3px] border-brand-ink
                 bg-brand-green text-sm font-black
-                shadow-[3px_3px_0_#171717]
+                shadow-brutal-sm
                 transition-transform duration-150
                 hover:-translate-y-1
                 motion-reduce:transition-none
@@ -135,24 +127,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
 
           <Link
             href={isAuthenticated ? "/dashboard" : "/login"}
-            className="
-              inline-flex items-center justify-center
-              border-[3px] border-brand-ink
-              bg-brand-purple px-5 py-2
-              text-sm font-black uppercase text-white
-              shadow-[4px_4px_0_#171717]
-              transition-[transform,box-shadow,background-color] duration-150
-              hover:-translate-y-1
-              hover:bg-brand-pink
-              hover:shadow-[6px_6px_0_#171717]
-              active:translate-x-1 active:translate-y-1
-              active:shadow-none
-              focus-visible:outline-4
-              focus-visible:outline-offset-4
-              focus-visible:outline-brand-purple
-              sm:px-6
-              motion-reduce:transition-none
-            "
+            className={buttonClasses({ className: "px-5 sm:px-6" })}
           >
             {isAuthenticated ? "Dashboard" : "Log in"}
           </Link>

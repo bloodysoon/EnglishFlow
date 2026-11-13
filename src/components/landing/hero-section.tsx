@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { buttonClasses } from "@/components/ui/button";
 
 import { HeroDecorations } from "@/components/landing/hero-decorations";
 import { SectionScrollLink } from "./section-scroll-link";
@@ -43,22 +44,7 @@ export function HeroSection({ isAuthenticated }: HeroSectionProps) {
 
         <Link
           href={isAuthenticated ? "/dashboard" : "/register"}
-          className="
-            inline-flex items-center gap-3
-            border-[3px] border-brand-ink
-            bg-brand-purple px-7 py-4
-            text-base font-black uppercase text-white
-            shadow-[6px_6px_0_#171717]
-            transition-[transform,box-shadow] duration-150
-            hover:-translate-y-1
-            hover:shadow-[8px_8px_0_#171717]
-            active:translate-x-1 active:translate-y-1
-            active:shadow-none
-            focus-visible:outline-4
-            focus-visible:outline-offset-4
-            focus-visible:outline-brand-ink
-            motion-reduce:transition-none
-          "
+          className={buttonClasses({ size: "lg" })}
         >
           {isAuthenticated ? "Continue learning" : "Start learning"}
           <span aria-hidden="true">↗</span>

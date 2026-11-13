@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { buttonClasses } from "@/components/ui/button";
 import { SectionScrollLink } from "./section-scroll-link";
 
 type FinalCtaSectionProps = {
@@ -71,23 +72,12 @@ export function FinalCtaSection({ isAuthenticated }: FinalCtaSectionProps) {
 
         <Link
           href={isAuthenticated ? "/dashboard" : "/register"}
-          className="
-            inline-flex items-center justify-center gap-3
-            border-[3px] border-brand-ink
-            bg-brand-green px-8 py-4
-            text-base font-black uppercase text-brand-ink
-            shadow-[7px_7px_0_#171717]
-            transition-[transform,box-shadow,background-color] duration-200
-            hover:-translate-y-1
-            hover:bg-brand-cream
-            hover:shadow-[10px_10px_0_#171717]
-            active:translate-x-1 active:translate-y-1
-            active:shadow-none
-            focus-visible:outline-4
-            focus-visible:outline-offset-4
-            focus-visible:outline-brand-green
-            motion-reduce:transition-none
-          "
+          className={buttonClasses({
+            variant: "secondary",
+            size: "lg",
+            // Ink focus ring is too dark on the purple section.
+            className: "focus-visible:outline-brand-cream",
+          })}
         >
           {isAuthenticated ? "Go to dashboard" : "Let's get started"}
           <span aria-hidden="true">↗</span>
