@@ -291,6 +291,30 @@ body {
   animation: hero-spin 20s linear infinite;
 }
 
+/* How it works: one word card hops through the five Leitner boxes.
+   Each box has its own copy, shown for 1/5 of the 8s cycle in turn. */
+@keyframes leitner-hop {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) rotate(-3deg);
+  }
+
+  4%, 16% {
+    opacity: 1;
+    transform: translateY(0) rotate(-3deg);
+  }
+
+  20%, 100% {
+    opacity: 0;
+    transform: translateY(10px) rotate(-3deg);
+  }
+}
+
+.leitner-hop {
+  opacity: 0;
+  animation: leitner-hop 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
 .hero-spin-reverse {
   animation: hero-spin 25s linear infinite reverse;
 }
@@ -304,6 +328,15 @@ body {
   .hero-spin,
   .hero-spin-reverse {
     animation: none;
+  }
+
+  /* No hopping: park the word in Box 3 so the idea still reads. */
+  .leitner-hop {
+    animation: none;
+  }
+
+  .leitner-hop--rest {
+    opacity: 1;
   }
 }
 
