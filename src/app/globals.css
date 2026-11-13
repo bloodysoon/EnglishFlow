@@ -11,6 +11,7 @@
   --color-purple: #8e2bd4;
   --color-pink: #e92dae;
   --color-green: #a4e447;
+  --color-lilac: #c084fc; /* sticker hover only */
 
   /* Surfaces */
   --color-sand: #a59a80;
@@ -26,6 +27,11 @@
   /* Neo-brutalism */
   --border-brutal: 3px solid var(--color-ink);
   --radius-brutal: 2px;
+
+  /* Rendered height of the sticky landing navbar (measured: 93px at
+     320–1440px). Full-screen sections subtract it; anchors offset by it.
+     Update if the navbar's padding or button size changes. */
+  --navbar-height: 93px;
 }
 
 /* ========================================
@@ -118,7 +124,7 @@ body {
 
 .brutal-sticker:hover {
   transform: rotate(3deg) scale(1.1);
-  background-color: #c084fc;
+  background-color: var(--color-lilac);
   box-shadow: 8px 8px 0 var(--color-ink);
 }
 
@@ -368,6 +374,26 @@ body {
 
   .leitner-hop--rest {
     opacity: 1;
+  }
+}
+
+/* Scroll arrows: a short downward nudge with a pause, eased out,
+   instead of Tailwind's rubbery infinite bounce. */
+@keyframes scroll-nudge {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(6px);
+  }
+}
+
+/* Opt-in to motion rather than opting out: the build merges duplicate
+   reduced-motion blocks, so an override placed after this could move above it. */
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-nudge {
+    animation: scroll-nudge 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 }
 

@@ -43,10 +43,10 @@ export function SectionScrollLink({
           flex h-10 w-10 items-center justify-center
           rounded-full border-[3px] border-brand-ink
           text-xl
-          shadow-[3px_3px_0_#171717]
+          shadow-brutal-sm
           transition-transform duration-200
           group-hover:scale-110
-          motion-safe:animate-bounce
+          scroll-nudge
           motion-reduce:transition-none
           ${backgroundClasses[variant]}
         `}

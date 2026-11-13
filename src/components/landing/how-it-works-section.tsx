@@ -21,7 +21,7 @@ export function HowItWorksSection() {
     <section
       id="how-it-works"
       className="
-        relative flex min-h-[calc(100dvh-83px)] scroll-mt-20
+        relative flex min-h-[calc(100dvh-var(--navbar-height))] scroll-mt-(--navbar-height)
         flex-col justify-center
         overflow-hidden border-t-[3px] border-brand-ink
         bg-brand-cream px-4

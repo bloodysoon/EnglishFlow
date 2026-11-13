@@ -18,7 +18,7 @@ export default async function HomePage() {
     <main className="min-h-dvh bg-brand-orange text-brand-ink">
       <Navbar isAuthenticated={isAuthenticated} email={user?.email ?? ""} />
 
-      <div className="flex min-h-[calc(100dvh-83px)] flex-col">
+      <div className="flex min-h-[calc(100dvh-var(--navbar-height))] flex-col">
         <HeroSection isAuthenticated={isAuthenticated} />
       </div>
 

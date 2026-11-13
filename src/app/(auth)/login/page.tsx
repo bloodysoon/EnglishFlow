@@ -47,7 +47,7 @@ export default async function LoginPage({
         <p className="max-w-md text-base leading-relaxed font-bold text-brand-ink sm:text-lg">
           Every word brings you closer.{" "}
           <span className="brutal-highlight">
-            Keep the streak alive.
+            Pick up where you left off.
             <span className="brutal-highlight__bolt" aria-hidden="true">
               ⚡
             </span>

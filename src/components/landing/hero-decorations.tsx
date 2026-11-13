@@ -6,14 +6,14 @@ export function HeroDecorations() {
     >
       {/* LEFT TOP: ABC sticker */}
       <div className="hero-float absolute left-[5%] top-[15%]">
-        <div className="-rotate-12 border-[3px] border-brand-ink bg-brand-green px-5 py-3 text-3xl font-black shadow-[6px_6px_0_#171717]">
+        <div className="-rotate-12 border-[3px] border-brand-ink bg-brand-green px-5 py-3 text-3xl font-black shadow-brutal">
           ABC ✳
         </div>
       </div>
 
       {/* LEFT MIDDLE: Vocabulary flashcard */}
       <div className="hero-sway absolute left-[3%] top-[48%]">
-        <div className="relative -rotate-6 border-[3px] border-brand-ink bg-brand-cream px-5 py-4 text-left shadow-[7px_7px_0_#171717]">
+        <div className="relative -rotate-6 border-[3px] border-brand-ink bg-brand-cream px-5 py-4 text-left shadow-brutal">
           <span className="absolute -top-3 right-3 rotate-6 border-2 border-brand-ink bg-brand-pink px-2 py-0.5 text-[10px] font-black uppercase">
             New word!
           </span>
@@ -30,21 +30,21 @@ export function HeroDecorations() {
 
       {/* LEFT BOTTOM: Mastered word */}
       <div className="hero-float-delayed absolute bottom-[12%] left-[14%]">
-        <div className="-rotate-6 border-[3px] border-brand-ink bg-brand-purple px-4 py-3 text-sm font-black uppercase text-white shadow-[5px_5px_0_#171717]">
+        <div className="-rotate-6 border-[3px] border-brand-ink bg-brand-purple px-4 py-3 text-sm font-black uppercase text-white shadow-brutal">
           ✓ Word mastered
         </div>
       </div>
 
       {/* RIGHT TOP: Level up sticker */}
       <div className="hero-float-delayed absolute right-[5%] top-[18%]">
-        <div className="rotate-12 border-[3px] border-brand-ink bg-brand-pink px-5 py-3 text-xl font-black uppercase shadow-[6px_6px_0_#171717]">
+        <div className="rotate-12 border-[3px] border-brand-ink bg-brand-pink px-5 py-3 text-xl font-black uppercase shadow-brutal">
           LEVEL UP! ⚡
         </div>
       </div>
 
       {/* RIGHT MIDDLE: Streak card */}
       <div className="hero-sway-delayed absolute right-[4%] top-[49%]">
-        <div className="rotate-6 border-[3px] border-brand-ink bg-brand-green px-5 py-4 text-center shadow-[7px_7px_0_#171717]">
+        <div className="rotate-6 border-[3px] border-brand-ink bg-brand-green px-5 py-4 text-center shadow-brutal">
           <p className="text-xs font-black uppercase tracking-widest">
             Your streak
           </p>
@@ -60,7 +60,7 @@ export function HeroDecorations() {
 
       {/* RIGHT BOTTOM: Experience points */}
       <div className="hero-float absolute bottom-[12%] right-[14%]">
-        <div className="rotate-6 border-[3px] border-brand-ink bg-brand-cream px-5 py-3 text-lg font-black uppercase shadow-[5px_5px_0_#171717]">
+        <div className="rotate-6 border-[3px] border-brand-ink bg-brand-cream px-5 py-3 text-lg font-black uppercase shadow-brutal">
           +25 XP ★
         </div>
       </div>
