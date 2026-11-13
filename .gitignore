@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code: personal settings
+.claude/settings.local.json
+
+# third-party AI skills (heavy, restored from skills-lock.json)
+.claude/skills/
+.agents/
+
+# other AI tools' copies of skills
+.cursor/
+.devin/
+.codex/
