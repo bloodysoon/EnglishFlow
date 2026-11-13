@@ -253,6 +253,26 @@ body {
   animation: hero-sway 5s ease-in-out infinite;
 }
 
+.hero-sway-delayed {
+  animation: hero-sway 6s ease-in-out 1.5s infinite;
+}
+
+@keyframes hero-flame {
+  0%, 100% {
+    transform: scale(1) rotate(-3deg);
+  }
+
+  50% {
+    transform: scale(1.15) rotate(3deg);
+  }
+}
+
+.hero-flame {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  animation: hero-flame 1.2s ease-in-out infinite;
+}
+
 .hero-spin {
   animation: hero-spin 20s linear infinite;
 }
@@ -265,6 +285,8 @@ body {
   .hero-float,
   .hero-float-delayed,
   .hero-sway,
+  .hero-sway-delayed,
+  .hero-flame,
   .hero-spin,
   .hero-spin-reverse {
     animation: none;
