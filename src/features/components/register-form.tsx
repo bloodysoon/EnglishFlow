@@ -1,7 +1,7 @@
 "use client";
 
 import { registerAction } from "@/features/auth/actions/register.action";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -16,6 +16,11 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [retryAfter, setRetryAfter] = useState(0);
   const [retryEndedMessage, setRetryEndedMessage] = useState("");
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (success) successHeadingRef.current?.focus();
+  }, [success]);
 
   useEffect(() => {
     if (retryAfter <= 0) return;
@@ -77,7 +82,12 @@ export function RegisterForm() {
           ✉️
         </div>
 
-        <h2 className="text-3xl font-black uppercase text-brand-ink">
+        {/* Focus moves here: the submit button that had focus unmounts. */}
+        <h2
+          ref={successHeadingRef}
+          tabIndex={-1}
+          className="text-3xl font-black uppercase text-brand-ink focus:outline-none"
+        >
           Check your inbox!
         </h2>
 
@@ -158,14 +168,9 @@ export function RegisterForm() {
         </p>
       )}
 
-      {/* Visual countdown only: a live region here would be re-read every
-          second. Screen readers get the alert above and the message below. */}
-      {retryAfter > 0 && (
-        <p className="font-bold text-brand-ink" aria-hidden="true">
-          ⏳ Try again in {retryAfter}s
-        </p>
-      )}
-
+      {/* The countdown is shown once, on the button ("Wait 12s"). Screen
+          readers get the alert above and one message when the wait ends,
+          instead of a live region re-read every second. */}
       <p role="status" className="sr-only">
         {retryEndedMessage}
       </p>

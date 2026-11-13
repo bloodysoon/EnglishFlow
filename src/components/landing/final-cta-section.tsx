@@ -25,16 +25,16 @@ export function FinalCtaSection({ isAuthenticated }: FinalCtaSectionProps) {
         aria-hidden="true"
         className="
           pointer-events-none absolute inset-0
-          hidden overflow-hidden lg:block
+          hidden overflow-hidden xl:block
         "
       >
-        <div className="hero-float absolute left-[8%] top-[20%]">
+        <div className="hero-float absolute left-[3%] top-[5%]">
           <div className="-rotate-12 border-[3px] border-brand-ink bg-brand-pink px-5 py-3 text-xl font-black text-brand-ink shadow-brutal">
             YOU GOT THIS! ⚡
           </div>
         </div>
 
-        <div className="hero-float-delayed absolute right-[8%] top-[22%]">
+        <div className="hero-float-delayed absolute right-[3%] top-[7%]">
           <div className="rotate-12 border-[3px] border-brand-ink bg-brand-cream px-5 py-3 text-xl font-black text-brand-ink shadow-brutal">
             LET&apos;S GO! ✳
           </div>

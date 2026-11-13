@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginAction } from "@/features/auth/actions/login.action";
@@ -21,6 +21,12 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
   const [error, setError] = useState<string | null>(initialError);
   const [isLoading, setIsLoading] = useState(false);
 
+  // The callback error arrives as ?error=...; drop it from the URL once
+  // shown, so a reload or shared link doesn't bring the alert back.
+  useEffect(() => {
+    if (initialError) window.history.replaceState(null, "", "/login");
+  }, [initialError]);
+
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -34,14 +40,16 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
 
       if (!result.success) {
         setError(result.error);
+        setIsLoading(false);
         return;
       }
 
+      // Stay in the loading state while the dashboard loads, so the button
+      // doesn't flash back to "Log in" after a successful login.
       router.replace("/dashboard");
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   }

@@ -78,7 +78,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
           "
         >
           ENGLISHFLOW
-          <span className="text-brand-purple">✳</span>
+          <span className="text-brand-purple" aria-hidden="true">✳</span>
         </Link>
 
         <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">

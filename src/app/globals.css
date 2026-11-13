@@ -14,7 +14,6 @@
   --color-purple: #8e2bd4;
   --color-pink: #e92dae;
   --color-green: #a4e447;
-  --color-lilac: #c084fc; /* sticker hover only */
 
   /* Surfaces */
   --color-sand: #a59a80;
@@ -125,21 +124,11 @@ body {
     box-shadow 300ms ease-out;
 }
 
-.brutal-sticker:hover {
-  transform: rotate(3deg) scale(1.1);
-  background-color: var(--color-lilac);
-  box-shadow: 8px 8px 0 var(--color-ink);
-}
-
 .brutal-sticker__icon {
   display: inline-block;
   font-size: 1.125rem;
 
   transition: transform 500ms ease-out;
-}
-
-.brutal-sticker:hover .brutal-sticker__icon {
-  transform: rotate(180deg) scale(1.25);
 }
 
 /* ========================================
@@ -169,16 +158,6 @@ body {
 
   max-width: 100%;
   box-sizing: border-box;
-}
-
-.brutal-lift:hover {
-  transform: rotate(-1deg) translateY(-4px);
-  box-shadow: 7px 7px 0 var(--color-ink);
-}
-
-.brutal-lift:active {
-  transform: rotate(-1deg) translate(4px, 4px);
-  box-shadow: none;
 }
 
 /* ========================================
@@ -239,18 +218,9 @@ body {
     transform 200ms ease-out;
 }
 
-.brutal-highlight:hover {
-  background-size: 100% 100%;
-  transform: rotate(-2deg) scale(1.05);
-}
-
 .brutal-highlight__bolt {
   display: inline-block;
   transition: transform 300ms ease-out;
-}
-
-.brutal-highlight:hover .brutal-highlight__bolt {
-  transform: translateY(-6px) rotate(25deg) scale(1.3);
 }
 
 @media (prefers-reduced-motion: reduce) {
