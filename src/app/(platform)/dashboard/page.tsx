@@ -77,20 +77,26 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-neutral-600">
-            Your learning space
-          </p>
-          <h1 className="mt-2 text-3xl font-black uppercase tracking-tight sm:text-4xl">
-            Dashboard<span className="text-brand-purple">.</span>
-          </h1>
-        </div>
+      <header className="space-y-4">
+        <h1 className="text-3xl font-black uppercase tracking-tight sm:text-4xl">
+          Dashboard<span className="text-brand-purple">.</span>
+        </h1>
 
-        <span className="inline-flex items-center gap-2 border-[2px] border-brand-ink bg-white px-3 py-2 text-xs font-black uppercase shadow-[3px_3px_0_#171717]">
-          <Sparkles className="h-4 w-4 text-brand-purple" />
-          Demo preview
-        </span>
+        {/* Demo notice: every number on this page is sample data until the
+            vocabulary module ships. Remove this once stats are real. */}
+        <div
+          role="note"
+          className="flex items-start gap-3 border-[3px] border-brand-ink bg-white p-4 shadow-[4px_4px_0_#171717]"
+        >
+          <span className="inline-flex shrink-0 items-center gap-1.5 -rotate-2 border-[2px] border-brand-ink bg-brand-pink px-2 py-1 text-xs font-black uppercase">
+            <Sparkles className="h-4 w-4" />
+            Demo
+          </span>
+          <p className="text-sm font-bold sm:text-base">
+            This is a preview. The streak, XP and level below are sample data,
+            not your progress. Your real stats start with the vocabulary module.
+          </p>
+        </div>
       </header>
 
       {/* Welcome */}
@@ -101,7 +107,7 @@ export default function DashboardPage() {
           </span>
 
           <h2 className="mt-6 text-3xl leading-tight font-black uppercase tracking-tight sm:text-5xl">
-            Welcome back.
+            Welcome to EnglishFlow.
             <span className="block">Keep moving forward.</span>
           </h2>
 
@@ -129,8 +135,14 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <section aria-labelledby="overview-heading">
-        <h2 id="overview-heading" className="mb-4 text-xl font-black uppercase">
+        <h2
+          id="overview-heading"
+          className="mb-4 flex flex-wrap items-center gap-3 text-xl font-black uppercase"
+        >
           Your progress
+          <span className="border-[2px] border-brand-ink bg-brand-pink px-2 py-0.5 text-xs">
+            Sample data
+          </span>
         </h2>
 
         <div className="grid gap-4 sm:grid-cols-3">
@@ -198,16 +210,10 @@ export default function DashboardPage() {
                 </p>
 
                 <div className="mt-auto pt-5">
-                  {exercise.available ? (
-                    <span className="inline-flex items-center gap-2 border-[2px] border-brand-ink bg-brand-green px-4 py-2 text-xs font-black uppercase text-brand-ink">
-                      First module planned
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                  ) : (
-                    <span className="text-xs font-black uppercase opacity-70">
-                      In development
-                    </span>
-                  )}
+                  {/* Status labels, not actions: no button styling or arrow. */}
+                  <span className="text-xs font-black uppercase">
+                    {exercise.available ? "Next up · first module" : "In development"}
+                  </span>
                 </div>
               </article>
             );
