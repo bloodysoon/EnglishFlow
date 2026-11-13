@@ -4,7 +4,7 @@ type ButtonVariant = "primary" | "secondary";
 type ButtonSize = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex cursor-pointer items-center justify-center gap-3 border-[3px] border-brand-ink font-black uppercase " +
+  "font-display inline-flex cursor-pointer items-center justify-center gap-3 border-[3px] border-brand-ink font-black uppercase " +
   "transition-[transform,box-shadow,background-color] duration-150 motion-reduce:transition-none " +
   "not-disabled:hover:-translate-y-1 " +
   "not-disabled:active:translate-x-1 not-disabled:active:translate-y-1 not-disabled:active:shadow-none " +
@@ -21,7 +21,7 @@ const variants: Record<ButtonVariant, string> = {
 const sizes: Record<ButtonSize, string> = {
   sm: "px-4 py-3 text-sm shadow-brutal-md not-disabled:hover:shadow-brutal sm:px-6",
   md: "px-6 py-3 text-sm shadow-brutal-md not-disabled:hover:shadow-brutal",
-  lg: "px-7 py-4 text-base shadow-brutal not-disabled:hover:shadow-brutal-lg",
+  lg: "px-5 py-4 text-sm shadow-brutal not-disabled:hover:shadow-brutal-lg sm:px-7 sm:text-base",
 };
 
 // Class string for anything that should look like a button. Use it on

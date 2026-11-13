@@ -43,6 +43,8 @@
 
   /* Hard-shadow scale: sm for chips, md for compact controls,
      default for cards and primary buttons, lg for hover lift. */
+  --font-sans: var(--font-archivo), Arial, Helvetica, sans-serif;
+
   --shadow-brutal-sm: 3px 3px 0 var(--color-ink);
   --shadow-brutal-md: 4px 4px 0 var(--color-ink);
   --shadow-brutal: 6px 6px 0 var(--color-ink);
@@ -53,6 +55,24 @@
 /* One keyboard focus ring for every interactive element. Ink reads on all
    light brand surfaces; elements on purple override it with a light color. */
 @layer base {
+  /* Display voice: Archivo stretched wide. Body copy stays normal width.
+     Add `font-display` to any non-heading element that should shout. */
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-stretch: 110%;
+  }
+
+  @media (min-width: 480px) {
+    h1,
+    h2,
+    h3,
+    .font-display {
+      font-stretch: 125%;
+    }
+  }
+
   :focus-visible {
     outline: 3px solid var(--color-ink);
     outline-offset: 3px;
@@ -66,7 +86,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* ========================================
@@ -128,6 +148,10 @@ body {
 
   white-space: nowrap;
 
+  /* Single-line label: normal width on narrow phones so it fits, then
+     the expanded display width once there is room. */
+  font-stretch: 100%;
+
   box-shadow: 5px 5px 0 var(--color-ink);
 
   transition:
@@ -151,6 +175,13 @@ body {
 /* ========================================
    6. RESPONSIVE
 ======================================== */
+
+@media (min-width: 480px) {
+  .brutal-lift,
+  .brutal-sticker {
+    font-stretch: 125%;
+  }
+}
 
 @media (min-width: 640px) {
   .brutal-lift {

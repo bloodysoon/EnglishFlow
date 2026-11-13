@@ -52,7 +52,7 @@ export function HowItWorksSection() {
                 <span className="text-xs font-black uppercase tracking-widest md:text-sm">
                   Box
                 </span>
-                <span className="text-4xl leading-none font-black">{box}</span>
+                <span className="font-display text-4xl leading-none font-black">{box}</span>
                 <span className="sr-only"> of {LEITNER_BOXES.length}</span>
               </p>
 

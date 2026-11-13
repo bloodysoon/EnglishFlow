@@ -59,7 +59,7 @@ export function FinalCtaSection({ isAuthenticated }: FinalCtaSectionProps) {
           Your next chapter starts here ✳
         </span>
 
-        <h2 className="text-[clamp(2.5rem,7vw,6rem)] leading-[0.98] font-black tracking-tighter uppercase">
+        <h2 className="text-[clamp(2rem,5.5vw,4.75rem)] leading-[0.98] font-black tracking-tight uppercase">
           Ready to make
           <span className="block">your English</span>
           <span className="block text-brand-green">stick?</span>

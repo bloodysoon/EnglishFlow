@@ -32,7 +32,7 @@ export default async function RegisterPage() {
           </span>
         </span>
 
-        <h1 className="flex w-full flex-col items-center gap-3 text-[clamp(1.5rem,6.5vw,4.5rem)] leading-none font-black tracking-tighter uppercase text-brand-ink">
+        <h1 className="flex w-full flex-col items-center gap-3 text-[clamp(1.5rem,6.5vw,4.5rem)] leading-none font-black tracking-tight uppercase text-brand-ink">
           <span className="whitespace-nowrap">Stop scrolling.</span>
           <span className="brutal-lift">Start speaking.</span>
         </h1>
