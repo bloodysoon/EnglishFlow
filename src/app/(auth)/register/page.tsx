@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { RegisterForm } from "@/features/components/register-form";
+import { LogoLink } from "@/components/ui/logo-link";
+
+export const metadata: Metadata = {
+  title: "Create account",
+};
 
 export default async function RegisterPage() {
   const supabase = await createClient();
@@ -15,7 +21,9 @@ export default async function RegisterPage() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-8 overflow-x-clip bg-[#F76B16] px-4 py-10 sm:px-6 sm:py-14">
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-8 overflow-x-clip bg-brand-orange px-4 py-10 sm:px-6 sm:py-14">
+      <LogoLink />
+
       <header className="flex w-full max-w-3xl flex-col items-center gap-5 text-center">
         <span className="brutal-sticker text-xs sm:text-sm">
           Welcome to EnglishFlow
@@ -24,7 +32,7 @@ export default async function RegisterPage() {
           </span>
         </span>
 
-        <h1 className="flex w-full flex-col items-center gap-3 text-[clamp(1.5rem,6.5vw,4.5rem)] leading-none font-black tracking-tighter uppercase text-[#171717]">
+        <h1 className="flex w-full flex-col items-center gap-3 text-[clamp(1.5rem,6.5vw,4.5rem)] leading-none font-black tracking-tighter uppercase text-brand-ink">
           <span className="whitespace-nowrap">Stop scrolling.</span>
           <span className="brutal-lift">Start speaking.</span>
         </h1>

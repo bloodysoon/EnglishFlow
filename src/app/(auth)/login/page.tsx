@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "@/features/components/login-form";
 import { getCallbackErrorMessage } from "@/features/auth/lib/callback-error";
+import { LogoLink } from "@/components/ui/logo-link";
+
+export const metadata: Metadata = {
+  title: "Log in",
+};
 
 export default async function LoginPage({
   searchParams,
@@ -23,6 +29,8 @@ export default async function LoginPage({
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-8 overflow-x-clip bg-brand-orange px-4 py-10 sm:px-6 sm:py-14">
+      <LogoLink />
+
       <header className="flex w-full max-w-3xl flex-col items-center gap-5 text-center">
         <span className="brutal-sticker text-xs sm:text-sm">
           Welcome back to EnglishFlow
