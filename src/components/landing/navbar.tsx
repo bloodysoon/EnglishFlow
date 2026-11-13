@@ -70,7 +70,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
           href="/"
           className="
             inline-flex items-center
-            text-xl font-black tracking-tighter
+            text-lg font-black tracking-tighter
             transition-transform duration-200
             hover:-rotate-2
             sm:text-2xl
@@ -112,7 +112,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
               title={email}
               aria-label={`Open dashboard for ${email || "your account"}`}
               className="
-                flex h-10 w-10 items-center justify-center
+                hidden h-10 w-10 items-center justify-center sm:flex
                 border-[3px] border-brand-ink
                 bg-brand-green text-sm font-black
                 shadow-brutal-sm
@@ -127,7 +127,7 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
 
           <Link
             href={isAuthenticated ? "/dashboard" : "/login"}
-            className={buttonClasses({ className: "px-5 sm:px-6" })}
+            className={buttonClasses({ size: "sm" })}
           >
             {isAuthenticated ? "Dashboard" : "Log in"}
           </Link>

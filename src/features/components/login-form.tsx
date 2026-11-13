@@ -48,7 +48,7 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-8 shadow-brutal"
+      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-5 shadow-brutal sm:p-8"
     >
       {/* Email */}
       <div>

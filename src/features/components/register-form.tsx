@@ -62,7 +62,7 @@ export function RegisterForm() {
     return (
       <section
         role="status"
-        className="w-full max-w-md border-[3px] border-brand-ink bg-brand-cream p-8 text-center shadow-brutal"
+        className="w-full max-w-md border-[3px] border-brand-ink bg-brand-cream p-5 text-center shadow-brutal sm:p-8"
       >
         <div className="mb-5 text-6xl" aria-hidden="true">
           ✉️
@@ -98,7 +98,7 @@ export function RegisterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-8 shadow-brutal"
+      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-5 shadow-brutal sm:p-8"
     >
       <div>
         <Label htmlFor="email">Email</Label>
