@@ -13,12 +13,18 @@ export function RegisterForm() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [retryAfter, setRetryAfter] = useState(0);
+  const [retryEndedMessage, setRetryEndedMessage] = useState("");
 
   useEffect(() => {
     if (retryAfter <= 0) return;
 
     const timeout = setTimeout(() => {
       setRetryAfter((seconds) => Math.max(0, seconds - 1));
+
+      // Announce once when the wait is over, not on every tick.
+      if (retryAfter === 1) {
+        setRetryEndedMessage("You can try again now.");
+      }
     }, 1000);
 
     return () => clearTimeout(timeout);
@@ -30,6 +36,7 @@ export function RegisterForm() {
     if (isLoading || retryAfter > 0) return;
 
     setError(null);
+    setRetryEndedMessage("");
     setIsLoading(true);
 
     try {
@@ -62,16 +69,20 @@ export function RegisterForm() {
         </div>
 
         <h2 className="text-3xl font-black uppercase text-brand-ink">
-          Check your email!
+          Check your inbox!
         </h2>
 
+        {/* Same message whether or not the address is already registered,
+            so this screen never reveals which emails have accounts. */}
         <p className="mt-4 text-brand-ink">
-          If your email address is eligible for registration, you&apos;ll
-          receive a confirmation link.
+          If this address can be used, a confirmation link is on its way to{" "}
+          <strong className="break-all">{email}</strong>. Open it to activate
+          your account.
         </p>
 
-        <p className="mt-3 text-sm text-brand-ink">
-          Already have an account?
+        <p className="mt-3 text-sm font-semibold text-brand-ink">
+          Nothing after a few minutes? Check your spam folder. Already have an
+          account? Just log in.
         </p>
 
         <Link
@@ -98,6 +109,7 @@ export function RegisterForm() {
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          aria-describedby={error ? "register-error" : undefined}
           placeholder="you@example.com"
         />
       </div>
@@ -113,12 +125,19 @@ export function RegisterForm() {
           required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="At least 8 characters"
+          aria-describedby={
+            error ? "password-hint register-error" : "password-hint"
+          }
         />
+        {/* Visible hint: a placeholder disappears as soon as you type. */}
+        <p id="password-hint" className="mt-2 text-sm font-semibold text-brand-ink">
+          At least 8 characters.
+        </p>
       </div>
 
       {error && (
         <p
+          id="register-error"
           role="alert"
           className="border-[3px] border-brand-ink bg-brand-pink p-3 font-semibold text-brand-ink"
         >
@@ -126,11 +145,17 @@ export function RegisterForm() {
         </p>
       )}
 
+      {/* Visual countdown only: a live region here would be re-read every
+          second. Screen readers get the alert above and the message below. */}
       {retryAfter > 0 && (
-        <p role="status" className="font-bold text-brand-ink">
+        <p className="font-bold text-brand-ink" aria-hidden="true">
           ⏳ Try again in {retryAfter}s
         </p>
       )}
+
+      <p role="status" className="sr-only">
+        {retryEndedMessage}
+      </p>
 
       <Button type="submit" disabled={isLoading || retryAfter > 0}>
         {isLoading

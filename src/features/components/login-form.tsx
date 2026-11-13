@@ -60,6 +60,7 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          aria-describedby={error ? "login-error" : undefined}
           placeholder="you@example.com"
         />
       </div>
@@ -74,6 +75,7 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
           required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
+          aria-describedby={error ? "login-error" : undefined}
           placeholder="Your password"
         />
       </div>
@@ -81,6 +83,7 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
       {/* Error */}
       {error && (
         <p
+          id="login-error"
           role="alert"
           className="border-[3px] border-brand-ink bg-brand-pink p-3 font-semibold text-brand-ink"
         >
