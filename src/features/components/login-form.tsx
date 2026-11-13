@@ -5,12 +5,17 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginAction } from "@/features/auth/actions/login.action";
 
-export function LoginForm() {
+type LoginFormProps = {
+  // Server-validated message from the email confirmation callback, if any.
+  initialError?: string | null;
+};
+
+export function LoginForm({ initialError = null }: LoginFormProps) {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {

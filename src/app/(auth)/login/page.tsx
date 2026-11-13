@@ -1,8 +1,13 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "@/features/components/login-form";
+import { getCallbackErrorMessage } from "@/features/auth/lib/callback-error";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const supabase = await createClient();
 
   const {
@@ -13,6 +18,8 @@ export default async function LoginPage() {
   if (user) {
     redirect("/dashboard");
   }
+
+  const callbackError = getCallbackErrorMessage((await searchParams).error);
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-8 overflow-x-clip bg-brand-orange px-4 py-10 sm:px-6 sm:py-14">
@@ -40,7 +47,7 @@ export default async function LoginPage() {
         </p>
       </header>
 
-      <LoginForm />
+      <LoginForm initialError={callbackError} />
     </main>
   );
 }
