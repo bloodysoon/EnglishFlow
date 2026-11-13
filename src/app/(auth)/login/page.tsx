@@ -31,7 +31,7 @@ export default async function LoginPage({
     <main className="flex min-h-dvh flex-col items-center justify-center gap-8 overflow-x-clip bg-brand-orange px-4 py-10 sm:px-6 sm:py-14">
       <LogoLink />
 
-      <header className="flex w-full max-w-3xl flex-col items-center gap-5 text-center">
+      <header className="flex w-full max-w-5xl flex-col items-center gap-5 text-center">
         <span className="brutal-sticker text-xs sm:text-sm">
           Welcome back to EnglishFlow
           <span className="brutal-sticker__icon" aria-hidden="true">
