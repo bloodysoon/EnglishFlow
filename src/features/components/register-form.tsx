@@ -3,6 +3,8 @@
 import { registerAction } from "@/features/auth/actions/register.action";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Button, buttonClasses } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/input";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -53,28 +55,28 @@ export function RegisterForm() {
     return (
       <section
         role="status"
-        className="w-full max-w-md border-[3px] border-[var(--color-ink)] bg-[var(--color-cream)] p-8 text-center shadow-[var(--shadow-brutal)]"
+        className="w-full max-w-md border-[3px] border-brand-ink bg-brand-cream p-8 text-center shadow-brutal"
       >
         <div className="mb-5 text-6xl" aria-hidden="true">
           ✉️
         </div>
 
-        <h2 className="text-3xl font-black uppercase text-[var(--color-ink)]">
+        <h2 className="text-3xl font-black uppercase text-brand-ink">
           Check your email!
         </h2>
 
-        <p className="mt-4 text-[var(--color-ink)]">
+        <p className="mt-4 text-brand-ink">
           If your email address is eligible for registration, you&apos;ll
           receive a confirmation link.
         </p>
 
-        <p className="mt-3 text-sm text-[var(--color-ink)]">
+        <p className="mt-3 text-sm text-brand-ink">
           Already have an account?
         </p>
 
         <Link
           href="/login"
-          className="mt-5 inline-block border-[3px] border-[var(--color-ink)] bg-[var(--color-green)] px-6 py-3 font-black uppercase text-[var(--color-ink)] shadow-[var(--shadow-brutal)] transition-transform hover:-translate-y-1"
+          className={buttonClasses({ variant: "secondary", className: "mt-5" })}
         >
           Go to login →
         </Link>
@@ -85,37 +87,24 @@ export function RegisterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-[var(--color-ink)] bg-[var(--color-cream)] p-8 shadow-[var(--shadow-brutal)]"
+      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-8 shadow-brutal"
     >
       <div>
-        <label
-          htmlFor="email"
-          className="mb-2 block font-black uppercase text-[var(--color-ink)]"
-        >
-          Email
-        </label>
-
-        <input
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full border-[3px] border-[var(--color-ink)] bg-white p-3 text-[var(--color-ink)] outline-none focus:shadow-[4px_4px_0_var(--color-purple)]"
           placeholder="you@example.com"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="password"
-          className="mb-2 block font-black uppercase text-[var(--color-ink)]"
-        >
-          Password
-        </label>
-
-        <input
+        <Label htmlFor="password">Password</Label>
+        <Input
           id="password"
           type="password"
           autoComplete="new-password"
@@ -124,7 +113,6 @@ export function RegisterForm() {
           required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="w-full border-[3px] border-[var(--color-ink)] bg-white p-3 text-[var(--color-ink)] outline-none focus:shadow-[4px_4px_0_var(--color-purple)]"
           placeholder="At least 8 characters"
         />
       </div>
@@ -132,31 +120,27 @@ export function RegisterForm() {
       {error && (
         <p
           role="alert"
-          className="border-[3px] border-[var(--color-ink)] bg-[var(--color-pink)] p-3 font-semibold text-[var(--color-ink)]"
+          className="border-[3px] border-brand-ink bg-brand-pink p-3 font-semibold text-brand-ink"
         >
           {error}
         </p>
       )}
 
       {retryAfter > 0 && (
-        <p role="status" className="font-bold text-[var(--color-ink)]">
+        <p role="status" className="font-bold text-brand-ink">
           ⏳ Try again in {retryAfter}s
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={isLoading || retryAfter > 0}
-        className="border-[3px] border-[var(--color-ink)] bg-[var(--color-purple)] px-6 py-3 font-black uppercase text-white shadow-[var(--shadow-brutal)] transition-[transform,box-shadow] enabled:cursor-pointer enabled:hover:-translate-y-1 enabled:active:translate-x-1 enabled:active:translate-y-1 enabled:active:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <Button type="submit" disabled={isLoading || retryAfter > 0}>
         {isLoading
           ? "Creating account..."
           : retryAfter > 0
             ? `Wait ${retryAfter}s`
             : "Create account →"}
-      </button>
+      </Button>
 
-      <p className="text-center text-sm text-[var(--color-ink)]">
+      <p className="text-center text-sm text-brand-ink">
         Already have an account?{" "}
         <Link href="/login" className="font-black underline">
           Sign in

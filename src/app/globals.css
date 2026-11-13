@@ -41,8 +41,22 @@
   --color-brand-sand: var(--color-sand);
   --color-brand-ink: var(--color-ink);
 
+  /* Hard-shadow scale: sm for chips, md for compact controls,
+     default for cards and primary buttons, lg for hover lift. */
+  --shadow-brutal-sm: 3px 3px 0 var(--color-ink);
+  --shadow-brutal-md: 4px 4px 0 var(--color-ink);
   --shadow-brutal: 6px 6px 0 var(--color-ink);
+  --shadow-brutal-lg: 8px 8px 0 var(--color-ink);
   --radius-brutal: 2px;
+}
+
+/* One keyboard focus ring for every interactive element. Ink reads on all
+   light brand surfaces; elements on purple override it with a light color. */
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+  }
 }
 
 /* ========================================

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginAction } from "@/features/auth/actions/login.action";
+import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/input";
 
 type LoginFormProps = {
   // Server-validated message from the email confirmation callback, if any.
@@ -46,46 +48,32 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-[var(--color-ink)] bg-[var(--color-cream)] p-8 shadow-[var(--shadow-brutal)]"
+      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-8 shadow-brutal"
     >
       {/* Email */}
       <div>
-        <label
-          htmlFor="email"
-          className="mb-2 block font-black uppercase text-[var(--color-ink)]"
-        >
-          Email
-        </label>
-
-        <input
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full border-[3px] border-[var(--color-ink)] bg-white p-3 text-[var(--color-ink)] outline-none focus:shadow-[4px_4px_0_var(--color-purple)]"
           placeholder="you@example.com"
         />
       </div>
 
       {/* Password */}
       <div>
-        <label
-          htmlFor="password"
-          className="mb-2 block font-black uppercase text-[var(--color-ink)]"
-        >
-          Password
-        </label>
-
-        <input
+        <Label htmlFor="password">Password</Label>
+        <Input
           id="password"
           type="password"
           autoComplete="current-password"
           required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="w-full border-[3px] border-[var(--color-ink)] bg-white p-3 text-[var(--color-ink)] outline-none focus:shadow-[4px_4px_0_var(--color-purple)]"
           placeholder="Your password"
         />
       </div>
@@ -94,23 +82,19 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
       {error && (
         <p
           role="alert"
-          className="border-[3px] border-[var(--color-ink)] bg-[var(--color-pink)] p-3 font-semibold text-[var(--color-ink)]"
+          className="border-[3px] border-brand-ink bg-brand-pink p-3 font-semibold text-brand-ink"
         >
           {error}
         </p>
       )}
 
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="border-[3px] border-[var(--color-ink)] bg-[var(--color-purple)] px-6 py-3 font-black uppercase text-white shadow-[var(--shadow-brutal)] transition-[transform,box-shadow] enabled:cursor-pointer enabled:hover:-translate-y-1 enabled:active:translate-x-1 enabled:active:translate-y-1 enabled:active:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <Button type="submit" disabled={isLoading}>
         {isLoading ? "Signing in..." : "Sign in →"}
-      </button>
+      </Button>
 
       {/* Registration */}
-      <p className="text-center text-sm text-[var(--color-ink)]">
+      <p className="text-center text-sm text-brand-ink">
         Don&apos;t have an account?{" "}
         <Link href="/register" className="font-black underline">
           Create account
