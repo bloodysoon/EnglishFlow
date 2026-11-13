@@ -15,12 +15,14 @@ import {
 
 import { logoutAction } from "@/features/auth/actions/logout.action";
 
+// `ready: false` sections have no route yet: they render as a non-clickable
+// "Soon" item instead of a link that would 404. Flip to true once the page exists.
 const navigation = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Learn", href: "/learn", icon: BookOpen },
-  { label: "Statistics", href: "/statistics", icon: BarChart3 },
-  { label: "Achievements", href: "/achievements", icon: Trophy },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, ready: true },
+  { label: "Learn", href: "/learn", icon: BookOpen, ready: false },
+  { label: "Statistics", href: "/statistics", icon: BarChart3, ready: false },
+  { label: "Achievements", href: "/achievements", icon: Trophy, ready: false },
+  { label: "Settings", href: "/settings", icon: Settings, ready: false },
 ];
 
 export function PlatformSidebar({ email }: { email: string }) {
@@ -47,6 +49,21 @@ export function PlatformSidebar({ email }: { email: string }) {
       >
         {navigation.map((item) => {
           const Icon = item.icon;
+
+          if (!item.ready) {
+            return (
+              <span
+                key={item.href}
+                className="flex shrink-0 cursor-not-allowed items-center gap-3 border-[2px] border-dashed border-brand-ink bg-brand-cream px-3 py-3 text-sm font-black uppercase"
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                <span>{item.label}</span>
+                <span className="ml-auto border-[2px] border-brand-ink bg-white px-1.5 py-0.5 text-xs leading-none">
+                  Soon
+                </span>
+              </span>
+            );
+          }
 
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
