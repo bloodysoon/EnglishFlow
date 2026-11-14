@@ -1,0 +1,678 @@
+[
+  {
+    "lemma": "passport",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈpɑːspɔːt/",
+    "definition": "An official document normally used for international journeys, which proves the identity and nationality of the person for whom it was issued.",
+    "example": "You will have to bring your passport to prove who you are.",
+    "translations": {
+      "ru": {
+        "translation": "паспорт",
+        "alternatives": [
+          "заграничный паспорт",
+          "загранпаспорт",
+          "загранник"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "pașaport",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "luggage",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈlʌɡɪd͡ʒ/",
+    "definition": "The bags and other containers that hold a traveller's belongings.",
+    "example": "Don't leave your luggage unattended.",
+    "translations": {
+      "ru": {
+        "translation": "багаж",
+        "alternatives": [
+          "кладь",
+          "поклажа",
+          "сумки"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "bagaj",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "suitcase",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈsutkeɪs/",
+    "definition": "A large (usually rectangular) piece of luggage used for carrying clothes, and sometimes suits, when travelling.",
+    "example": "My suitcase is stowed in the luggage rack.",
+    "translations": {
+      "ru": {
+        "translation": "чемодан",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "valiză",
+        "alternatives": [
+          "geamantan"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "ticket",
+    "pos": "noun",
+    "source": "manual",
+    "level": "A1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈtɪk.ɪt/",
+    "definition": "A piece of paper or digital pass that lets you travel or enter a place.",
+    "example": "I bought a return ticket to Paris.",
+    "translations": {
+      "ru": {
+        "translation": "билет",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "bilet",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "flight",
+    "pos": "noun",
+    "source": "manual",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈflaɪ̯t/",
+    "definition": "A journey in an aircraft, especially a scheduled one.",
+    "example": "Our flight to Rome leaves at 7 a.m.",
+    "translations": {
+      "ru": {
+        "translation": "рейс",
+        "alternatives": [
+          "перелёт",
+          "полёт"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "zbor",
+        "alternatives": [
+          "zburare"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "departure",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/dɪˈpɑː(ɹ)tjə(ɹ)/",
+    "definition": "The act of departing or something that has departed.",
+    "example": "Check the departure time on your ticket.",
+    "translations": {
+      "ru": {
+        "translation": "отправление",
+        "alternatives": [
+          "вылет",
+          "отъезд"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "plecare",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "arrival",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/əˈɹaɪ.vl̩/",
+    "definition": "The act of arriving (reaching a certain place).",
+    "example": "Our arrival in London was delayed by an hour.",
+    "translations": {
+      "ru": {
+        "translation": "прибытие",
+        "alternatives": [
+          "приезд",
+          "приход",
+          "прилёт"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "sosire",
+        "alternatives": [
+          "venire"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "delay",
+    "pos": "noun",
+    "source": "manual",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/dɪˈleɪ/",
+    "definition": "A time when something happens later than planned.",
+    "example": "There is a two-hour delay on all flights.",
+    "translations": {
+      "ru": {
+        "translation": "задержка",
+        "alternatives": [
+          "промедление",
+          "опоздание"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "întârziere",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "gate",
+    "pos": "noun",
+    "source": "manual",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈɡeɪ̯t/",
+    "definition": "The place in an airport where passengers get on a plane.",
+    "example": "Please go to gate 12 for boarding.",
+    "translations": {
+      "ru": {
+        "translation": "выход на посадку",
+        "alternatives": [
+          "гейт"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "poartă de îmbarcare",
+        "alternatives": [
+          "poartă"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "boarding pass",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "manual",
+    "ipa": "/ˈbɔɹdɪŋ ˌpæs/",
+    "definition": "A document or card, similar to a ticket, needed in order to board an airplane or other mode of transport.",
+    "example": "Show your boarding pass at the gate.",
+    "translations": {
+      "ru": {
+        "translation": "посадочный талон",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "carte de îmbarcare",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "customs",
+    "pos": "noun",
+    "source": "manual",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈkʌs.təmz/",
+    "definition": "The place at a border or airport where officials check your bags and goods.",
+    "example": "It took an hour to get through customs.",
+    "translations": {
+      "ru": {
+        "translation": "таможня",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "vamă",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "reservation",
+    "pos": "noun",
+    "source": "manual",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˌɹɛz.ɚˈveɪ.ʃən/",
+    "definition": "An arrangement to keep a room, table or seat for you.",
+    "example": "I have a reservation for two nights.",
+    "translations": {
+      "ru": {
+        "translation": "бронь",
+        "alternatives": [
+          "бронирование"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "rezervare",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "accommodation",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B2",
+    "levelSource": "cefr-j",
+    "ipa": "/əˌkɒm.əˈdeɪ.ʃən/",
+    "definition": "Lodging in a dwelling or similar living quarters afforded to travellers in hotels or on cruise ships, or students, etc.",
+    "example": "I have booked the accommodation for my trip to Paris.",
+    "translations": {
+      "ru": {
+        "translation": "жильё",
+        "alternatives": [
+          "расквартирование",
+          "жилище"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "cazare",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "receipt",
+    "pos": "noun",
+    "source": "manual",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/ɹɪˈsiːt/",
+    "definition": "A piece of paper that shows you have paid for something.",
+    "example": "Keep the receipt in case you need to return it.",
+    "translations": {
+      "ru": {
+        "translation": "чек",
+        "alternatives": [
+          "квитанция"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "chitanță",
+        "alternatives": [
+          "bon"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "sightseeing",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": null,
+    "definition": "The activity of going out looking at things; tourism.",
+    "example": "Sightseeing is a frequent reason to visit San Francisco.",
+    "translations": {
+      "ru": {
+        "translation": "осмотр достопримечательностей",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "vizitarea obiectivelor turistice",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "souvenir",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˌsuː.vəˈnɪə/",
+    "definition": "An item of sentimental value, that is given or kept to remember an event or location.",
+    "example": "I bought a small souvenir for my mum.",
+    "translations": {
+      "ru": {
+        "translation": "сувенир",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "suvenir",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "destination",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/dɛstɪˈneɪʃən/",
+    "definition": "The place set for the end of a journey or to which something is sent; place or point aimed at.",
+    "example": "arrive at your destination",
+    "translations": {
+      "ru": {
+        "translation": "пункт назначения",
+        "alternatives": [
+          "место назначения"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "destinație",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "journey",
+    "pos": "noun",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈd͡ʒɜːni/",
+    "definition": "A set amount of travelling, seen as a single unit; a discrete trip, a voyage.",
+    "example": "The journey to London takes two hours by train.",
+    "translations": {
+      "ru": {
+        "translation": "путешествие",
+        "alternatives": [
+          "поездка",
+          "турне",
+          "вояж"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "călătorie",
+        "alternatives": [
+          "voiaj"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "abroad",
+    "pos": "adv",
+    "source": "manual",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/əˈbɹɔːd/",
+    "definition": "In or to a foreign country.",
+    "example": "She is studying abroad this year.",
+    "translations": {
+      "ru": {
+        "translation": "за границей",
+        "alternatives": [
+          "за рубежом",
+          "за границу",
+          "за рубеж"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "în străinătate",
+        "alternatives": [
+          "peste hotare"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "book",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/bʊk/",
+    "definition": "To reserve (something) for future use.",
+    "example": "I want to book a hotel room for tomorrow night.",
+    "translations": {
+      "ru": {
+        "translation": "бронировать",
+        "alternatives": [
+          "забронировать",
+          "резервировать",
+          "зарезервировать"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "a rezerva",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "check in",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "manual",
+    "ipa": null,
+    "definition": "To announce or record one's own arrival at a hotel, airport etc.",
+    "example": "We got to the hotel last night and checked in at the front desk.",
+    "translations": {
+      "ru": {
+        "translation": "регистрироваться",
+        "alternatives": [
+          "зарегистрироваться"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "a se înregistra",
+        "alternatives": [
+          "a face check-in-ul"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "pack",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/pæk/",
+    "definition": "To put or bring things together in a limited or confined space, especially for storage or transport.",
+    "example": "to pack goods in a box; to pack fish",
+    "translations": {
+      "ru": {
+        "translation": "упаковывать",
+        "alternatives": [
+          "паковать",
+          "упаковать"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "a împacheta",
+        "alternatives": [
+          "a-și face bagajul"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "board",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/bɔːd/",
+    "definition": "To step or climb onto or otherwise enter a ship, aircraft, train or other conveyance.",
+    "example": "It is time to board the aircraft.",
+    "translations": {
+      "ru": {
+        "translation": "садиться на борт",
+        "alternatives": [
+          "сесть",
+          "подняться на борт"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "a se îmbarca",
+        "alternatives": [
+          "a urca la bord"
+        ],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "land",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "[lænd]",
+    "definition": "To descend to a surface, especially from the air.",
+    "example": "The plane is about to land.",
+    "translations": {
+      "ru": {
+        "translation": "приземляться",
+        "alternatives": [
+          "приземлиться"
+        ],
+        "source": "wiktionary",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "a ateriza",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  },
+  {
+    "lemma": "cancel",
+    "pos": "verb",
+    "source": "manual",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈkæn.sl̩/",
+    "definition": "To decide that something planned will not happen.",
+    "example": "Our flight was cancelled because of the storm.",
+    "translations": {
+      "ru": {
+        "translation": "отменять",
+        "alternatives": [
+          "отменить"
+        ],
+        "source": "manual",
+        "reviewed": true
+      },
+      "ro": {
+        "translation": "a anula",
+        "alternatives": [],
+        "source": "manual",
+        "reviewed": true
+      }
+    }
+  }
+]

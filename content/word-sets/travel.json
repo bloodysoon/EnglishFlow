@@ -1,0 +1,119 @@
+{
+  "slug": "travel",
+  "level": "A2",
+  "published": false,
+  "title": {
+    "en": "Travel",
+    "ru": "Путешествия",
+    "ro": "Călătorii"
+  },
+  "description": {
+    "en": "Words for airports, hotels and getting around.",
+    "ru": "Слова для аэропорта, отеля и поездок.",
+    "ro": "Cuvinte pentru aeroport, hotel și deplasări."
+  },
+  "words": [
+    {
+      "word": "passport",
+      "pos": "noun"
+    },
+    {
+      "word": "luggage",
+      "pos": "noun"
+    },
+    {
+      "word": "suitcase",
+      "pos": "noun"
+    },
+    {
+      "word": "ticket",
+      "pos": "noun"
+    },
+    {
+      "word": "flight",
+      "pos": "noun"
+    },
+    {
+      "word": "departure",
+      "pos": "noun"
+    },
+    {
+      "word": "arrival",
+      "pos": "noun"
+    },
+    {
+      "word": "delay",
+      "pos": "noun"
+    },
+    {
+      "word": "gate",
+      "pos": "noun"
+    },
+    {
+      "word": "boarding pass",
+      "pos": "noun",
+      "level": "A2"
+    },
+    {
+      "word": "customs",
+      "pos": "noun"
+    },
+    {
+      "word": "reservation",
+      "pos": "noun"
+    },
+    {
+      "word": "accommodation",
+      "pos": "noun"
+    },
+    {
+      "word": "receipt",
+      "pos": "noun"
+    },
+    {
+      "word": "sightseeing",
+      "pos": "noun"
+    },
+    {
+      "word": "souvenir",
+      "pos": "noun"
+    },
+    {
+      "word": "destination",
+      "pos": "noun"
+    },
+    {
+      "word": "journey",
+      "pos": "noun"
+    },
+    {
+      "word": "abroad",
+      "pos": "adv"
+    },
+    {
+      "word": "book",
+      "pos": "verb"
+    },
+    {
+      "word": "check in",
+      "pos": "verb",
+      "level": "A2"
+    },
+    {
+      "word": "pack",
+      "pos": "verb"
+    },
+    {
+      "word": "board",
+      "pos": "verb"
+    },
+    {
+      "word": "land",
+      "pos": "verb"
+    },
+    {
+      "word": "cancel",
+      "pos": "verb"
+    }
+  ]
+}
