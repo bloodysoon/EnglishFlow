@@ -1,15 +1,10 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
-import { flushSync } from "react-dom";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 
-import {
-  THEME_COOKIE,
-  THEME_COOKIE_MAX_AGE,
-  resolveTheme,
-  type ThemePreference,
-} from "@/features/theme/theme";
+import { changeTheme, onThemeChange } from "@/features/theme/client";
+import { resolveTheme, type ThemePreference } from "@/features/theme/theme";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
@@ -40,56 +35,11 @@ export function ThemeToggle({ initialPreference, labels }: ThemeToggleProps) {
 
   const isDark = resolveTheme(preference, systemPrefersDark) === "dark";
 
-  function applyTheme(next: ThemePreference) {
-    // <html data-theme> drives the tokens in globals.css.
-    document.documentElement.setAttribute("data-theme", next);
-    document.cookie = `${THEME_COOKIE}=${next}; path=/; max-age=${THEME_COOKIE_MAX_AGE}; samesite=lax`;
-    setPreference(next);
-  }
+  // Another control (e.g. the settings page) changed the theme.
+  useEffect(() => onThemeChange(setPreference), []);
 
   function handleClick() {
-    const next: ThemePreference = isDark ? "light" : "dark";
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (!document.startViewTransition || reduceMotion) {
-      applyTheme(next);
-      return;
-    }
-
-    // Reveal the new theme as a circle growing out of the button.
-    const rect = buttonRef.current?.getBoundingClientRect();
-    const x = rect ? rect.left + rect.width / 2 : window.innerWidth;
-    const y = rect ? rect.top + rect.height / 2 : 0;
-    const radius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
-    );
-
-    const transition = document.startViewTransition(() => {
-      flushSync(() => applyTheme(next));
-    });
-
-    transition.ready
-      .then(() => {
-        document.documentElement.animate(
-          {
-            clipPath: [
-              `circle(0px at ${x}px ${y}px)`,
-              `circle(${radius}px at ${x}px ${y}px)`,
-            ],
-          },
-          {
-            duration: 550,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            pseudoElement: "::view-transition-new(root)",
-          },
-        );
-      })
-      .catch(() => {
-        // Transition skipped (e.g. tab hidden): the theme is applied anyway.
-      });
+    changeTheme(isDark ? "light" : "dark", buttonRef.current);
   }
 
   return (

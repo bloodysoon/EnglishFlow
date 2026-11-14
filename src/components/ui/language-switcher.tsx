@@ -4,20 +4,8 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 
-import {
-  LOCALES,
-  LOCALE_COOKIE,
-  LOCALE_COOKIE_MAX_AGE,
-  LOCALE_NAMES,
-  LOCALE_PATHS,
-  type Locale,
-} from "@/features/i18n/locales";
-
-// Remembered so English-only entry points ("/", "/login", "/register",
-// e.g. after logging out) open in this language next time (src/proxy.ts).
-function rememberLocale(locale: Locale) {
-  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;
-}
+import { rememberLocale } from "@/features/i18n/client";
+import { LOCALES, LOCALE_NAMES, LOCALE_PATHS, type Locale } from "@/features/i18n/locales";
 
 type LanguageSwitcherProps = {
   locale: Locale;
