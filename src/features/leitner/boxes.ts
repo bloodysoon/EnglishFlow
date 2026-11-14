@@ -26,3 +26,17 @@ export function formatReviewInterval(days: number): string {
 
   return `every ${days} days`;
 }
+
+export const FIRST_BOX = LEITNER_BOXES[0].box;
+export const LAST_BOX = LEITNER_BOXES[LEITNER_BOXES.length - 1].box;
+
+// The Leitner rule: remembered moves a word up one box (it stays in the
+// last box once mastered); forgotten sends it back to the first box.
+export function nextBox(currentBox: number, remembered: boolean): number {
+  if (!Number.isInteger(currentBox) || currentBox < FIRST_BOX || currentBox > LAST_BOX) {
+    throw new RangeError(`Box must be a whole number from ${FIRST_BOX} to ${LAST_BOX}, got ${currentBox}`);
+  }
+
+  if (!remembered) return FIRST_BOX;
+  return Math.min(currentBox + 1, LAST_BOX);
+}

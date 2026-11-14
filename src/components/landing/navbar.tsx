@@ -2,55 +2,58 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { buttonClasses } from "@/components/ui/button";
 
-type ActiveSection = "hero" | "how-it-works" | "join-us";
+import { buttonClasses } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LOCALE_PATHS, fill, localePath, type Locale } from "@/features/i18n/locales";
+import type { LandingDictionary } from "@/features/i18n/landing";
+import type { ThemePreference } from "@/features/theme/theme";
+
+const SECTIONS = [
+  { id: "how-it-works", key: "method" },
+  { id: "daily-review", key: "review" },
+  { id: "join-us", key: "start" },
+] as const;
+
+type SectionId = (typeof SECTIONS)[number]["id"];
 
 type NavbarProps = {
   isAuthenticated: boolean;
   email: string;
+  themePreference: ThemePreference;
+  locale: Locale;
+  dict: LandingDictionary["nav"];
 };
 
-export function Navbar({ isAuthenticated, email }: NavbarProps) {
-  const [activeSection, setActiveSection] = useState<ActiveSection>("hero");
+export function Navbar({ isAuthenticated, email, themePreference, locale, dict }: NavbarProps) {
+  const [activeSection, setActiveSection] = useState<SectionId | null>(null);
 
   useEffect(() => {
-    const updateActiveSection = () => {
+    const update = () => {
       const navbarHeight =
-        document.querySelector("header")?.getBoundingClientRect().height ?? 80;
-
+        document.querySelector("header")?.getBoundingClientRect().height ?? 93;
       const checkpoint = navbarHeight + 20;
 
-      const howItWorks = document.getElementById("how-it-works");
-      const joinUs = document.getElementById("join-us");
-
-      if (joinUs && joinUs.getBoundingClientRect().top <= checkpoint) {
-        setActiveSection("join-us");
-      } else if (
-        howItWorks &&
-        howItWorks.getBoundingClientRect().top <= checkpoint
-      ) {
-        setActiveSection("how-it-works");
-      } else {
-        setActiveSection("hero");
+      // Last section whose top has passed under the navbar wins.
+      let current: SectionId | null = null;
+      for (const { id } of SECTIONS) {
+        const top = document.getElementById(id)?.getBoundingClientRect().top;
+        if (top !== undefined && top <= checkpoint) current = id;
       }
+
+      setActiveSection(current);
     };
 
-    updateActiveSection();
-
-    window.addEventListener("scroll", updateActiveSection, {
-      passive: true,
-    });
-    window.addEventListener("resize", updateActiveSection);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
 
     return () => {
-      window.removeEventListener("scroll", updateActiveSection);
-      window.removeEventListener("resize", updateActiveSection);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
     };
   }, []);
-
-  const backgroundClass =
-    activeSection === "how-it-works" ? "bg-brand-orange" : "bg-brand-cream";
 
   const initial = email.charAt(0).toUpperCase() || "U";
 
@@ -58,67 +61,66 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
     <header
       className={`
         sticky top-0 z-50 w-full shrink-0
-        border-b-[3px] border-brand-ink
-        text-brand-ink
-        transition-colors duration-500 ease-in-out
-        motion-reduce:transition-none
-        ${backgroundClass}
+        border-b-[3px] border-line bg-canvas text-fg
       `}
     >
-      <nav className="relative flex w-full items-center justify-between gap-3 px-4 py-5 sm:px-8 lg:px-10 xl:px-14">
+      <nav
+        aria-label={dict.label}
+        className="relative mx-auto flex w-full max-w-[1440px] items-center justify-between gap-2 px-4 py-5 sm:gap-3 sm:px-8 lg:px-10"
+      >
         <Link
-          href="/"
-          className="
-            inline-flex min-h-11 items-center
-            text-lg font-black tracking-tighter
-            transition-transform duration-200
-            hover:-rotate-2
-            sm:text-2xl
-            motion-reduce:transition-none
-          "
+          href={LOCALE_PATHS[locale]}
+          aria-label={dict.home}
+          className="group font-display inline-flex min-h-11 items-center text-xl font-black tracking-tight sm:text-2xl"
         >
-          ENGLISHFLOW
-          <span className="text-brand-purple" aria-hidden="true">✳</span>
+          <span aria-hidden="true" lang="en">ELEVO</span>
+          <span
+            aria-hidden="true"
+            className="inline-block text-primary transition-transform duration-500 ease-out group-hover:rotate-180 motion-reduce:transition-none"
+          >
+            ✳
+          </span>
         </Link>
 
-        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
-          <a
-            href="#how-it-works"
-            className="
-              inline-flex min-h-11 items-center text-sm font-black uppercase
-              transition-colors duration-150
-              hover:text-brand-purple
-            "
-          >
-            How it works
-          </a>
+        <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 xl:flex">
+          {SECTIONS.map(({ id, key }) => (
+            <li key={id}>
+              <a
+                href={`#${id}`}
+                aria-current={activeSection === id ? "location" : undefined}
+                className="
+                  relative inline-flex min-h-11 items-center text-sm font-black uppercase
+                  after:absolute after:bottom-2 after:left-0 after:h-[3px] after:w-full
+                  after:origin-left after:scale-x-0 after:bg-mark
+                  after:transition-transform after:duration-300 after:ease-out
+                  hover:after:scale-x-100 aria-[current=location]:after:scale-x-100
+                  motion-reduce:after:transition-none
+                "
+              >
+                {dict[key]}
+              </a>
+            </li>
+          ))}
+        </ul>
 
-          <a
-            href="#join-us"
-            className="
-              inline-flex min-h-11 items-center text-sm font-black uppercase
-              transition-colors duration-150
-              hover:text-brand-purple
-            "
-          >
-            {isAuthenticated ? "Keep learning" : "Join us"}
-          </a>
-        </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LanguageSwitcher locale={locale} label={dict.language} />
 
-        <div className="flex items-center gap-3">
+          <ThemeToggle
+            initialPreference={themePreference}
+            labels={{ label: dict.themeLabel, toLight: dict.themeToLight, toDark: dict.themeToDark }}
+          />
+
           {isAuthenticated && (
             <Link
               href="/dashboard"
               title={email}
-              aria-label={`Open dashboard for ${email || "your account"}`}
+              aria-label={fill(dict.openDashboardFor, { email })}
               className="
-                hidden h-10 w-10 items-center justify-center sm:flex
-                border-[3px] border-brand-ink
-                bg-brand-green text-sm font-black
-                shadow-brutal-sm
-                transition-transform duration-150
-                hover:-translate-y-1
-                motion-reduce:transition-none
+                hidden h-11 w-11 items-center justify-center sm:flex
+                border-[3px] border-line bg-chip text-sm font-black text-on-box
+                shadow-brutal-sm transition-transform duration-150
+                hover:-translate-y-0.5 motion-reduce:transition-none
               "
             >
               {initial}
@@ -126,10 +128,10 @@ export function Navbar({ isAuthenticated, email }: NavbarProps) {
           )}
 
           <Link
-            href={isAuthenticated ? "/dashboard" : "/login"}
-            className={buttonClasses({ size: "sm" })}
+            href={isAuthenticated ? "/dashboard" : localePath(locale, "login")}
+            className={buttonClasses({ variant: "primary", size: "sm" })}
           >
-            {isAuthenticated ? "Dashboard" : "Log in"}
+            {isAuthenticated ? dict.dashboard : dict.logIn}
           </Link>
         </div>
       </nav>

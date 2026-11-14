@@ -1,32 +1,7 @@
-import { Navbar } from "@/components/landing/navbar";
-import { HeroSection } from "@/components/landing/hero-section";
-import { HowItWorksSection } from "@/components/landing/how-it-works-section";
-import { Footer } from "@/components/landing/footer";
-import { FinalCtaSection } from "@/components/landing/final-cta-section";
-import { createClient } from "@/lib/supabase/server";
+import { LandingPage, landingMetadata } from "@/components/landing/landing-page";
 
-export default async function HomePage() {
-  const supabase = await createClient();
+export const metadata = landingMetadata("en");
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAuthenticated = Boolean(user);
-
-  return (
-    <main className="min-h-dvh bg-brand-orange text-brand-ink">
-      <Navbar isAuthenticated={isAuthenticated} email={user?.email ?? ""} />
-
-      <div className="flex min-h-[calc(100dvh-var(--navbar-height))] flex-col">
-        <HeroSection isAuthenticated={isAuthenticated} />
-      </div>
-
-      <HowItWorksSection />
-
-      <FinalCtaSection isAuthenticated={isAuthenticated} />
-
-      <Footer />
-    </main>
-  );
+export default function HomePage() {
+  return <LandingPage locale="en" />;
 }

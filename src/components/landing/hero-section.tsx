@@ -1,67 +1,90 @@
 import Link from "next/link";
-import { buttonClasses } from "@/components/ui/button";
 
-import { HeroDecorations } from "@/components/landing/hero-decorations";
-import { HeroShelf } from "@/components/landing/hero-shelf";
-import { SectionScrollLink } from "./section-scroll-link";
+import { buttonClasses } from "@/components/ui/button";
+import { HeroDeck } from "@/components/landing/hero-deck";
+import { riseStyle as rise } from "@/components/ui/rise";
+import type { LandingDictionary } from "@/features/i18n/landing";
+import { localePath, type Locale } from "@/features/i18n/locales";
 
 type HeroSectionProps = {
   isAuthenticated: boolean;
+  locale: Locale;
+  dict: LandingDictionary;
 };
 
-export function HeroSection({ isAuthenticated }: HeroSectionProps) {
-  return (
-    <section className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col items-center justify-center px-4 pb-28 pt-10 text-center sm:px-8 sm:pb-32">
-      <HeroDecorations />
+export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps) {
+  const { hero } = dict;
 
-      <div className="relative z-10 flex w-full flex-col items-center gap-7">
-        <span className="brutal-sticker text-xs sm:text-sm">
-          Flashcards that know when you&apos;ll forget
+  return (
+    <section
+      id="top"
+      aria-labelledby="hero-title"
+      className="
+        mx-auto grid w-full max-w-[1440px] flex-1 items-center gap-14
+        px-4 pt-10 pb-10 sm:px-8 sm:pt-14 lg:px-10
+        xl:grid-cols-[1.15fr_1fr] xl:gap-10 xl:pb-8
+      "
+    >
+      <div className="flex min-w-0 flex-col items-start gap-6 sm:gap-7">
+        <span className="rise brutal-sticker text-xs sm:text-sm" style={rise(0)}>
+          {hero.sticker}
           <span className="brutal-sticker__icon" aria-hidden="true">
             ✳
           </span>
         </span>
 
-        <h1 className="flex w-full max-w-5xl flex-col items-center gap-3 text-[clamp(2rem,6vw,5.5rem)] leading-[0.98] font-black tracking-tight uppercase">
-          <span>Learn words.</span>{" "}
-          <span className="brutal-lift text-[clamp(1.3rem,5vw,4rem)]">
-            Remember forever.
+        <h1
+          id="hero-title"
+          className="rise flex flex-col items-start gap-3 text-[clamp(2rem,8vw,4.5rem)] leading-[0.98] font-black tracking-tight uppercase xl:text-[4.8vw] 2xl:text-[4.25rem]"
+          style={rise(1)}
+        >
+          <span>{hero.titleLine1}</span>{" "}
+          <span className="brutal-lift text-[clamp(1.25rem,5.4vw,3.25rem)] xl:text-[3.3vw] 2xl:text-[2.9rem]">
+            {hero.titleLine2}
           </span>
         </h1>
 
-        <p className="max-w-xl text-base leading-relaxed font-bold sm:text-xl">
-          Learn English smarter with spaced repetition.
-          <span className="mt-2 block">
-            <span className="brutal-highlight">
-              Practice a little.
-              <span className="brutal-highlight__bolt" aria-hidden="true">
-                ⚡
-              </span>
-            </span>
-          </span>
-          <span className="block">Remember a lot.</span>
-        </p>
-
-        <HeroShelf />
-
-        <Link
-          href={isAuthenticated ? "/dashboard" : "/register"}
-          className={buttonClasses({ size: "lg" })}
+        <p
+          className="rise max-w-xl text-base leading-relaxed font-semibold text-muted sm:text-xl"
+          style={rise(2)}
         >
-          {isAuthenticated ? "Continue learning" : "Start learning"}
-          <span aria-hidden="true">↗</span>
-        </Link>
-
-        <p className="text-sm font-bold">
-          Small steps. Big progress. No boring stuff.
+          {hero.lead}{" "}
+          <span className="brutal-highlight font-black whitespace-normal">
+            {hero.leadHighlight}
+          </span>
         </p>
+
+        <div className="rise w-full sm:w-auto" style={rise(3)}>
+          <Link
+            href={isAuthenticated ? "/dashboard" : localePath(locale, "register")}
+            className={buttonClasses({ variant: "primary", size: "lg", className: "group w-full sm:w-auto" })}
+          >
+            {isAuthenticated ? hero.ctaContinue : hero.ctaStart}
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-0.5"
+            >
+              ↗
+            </span>
+          </Link>
+        </div>
+
+        <ul
+          className="rise flex flex-wrap gap-x-5 gap-y-2 pt-2 text-sm font-black tracking-wide uppercase"
+          style={rise(4)}
+        >
+          {hero.facts.map((fact) => (
+            <li key={fact} className="flex items-center gap-2">
+              <span aria-hidden="true" className="h-2.5 w-2.5 border-2 border-line bg-mark" />
+              {fact}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <SectionScrollLink
-        href="#how-it-works"
-        label="Explore the method"
-        variant="green"
-      />
+      <div className="rise min-w-0" style={rise(3)}>
+        <HeroDeck dict={dict} />
+      </div>
     </section>
   );
 }

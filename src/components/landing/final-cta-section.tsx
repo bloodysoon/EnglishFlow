@@ -1,100 +1,92 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
+
 import { buttonClasses } from "@/components/ui/button";
-import { SectionScrollLink } from "./section-scroll-link";
+import { SectionScrollLink } from "@/components/landing/section-scroll-link";
+import type { LandingDictionary } from "@/features/i18n/landing";
+import { localePath, type Locale } from "@/features/i18n/locales";
 
 type FinalCtaSectionProps = {
   isAuthenticated: boolean;
+  locale: Locale;
+  dict: LandingDictionary;
 };
 
-export function FinalCtaSection({ isAuthenticated }: FinalCtaSectionProps) {
+const STICKER_PLACES = [
+  { className: "left-[4%] top-[12%] bg-box-1", tilt: "-8deg", delay: "0s" },
+  { className: "right-[5%] top-[14%] bg-box-2", tilt: "7deg", delay: "0.8s" },
+  { className: "bottom-[16%] left-[9%] bg-box-4", tilt: "5deg", delay: "1.6s" },
+  { className: "bottom-[18%] right-[8%] bg-raised", tilt: "-5deg", delay: "0.4s" },
+];
+
+export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSectionProps) {
+  const { cta } = dict;
+
   return (
     <section
       id="join-us"
+      aria-labelledby="join-us-title"
       className="
         relative flex min-h-[calc(100dvh-var(--navbar-height))] scroll-mt-(--navbar-height)
-        flex-col items-center justify-center
-        overflow-hidden border-t-[3px] border-brand-ink
-        bg-brand-purple px-4
-        pt-12 pb-36
-        text-center text-white
-        sm:px-8 sm:pt-16 sm:pb-40
+        flex-col items-center justify-center overflow-hidden
+        bg-box-3 px-4 py-16 text-center text-on-box-3 sm:px-8
       "
     >
-      {/* Animated decorations */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute inset-0
-          hidden overflow-hidden xl:block
-        "
-      >
-        <div className="hero-float absolute left-[3%] top-[5%]">
-          <div className="-rotate-12 border-[3px] border-brand-ink bg-brand-pink px-5 py-3 text-xl font-black text-brand-ink shadow-brutal">
-            YOU GOT THIS! ⚡
-          </div>
-        </div>
-
-        <div className="hero-float-delayed absolute right-[3%] top-[7%]">
-          <div className="rotate-12 border-[3px] border-brand-ink bg-brand-cream px-5 py-3 text-xl font-black text-brand-ink shadow-brutal">
-            LET&apos;S GO! ✳
-          </div>
-        </div>
-
-        <div className="hero-sway absolute bottom-[17%] left-[12%]">
-          <div className="rotate-6 border-[3px] border-brand-ink bg-brand-green px-5 py-3 text-lg font-black text-brand-ink shadow-brutal">
-            BIG PROGRESS ✓
-          </div>
-        </div>
-
-        <div className="hero-sway-delayed absolute bottom-[18%] right-[12%]">
-          <div className="-rotate-6 border-[3px] border-brand-ink bg-brand-orange px-5 py-3 text-lg font-black text-brand-ink shadow-brutal">
-            START TODAY ↗
-          </div>
-        </div>
+      {/* Floating stickers, only where there is room for them. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden xl:block">
+        {STICKER_PLACES.map(({ className, tilt, delay }, i) => (
+          <span
+            key={className}
+            className={`bob absolute border-[3px] border-line px-5 py-3 text-lg font-black text-on-box uppercase shadow-brutal ${className}`}
+            style={{ "--tilt": tilt, "--delay": delay } as CSSProperties}
+          >
+            {cta.stickers[i]}
+          </span>
+        ))}
       </div>
 
-      {/* Main section content */}
-      <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8">
-        <span className="-rotate-3 border-[3px] border-brand-ink bg-brand-green px-4 py-2 text-xs font-black uppercase text-brand-ink shadow-brutal sm:text-sm">
-          Your next chapter starts here ✳
+      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-8">
+        <span className="-rotate-2 border-[3px] border-line bg-raised px-4 py-2 text-xs font-black text-fg uppercase shadow-brutal-sm sm:text-sm">
+          {cta.sticker}
         </span>
 
-        <h2 className="text-[clamp(2rem,5.5vw,4.75rem)] leading-[0.98] font-black tracking-tight uppercase">
-          Ready to make{" "}
-          <span className="block">your English</span>{" "}
-          <span className="block text-brand-green">stick?</span>
+        <h2
+          id="join-us-title"
+          className="flex flex-col items-center gap-3 text-[clamp(1.75rem,6vw,4.75rem)] leading-[0.98] font-black tracking-tight uppercase"
+        >
+          <span>{cta.titleLine1}</span>{" "}
+          <span className="brutal-lift text-[0.85em] text-fg sm:text-[1em]">{cta.titleStick}</span>
         </h2>
 
-        <p className="max-w-xl text-base leading-relaxed font-bold sm:text-xl">
-          A few minutes a day can make a big difference.
-          <span className="mt-2 block">Your journey starts with one word.</span>
-        </p>
+        <p className="max-w-xl text-base leading-relaxed font-semibold sm:text-xl">{cta.lead}</p>
 
         <Link
-          href={isAuthenticated ? "/dashboard" : "/register"}
-          className={buttonClasses({
-            variant: "secondary",
-            size: "lg",
-            // Ink focus ring is too dark on the purple section.
-            className: "focus-visible:outline-brand-cream",
-          })}
+          href={isAuthenticated ? "/dashboard" : localePath(locale, "register")}
+          className={buttonClasses({ variant: "primary", size: "lg", className: "group" })}
         >
-          {isAuthenticated ? "Go to dashboard" : "Let's get started"}
-          <span aria-hidden="true">↗</span>
+          {isAuthenticated ? cta.dashboard : cta.create}
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-0.5"
+          >
+            ↗
+          </span>
         </Link>
 
-        <p className="text-sm font-black uppercase tracking-widest">
-          Free to start. Built to last.
-        </p>
-      </div>
+        {!isAuthenticated && (
+          <p className="text-sm font-semibold">
+            {cta.already}{" "}
+            <Link
+              href={localePath(locale, "login")}
+              className="inline-flex min-h-11 items-center font-black underline decoration-[3px] underline-offset-4 hover:decoration-mark"
+            >
+              {cta.logIn}
+            </Link>
+          </p>
+        )}
 
-      {/* Bottom scroll navigation */}
-      <SectionScrollLink
-        href="#top"
-        label="Back to top"
-        direction="up"
-        variant="green"
-      />
+        <SectionScrollLink href="#top" label={dict.scroll.toTop} direction="up" className="mt-4" />
+      </div>
     </section>
   );
 }

@@ -2,56 +2,39 @@ type SectionScrollLinkProps = {
   href: string;
   label: string;
   direction?: "up" | "down";
-  variant?: "green" | "cream" | "purple";
+  className?: string;
 };
 
-const backgroundClasses = {
-  green: "bg-brand-green text-brand-ink",
-  cream: "bg-brand-cream text-brand-ink",
-  purple: "bg-brand-purple text-white",
-};
-
+// The "go to the next screen" button that closes every landing section.
 export function SectionScrollLink({
   href,
   label,
   direction = "down",
-  variant = "green",
+  className = "",
 }: SectionScrollLinkProps) {
   return (
     <a
       href={href}
-      aria-label={label}
-      className="
-        group absolute bottom-8 left-1/2 z-20
-        flex -translate-x-1/2 flex-col items-center gap-2
-        whitespace-nowrap text-xs font-black uppercase
-        tracking-widest
-        transition-transform duration-200
-        hover:scale-105
-        focus-visible:outline-2
-        focus-visible:outline-offset-4
-        focus-visible:outline-current
-        sm:bottom-10
-        motion-reduce:transition-none
-      "
+      className={`group mx-auto flex w-fit flex-col items-center gap-2 text-center text-xs font-black tracking-widest uppercase ${className}`}
     >
-      <span>{label}</span>
+      <span className="relative after:absolute after:-bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:bg-mark after:transition-transform after:duration-300 group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+        {label}
+      </span>
 
       <span
         aria-hidden="true"
-        className={`
-          flex h-10 w-10 items-center justify-center
-          rounded-full border-[3px] border-brand-ink
-          text-xl
-          shadow-brutal-sm
-          transition-transform duration-200
-          group-hover:scale-110
-          scroll-nudge
+        className="
+          flex h-12 w-12 items-center justify-center rounded-full
+          border-[3px] border-line bg-raised text-xl text-fg shadow-brutal-sm
+          transition-[transform,background-color,box-shadow] duration-200
+          group-hover:-translate-y-0.5 group-hover:bg-box-2 group-hover:text-on-box group-hover:shadow-brutal-md
+          group-active:translate-y-0.5 group-active:shadow-none
           motion-reduce:transition-none
-          ${backgroundClasses[variant]}
-        `}
+        "
       >
-        {direction === "down" ? "↓" : "↑"}
+        <span className={direction === "down" ? "scroll-nudge inline-block" : "scroll-nudge-up inline-block"}>
+          {direction === "down" ? "↓" : "↑"}
+        </span>
       </span>
     </a>
   );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LEITNER_BOXES, formatReviewInterval } from "./boxes";
+import { LEITNER_BOXES, formatReviewInterval, nextBox } from "./boxes";
 
 describe("LEITNER_BOXES", () => {
   it("has five boxes numbered 1 to 5", () => {
@@ -26,5 +26,28 @@ describe("formatReviewInterval", () => {
     expect(() => formatReviewInterval(0)).toThrow(RangeError);
     expect(() => formatReviewInterval(-1)).toThrow(RangeError);
     expect(() => formatReviewInterval(1.5)).toThrow(RangeError);
+  });
+});
+
+describe("nextBox", () => {
+  it.each([
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+  ])("moves a remembered word from box %i to box %i", (from, to) => {
+    expect(nextBox(from, true)).toBe(to);
+  });
+
+  it("keeps a mastered word in the last box", () => {
+    expect(nextBox(5, true)).toBe(5);
+  });
+
+  it.each([1, 2, 3, 4, 5])("sends a forgotten word from box %i back to box 1", (from) => {
+    expect(nextBox(from, false)).toBe(1);
+  });
+
+  it.each([0, 6, 2.5, Number.NaN])("rejects box %s", (box) => {
+    expect(() => nextBox(box, true)).toThrow(RangeError);
   });
 });
