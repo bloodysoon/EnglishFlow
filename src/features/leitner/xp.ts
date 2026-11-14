@@ -1,27 +1,26 @@
 import type { CefrLevel } from "@/features/dictionary/cefr";
 import { LAST_BOX, nextBox } from "./boxes";
 
-// XP rules. The database function public.review_word (migration
-// 20261114120000_progress_xp.sql) applies the same numbers when it awards
-// XP; xp.test.ts fails if the two drift apart.
+// XP rules. The live numbers sit in the public.xp_rules table (editable
+// in the admin panel) and public.review_word applies them. These are the
+// defaults that table starts with; xp.test.ts checks the migration
+// matches them.
 
-export const XP_PER_REVIEW = {
+export type XpRules = {
   // Honest "forgot" still earns something, so nobody is tempted to lie.
+  remembered: number;
+  forgot: number;
+  // Bonus for moving a word from box 4 into the last box (mastered).
+  masteredBonus: number;
+  // Harder words are worth more. Unknown level counts as A1.
+  multipliers: Record<CefrLevel, number>;
+};
+
+export const DEFAULT_XP_RULES: XpRules = {
   remembered: 10,
   forgot: 3,
-} as const;
-
-// Bonus for moving a word from box 4 into the last box (mastered).
-export const XP_MASTERED_BONUS = 50;
-
-// Harder words are worth more. Unknown level counts as A1.
-export const CEFR_XP_MULTIPLIER: Record<CefrLevel, number> = {
-  A1: 1,
-  A2: 1.2,
-  B1: 1.5,
-  B2: 2,
-  C1: 2.5,
-  C2: 3,
+  masteredBonus: 50,
+  multipliers: { A1: 1, A2: 1.2, B1: 1.5, B2: 2, C1: 2.5, C2: 3 },
 };
 
 export type ReviewXp = {
@@ -31,14 +30,20 @@ export type ReviewXp = {
   newBox: number;
 };
 
-// XP for answering one due word that sat in `box`.
-export function reviewXp(box: number, remembered: boolean, level: CefrLevel | null): ReviewXp {
-  const multiplier = level ? CEFR_XP_MULTIPLIER[level] : 1;
+// XP for answering one due word that sat in `box` (same maths as
+// public.review_word; used for previews in the admin panel).
+export function reviewXp(
+  box: number,
+  remembered: boolean,
+  level: CefrLevel | null,
+  rules: XpRules = DEFAULT_XP_RULES,
+): ReviewXp {
+  const multiplier = rules.multipliers[level ?? "A1"];
   const newBox = nextBox(box, remembered);
   const mastered = remembered && box === LAST_BOX - 1;
 
-  const base = Math.round((remembered ? XP_PER_REVIEW.remembered : XP_PER_REVIEW.forgot) * multiplier);
-  const bonus = mastered ? Math.round(XP_MASTERED_BONUS * multiplier) : 0;
+  const base = Math.round((remembered ? rules.remembered : rules.forgot) * multiplier);
+  const bonus = mastered ? Math.round(rules.masteredBonus * multiplier) : 0;
 
   return { xp: base + bonus, bonus, mastered, newBox };
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PlatformSidebar } from "@/components/platform/sidebar";
+import { isAdminUser } from "@/features/admin/roles";
 import { getLandingDictionary } from "@/features/i18n/landing";
 import { getThemePreference } from "@/features/theme/server";
 
@@ -28,6 +29,7 @@ export default async function PlatformLayout({
     <div className="min-h-dvh bg-canvas text-fg lg:flex">
       <PlatformSidebar
         email={user.email ?? ""}
+        isAdmin={isAdminUser(user)}
         themePreference={themePreference}
         themeLabels={{ label: nav.themeLabel, toLight: nav.themeToLight, toDark: nav.themeToDark }}
       />

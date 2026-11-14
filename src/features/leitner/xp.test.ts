@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { CEFR_LEVELS } from "@/features/dictionary/cefr";
 import { LEITNER_BOXES } from "./boxes";
-import { CEFR_XP_MULTIPLIER, XP_MASTERED_BONUS, XP_PER_REVIEW, learnerLevel, reviewXp, xpForLevel } from "./xp";
+import { DEFAULT_XP_RULES, learnerLevel, reviewXp, xpForLevel } from "./xp";
 
 describe("reviewXp", () => {
   it("gives base XP times the word's level multiplier", () => {
@@ -20,6 +20,12 @@ describe("reviewXp", () => {
 
   it("treats an unknown level like A1", () => {
     expect(reviewXp(1, true, null).xp).toBe(10);
+  });
+
+  it("uses the rules it is given", () => {
+    const rules = { ...DEFAULT_XP_RULES, remembered: 20, multipliers: { ...DEFAULT_XP_RULES.multipliers, B1: 2 } };
+    expect(reviewXp(1, true, "B1", rules).xp).toBe(40);
+    expect(reviewXp(1, true, null, { ...rules, multipliers: { ...rules.multipliers, A1: 0.5 } }).xp).toBe(10);
   });
 
   it("adds the mastered bonus only when a word moves from box 4 to 5", () => {
@@ -48,33 +54,35 @@ describe("learner levels", () => {
   });
 });
 
-// The database function review_word applies these rules on its own. Read
-// the migration and make sure its numbers match the TypeScript ones.
-describe("review_word in SQL matches the TypeScript rules", () => {
-  const sql = readFileSync(
-    path.join(process.cwd(), "supabase/migrations/20261114120000_progress_xp.sql"),
-    "utf8",
-  );
+// The database applies these rules on its own (public.xp_rules,
+// public.review_word). Read the migration and make sure it matches.
+describe("the database matches the TypeScript rules", () => {
+  const sql = readFileSync(path.join(process.cwd(), "supabase/migrations/20261114140000_admin.sql"), "utf8");
+  const reviewWord = sql.slice(sql.indexOf("create or replace function public.review_word"));
 
-  it("uses the same review intervals", () => {
-    const intervals = sql.match(/v_interval := case v_new_box (.*?) end;/)?.[1] ?? "";
+  it("starts xp_rules with the default values", () => {
+    expect(sql).toMatch(new RegExp(`xp_remembered smallint not null default ${DEFAULT_XP_RULES.remembered}\\b`));
+    expect(sql).toMatch(new RegExp(`xp_forgot smallint not null default ${DEFAULT_XP_RULES.forgot}\\b`));
+    expect(sql).toMatch(new RegExp(`xp_mastered_bonus smallint not null default ${DEFAULT_XP_RULES.masteredBonus}\\b`));
+    for (const level of CEFR_LEVELS) {
+      expect(sql).toMatch(
+        new RegExp(`multiplier_${level.toLowerCase()} numeric\\(3, 1\\) not null default ${DEFAULT_XP_RULES.multipliers[level]} `),
+      );
+    }
+  });
+
+  it("falls back to the same defaults when the rules row is missing", () => {
+    expect(reviewWord).toContain(`coalesce(v_rules.xp_remembered, ${DEFAULT_XP_RULES.remembered})`);
+    expect(reviewWord).toContain(`coalesce(v_rules.xp_forgot, ${DEFAULT_XP_RULES.forgot})`);
+    expect(reviewWord).toContain(`coalesce(v_rules.xp_mastered_bonus, ${DEFAULT_XP_RULES.masteredBonus})`);
+  });
+
+  it("uses the same Leitner rule and review intervals", () => {
+    const intervals = reviewWord.match(/v_interval := case v_new_box (.*?) end;/)?.[1] ?? "";
     for (const { box, intervalDays } of LEITNER_BOXES) {
       expect(intervals).toContain(`when ${box} then ${intervalDays}`);
     }
-  });
-
-  it("uses the same CEFR multipliers", () => {
-    for (const level of CEFR_LEVELS) {
-      expect(sql).toMatch(new RegExp(`when '${level}' then ${CEFR_XP_MULTIPLIER[level]}\\b`));
-    }
-  });
-
-  it("uses the same base XP and bonus", () => {
-    expect(sql).toContain(
-      `case when p_remembered then ${XP_PER_REVIEW.remembered} else ${XP_PER_REVIEW.forgot} end`,
-    );
-    expect(sql).toContain(`round(${XP_MASTERED_BONUS} * v_multiplier)`);
-    expect(sql).toContain("least(v_box + 1, 5)");
-    expect(sql).toContain("p_remembered and v_box = 4");
+    expect(reviewWord).toContain("least(v_box + 1, 5)");
+    expect(reviewWord).toContain("p_remembered and v_box = 4");
   });
 });

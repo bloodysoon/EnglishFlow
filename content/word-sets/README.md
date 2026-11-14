@@ -24,8 +24,10 @@ checked by a person before learners see them.
 4. `npm run words:seed -- <slug>` validates the file and writes
    `supabase/seed/<slug>.sql`. Run it in the Supabase SQL editor
    (after the migrations in `supabase/migrations`).
-5. To show the set in the app, set `"published": true` in `<slug>.json`
-   and seed again.
+5. Publish the set in the admin panel (`/admin/word-sets`), where you can
+   also fix translations and levels later. `"published"` in `<slug>.json`
+   only applies the first time a set is seeded; re-seeding never touches
+   the publish switch or translations already marked reviewed.
 
 Only published sets and reviewed translations are readable (RLS);
 nothing in the app can write to these tables.

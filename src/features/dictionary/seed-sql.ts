@@ -2,7 +2,10 @@ import { DICTIONARY_LANGUAGES } from "./kaikki.ts";
 import type { WordSetDefinition, WordsFile } from "./word-set.ts";
 
 // Builds an idempotent SQL script for one word set: run it in the
-// Supabase SQL editor (it bypasses RLS). Re-running updates in place.
+// Supabase SQL editor (it bypasses RLS). Re-running updates in place, but
+// never undoes work done in the admin panel: the publish switch is only
+// set when the set is first created, and translations already marked
+// reviewed are left alone.
 
 // Standard SQL string literal; Supabase has standard_conforming_strings
 // on, so only single quotes need escaping.
@@ -78,7 +81,7 @@ export function buildSeedSql(definition: WordSetDefinition, words: WordsFile): S
     "",
     `insert into public.word_sets (slug, title, description, level, is_published)`,
     `values (${slug}, ${sqlJson(definition.title)}, ${sqlJson(definition.description)}, ${sqlString(definition.level ?? null)}, ${definition.published ? "true" : "false"})`,
-    `on conflict (slug) do update set title = excluded.title, description = excluded.description, level = excluded.level, is_published = excluded.is_published;`,
+    `on conflict (slug) do update set title = excluded.title, description = excluded.description, level = excluded.level;`,
   ];
 
   if (wordRows.length > 0) {
@@ -100,7 +103,8 @@ export function buildSeedSql(definition: WordSetDefinition, words: WordsFile): S
       translationRows.join(",\n"),
       `) as v (lemma, pos, language, translation, alternatives, example, source, reviewed)`,
       `join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos`,
-      `on conflict (word_id, language) do update set translation = excluded.translation, alternatives = excluded.alternatives, example = excluded.example, source = excluded.source, reviewed = excluded.reviewed;`,
+      `on conflict (word_id, language) do update set translation = excluded.translation, alternatives = excluded.alternatives, example = excluded.example, source = excluded.source, reviewed = excluded.reviewed`,
+      `where not public.word_translations.reviewed;`,
     );
   }
 

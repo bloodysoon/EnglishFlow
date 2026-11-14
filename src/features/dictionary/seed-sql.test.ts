@@ -52,6 +52,12 @@ describe("buildSeedSql", () => {
     expect(sql).toContain("on conflict (slug) do update");
   });
 
+  it("never undoes admin work when re-run", () => {
+    const setUpsert = sql.slice(sql.indexOf("on conflict (slug)"), sql.indexOf(";", sql.indexOf("on conflict (slug)")));
+    expect(setUpsert).not.toContain("is_published");
+    expect(sql).toContain("where not public.word_translations.reviewed;");
+  });
+
   it("upserts words, translations and set items by natural keys", () => {
     expect(sql).toContain(
       "('borrow', 'verb', '/ˈbɒɹəʊ/', 'To receive something temporarily.', 'Can I borrow your pen?', 'wiktionary', 'A1', 'cefr-j')",

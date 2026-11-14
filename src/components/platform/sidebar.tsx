@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   LogOut,
   Settings,
+  ShieldCheck,
   Trophy,
   UserRound,
 } from "lucide-react";
@@ -23,19 +24,21 @@ const navigation = [
   { label: "Learn", href: "/learn", icon: BookOpen, ready: false },
   { label: "Statistics", href: "/statistics", icon: BarChart3, ready: false },
   { label: "Achievements", href: "/achievements", icon: Trophy, ready: false },
-  { label: "Settings", href: "/settings", icon: Settings, ready: false },
 ];
 
 type PlatformSidebarProps = {
   email: string;
+  isAdmin?: boolean;
   themePreference: ThemePreference;
   themeLabels: { label: string; toLight: string; toDark: string };
 };
 
-export function PlatformSidebar({ email, themePreference, themeLabels }: PlatformSidebarProps) {
+export function PlatformSidebar({ email, isAdmin = false, themePreference, themeLabels }: PlatformSidebarProps) {
   const pathname = usePathname();
 
   const initial = email.charAt(0).toUpperCase() || "U";
+  const settingsActive = pathname === "/settings" || pathname.startsWith("/settings/");
+  const adminActive = pathname === "/admin" || pathname.startsWith("/admin/");
 
   return (
     <aside className="border-b-[3px] border-line bg-surface lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-64 lg:shrink-0 lg:flex-col lg:border-r-[3px] lg:border-b-0">
@@ -96,6 +99,20 @@ export function PlatformSidebar({ email, themePreference, themeLabels }: Platfor
             </Link>
           );
         })}
+
+        {/* Only the admin sees this; /admin itself checks the role again. */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            aria-current={adminActive ? "page" : undefined}
+            className={`flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none lg:mt-4 ${
+              adminActive ? "bg-box-5 text-on-box-5 shadow-brutal-sm" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
+            }`}
+          >
+            <ShieldCheck className="h-5 w-5 shrink-0" aria-hidden="true" />
+            <span>Admin</span>
+          </Link>
+        )}
       </nav>
 
       {/* User profile */}
@@ -107,7 +124,7 @@ export function PlatformSidebar({ email, themePreference, themeLabels }: Platfor
 
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-1 text-xs font-black text-muted uppercase">
-              <UserRound className="h-3 w-3" />
+              <UserRound className="h-3 w-3" aria-hidden="true" />
               Your account
             </p>
 
@@ -115,6 +132,23 @@ export function PlatformSidebar({ email, themePreference, themeLabels }: Platfor
               {email}
             </p>
           </div>
+
+          {/* Settings sit with the account, like Notion or Slack. */}
+          <Link
+            href="/settings"
+            aria-label="Settings"
+            title="Settings"
+            aria-current={settingsActive ? "page" : undefined}
+            className={`group flex h-11 w-11 shrink-0 items-center justify-center border-[2px] border-line shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-y-0 active:shadow-none motion-reduce:transition-none ${
+              settingsActive ? "bg-chip text-on-box" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
+            }`}
+          >
+            <Settings
+              className="h-5 w-5 transition-transform duration-500 ease-out group-hover:rotate-90 motion-reduce:transition-none"
+              strokeWidth={2.5}
+              aria-hidden="true"
+            />
+          </Link>
         </div>
 
         {/* Logout */}

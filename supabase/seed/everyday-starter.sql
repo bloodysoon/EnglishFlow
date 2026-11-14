@@ -5,7 +5,7 @@ begin;
 
 insert into public.word_sets (slug, title, description, level, is_published)
 values ('everyday-starter', '{"en":"Everyday starter","ru":"Повседневный старт","ro":"Start de zi cu zi"}'::jsonb, '{"en":"Useful words for daily conversations.","ru":"Полезные слова для повседневного общения.","ro":"Cuvinte utile pentru conversațiile de zi cu zi."}'::jsonb, 'A2', false)
-on conflict (slug) do update set title = excluded.title, description = excluded.description, level = excluded.level, is_published = excluded.is_published;
+on conflict (slug) do update set title = excluded.title, description = excluded.description, level = excluded.level;
 
 insert into public.words (lemma, part_of_speech, ipa, definition, example, source, cefr_level, level_source)
 values
@@ -48,7 +48,8 @@ from (values
   ('resilient', 'adj', 'ro', 'rezilient', '{}'::text[], null, 'wiktionary', false)
 ) as v (lemma, pos, language, translation, alternatives, example, source, reviewed)
 join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos
-on conflict (word_id, language) do update set translation = excluded.translation, alternatives = excluded.alternatives, example = excluded.example, source = excluded.source, reviewed = excluded.reviewed;
+on conflict (word_id, language) do update set translation = excluded.translation, alternatives = excluded.alternatives, example = excluded.example, source = excluded.source, reviewed = excluded.reviewed
+where not public.word_translations.reviewed;
 
 delete from public.word_set_items where set_id = (select id from public.word_sets where slug = 'everyday-starter');
 
