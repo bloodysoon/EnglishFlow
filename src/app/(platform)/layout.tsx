@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { DataCredits } from "@/components/learn/data-credits";
 import { PlatformSidebar } from "@/components/platform/sidebar";
 import { isAdminUser } from "@/features/admin/roles";
 import { getLandingDictionary } from "@/features/i18n/landing";
@@ -26,7 +27,7 @@ export default async function PlatformLayout({
   const { nav } = getLandingDictionary("en");
 
   return (
-    <div className="min-h-dvh bg-canvas text-fg lg:flex">
+    <div className="flex min-h-dvh flex-col bg-canvas text-fg lg:flex-row">
       <PlatformSidebar
         email={user.email ?? ""}
         isAdmin={isAdminUser(user)}
@@ -34,8 +35,11 @@ export default async function PlatformLayout({
         themeLabels={{ label: nav.themeLabel, toLight: nav.themeToLight, toDark: nav.themeToDark }}
       />
 
-      <main className="min-w-0 flex-1 px-4 py-6 sm:px-8 lg:px-10 lg:py-9">
+      <main className="flex min-w-0 flex-1 flex-col px-4 py-6 sm:px-8 lg:px-10 lg:py-9">
         <div className="mx-auto w-full max-w-7xl">{children}</div>
+        <footer className="mx-auto mt-auto w-full max-w-7xl pt-10">
+          <DataCredits />
+        </footer>
       </main>
     </div>
   );

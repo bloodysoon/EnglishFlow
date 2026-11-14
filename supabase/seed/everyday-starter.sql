@@ -20,7 +20,7 @@ values
   ('reliable', 'adj', '/ɹɪˈlaɪəbl̩/', 'Suitable or fit to be relied on; worthy of dependence, reliance or trust; dependable, trustworthy', null, 'wiktionary', 'B1', 'cefr-j'),
   ('curious', 'adj', '/ˈkjʊə.ɹi.əs/', 'Tending to ask questions, or to want to explore or investigate; inquisitive; (with a negative connotation) nosy, prying.', 'Young children are naturally curious about the world and everything in it.', 'wiktionary', 'B1', 'cefr-j'),
   ('resilient', 'adj', '/ɹɪˈzɪl.jənt/', 'Returning quickly to original shape after force is applied; elastic. (of objects or substances)', null, 'wiktionary', 'C1', 'octanove')
-on conflict (lemma, part_of_speech) do update set ipa = excluded.ipa, definition = excluded.definition, example = excluded.example, source = excluded.source, cefr_level = excluded.cefr_level, level_source = excluded.level_source;
+on conflict (lemma, part_of_speech, owner_id) do update set ipa = excluded.ipa, definition = excluded.definition, example = excluded.example, source = excluded.source, cefr_level = excluded.cefr_level, level_source = excluded.level_source;
 
 insert into public.word_translations (word_id, language, translation, alternatives, example, source, reviewed)
 select w.id, v.language, v.translation, v.alternatives, v.example, v.source, v.reviewed
@@ -47,7 +47,7 @@ from (values
   ('resilient', 'adj', 'ru', 'гибкий', array['эластичный', 'упругий']::text[], null, 'wiktionary', false),
   ('resilient', 'adj', 'ro', 'rezilient', '{}'::text[], null, 'wiktionary', false)
 ) as v (lemma, pos, language, translation, alternatives, example, source, reviewed)
-join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos
+join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos and w.owner_id is null
 on conflict (word_id, language) do update set translation = excluded.translation, alternatives = excluded.alternatives, example = excluded.example, source = excluded.source, reviewed = excluded.reviewed
 where not public.word_translations.reviewed;
 
@@ -68,7 +68,7 @@ from (values
   ('curious', 'adj', 9),
   ('resilient', 'adj', 10)
 ) as v (lemma, pos, position)
-join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos
+join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos and w.owner_id is null
 join public.word_sets s on s.slug = 'everyday-starter';
 
 commit;

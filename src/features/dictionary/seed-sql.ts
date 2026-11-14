@@ -90,7 +90,7 @@ export function buildSeedSql(definition: WordSetDefinition, words: WordsFile): S
       `insert into public.words (lemma, part_of_speech, ipa, definition, example, source, cefr_level, level_source)`,
       `values`,
       wordRows.join(",\n"),
-      `on conflict (lemma, part_of_speech) do update set ipa = excluded.ipa, definition = excluded.definition, example = excluded.example, source = excluded.source, cefr_level = excluded.cefr_level, level_source = excluded.level_source;`,
+      `on conflict (lemma, part_of_speech, owner_id) do update set ipa = excluded.ipa, definition = excluded.definition, example = excluded.example, source = excluded.source, cefr_level = excluded.cefr_level, level_source = excluded.level_source;`,
     );
   }
 
@@ -102,7 +102,7 @@ export function buildSeedSql(definition: WordSetDefinition, words: WordsFile): S
       `from (values`,
       translationRows.join(",\n"),
       `) as v (lemma, pos, language, translation, alternatives, example, source, reviewed)`,
-      `join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos`,
+      `join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos and w.owner_id is null`,
       `on conflict (word_id, language) do update set translation = excluded.translation, alternatives = excluded.alternatives, example = excluded.example, source = excluded.source, reviewed = excluded.reviewed`,
       `where not public.word_translations.reviewed;`,
     );
@@ -122,7 +122,7 @@ export function buildSeedSql(definition: WordSetDefinition, words: WordsFile): S
       `from (values`,
       itemRows.join(",\n"),
       `) as v (lemma, pos, position)`,
-      `join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos`,
+      `join public.words w on w.lemma = v.lemma and w.part_of_speech = v.pos and w.owner_id is null`,
       `join public.word_sets s on s.slug = ${slug};`,
     );
   }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
+import Link from "next/link";
 import { LogOut } from "lucide-react";
 
 import { AppearanceSettings } from "@/components/settings/appearance-settings";
@@ -12,6 +13,7 @@ import { logoutAction } from "@/features/auth/actions/logout.action";
 import { LOCALE_COOKIE } from "@/features/i18n/locales";
 import { preferredLocale } from "@/features/i18n/preferred-locale";
 import { getLearningSettings } from "@/features/settings/profile";
+import { PLANS, effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
 import { getThemePreference } from "@/features/theme/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -31,6 +33,8 @@ export default async function SettingsPage() {
     cookies(),
     headers(),
   ]);
+  const plan = await getPlan(supabase);
+  const goalOptions = app.dailyGoalOptions.filter((g) => effectiveDailyGoal(plan, g) === g);
   const locale = preferredLocale(cookieStore.get(LOCALE_COOKIE)?.value, headerList.get("accept-language"));
 
   return (
@@ -44,7 +48,15 @@ export default async function SettingsPage() {
 
       <div className="rise" style={riseStyle(1)}>
         <SettingsSection id="learning" title="Learning" description="Saved to your account, on every device.">
-          <LearningSettingsForm initial={learning} goalOptions={app.dailyGoalOptions} />
+          <LearningSettingsForm initial={learning} goalOptions={goalOptions} />
+          {goalOptions.length < app.dailyGoalOptions.length && (
+            <p className="mt-5 text-sm font-semibold text-muted">
+              Want more than {PLANS[plan].newWordsPerDay} new words a day?{" "}
+              <Link href="/subscription" className="font-black underline decoration-2 underline-offset-2 hover:decoration-mark">
+                Upgrade
+              </Link>
+            </p>
+          )}
         </SettingsSection>
       </div>
 

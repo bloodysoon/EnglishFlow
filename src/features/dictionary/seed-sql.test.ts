@@ -63,6 +63,9 @@ describe("buildSeedSql", () => {
       "('borrow', 'verb', '/ˈbɒɹəʊ/', 'To receive something temporarily.', 'Can I borrow your pen?', 'wiktionary', 'A1', 'cefr-j')",
     );
     expect(sql).toContain("cefr_level = excluded.cefr_level, level_source = excluded.level_source");
+    // Shared dictionary entries only, never a learner's own word.
+    expect(sql).toContain("on conflict (lemma, part_of_speech, owner_id) do update");
+    expect(sql.match(/w\.owner_id is null/g)).toHaveLength(2);
     expect(sql).toContain("('borrow', 'verb', 'ru', 'занимать', array['одолжить']::text[], null, 'wiktionary', true)");
     expect(sql).toContain("('borrow', 'verb', 0)");
   });

@@ -57,8 +57,12 @@ describe("learner levels", () => {
 // The database applies these rules on its own (public.xp_rules,
 // public.review_word). Read the migration and make sure it matches.
 describe("the database matches the TypeScript rules", () => {
-  const sql = readFileSync(path.join(process.cwd(), "supabase/migrations/20261114140000_admin.sql"), "utf8");
-  const reviewWord = sql.slice(sql.indexOf("create or replace function public.review_word"));
+  const read = (file: string) => readFileSync(path.join(process.cwd(), "supabase/migrations", file), "utf8");
+  // xp_rules is created here…
+  const sql = read("20261114140000_admin.sql");
+  // …and this is the latest definition of review_word.
+  const learning = read("20261114150000_learning.sql");
+  const reviewWord = learning.slice(learning.indexOf("create or replace function public.review_word"));
 
   it("starts xp_rules with the default values", () => {
     expect(sql).toMatch(new RegExp(`xp_remembered smallint not null default ${DEFAULT_XP_RULES.remembered}\\b`));
@@ -84,5 +88,9 @@ describe("the database matches the TypeScript rules", () => {
     }
     expect(reviewWord).toContain("least(v_box + 1, 5)");
     expect(reviewWord).toContain("p_remembered and v_box = 4");
+  });
+
+  it("refuses words that are still waiting in the queue", () => {
+    expect(reviewWord).toContain("if v_due is null or v_due > current_date then");
   });
 });

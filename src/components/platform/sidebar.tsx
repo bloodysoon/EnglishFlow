@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   BookOpen,
+  Gem,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -21,7 +22,8 @@ import type { ThemePreference } from "@/features/theme/theme";
 // "Soon" item instead of a link that would 404. Flip to true once the page exists.
 const navigation = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, ready: true },
-  { label: "Learn", href: "/learn", icon: BookOpen, ready: false },
+  { label: "Learn", href: "/learn", icon: BookOpen, ready: true },
+  { label: "Subscription", href: "/subscription", icon: Gem, ready: true },
   { label: "Statistics", href: "/statistics", icon: BarChart3, ready: false },
   { label: "Achievements", href: "/achievements", icon: Trophy, ready: false },
 ];
