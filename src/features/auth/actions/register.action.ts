@@ -1,16 +1,25 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { localeSchema } from "@/features/i18n/locale-schema";
+import type { AuthErrorCode } from "../errors";
 import { registerSchema } from "../schemas/auth.schema";
 
-export async function registerAction(input: unknown) {
-  const result = registerSchema.safeParse(input);
+// Errors are codes; the form shows them in the page's language.
+type RegisterResult =
+  | { success: true; error: null; retryAfter: null }
+  | { success: false; error: AuthErrorCode; retryAfter: number | null };
+
+const registerRequestSchema = registerSchema.extend({
+  // Which language the confirmation link should bring the visitor back to.
+  locale: localeSchema,
+});
+
+export async function registerAction(input: unknown): Promise<RegisterResult> {
+  const result = registerRequestSchema.safeParse(input);
 
   if (!result.success) {
-    return {
-      success: false,
-      error: "Invalid registration data",
-    };
+    return { success: false, error: "invalid_data", retryAfter: null };
   }
 
   const supabase = await createClient();
@@ -20,18 +29,14 @@ export async function registerAction(input: unknown) {
   if (!appUrl) {
     console.error("[Auth] NEXT_PUBLIC_APP_URL is not configured");
 
-    return {
-      success: false,
-      error: "Registration is temporarily unavailable.",
-      retryAfter: null,
-    };
+    return { success: false, error: "unavailable", retryAfter: null };
   }
 
   const { error } = await supabase.auth.signUp({
     email: result.data.email,
     password: result.data.password,
     options: {
-      emailRedirectTo: new URL("/auth/callback", appUrl).toString(),
+      emailRedirectTo: callbackUrl(appUrl, result.data.locale),
     },
   });
 
@@ -50,21 +55,19 @@ export async function registerAction(input: unknown) {
 
       return {
         success: false,
-        error: "Too many attempts. Please wait before trying again.",
+        error: "rate_limited",
         retryAfter: match ? Number(match[1]) : 60,
       };
     }
 
-    return {
-      success: false,
-      error: "Registration failed. Please try again.",
-      retryAfter: null,
-    };
+    return { success: false, error: "registration_failed", retryAfter: null };
   }
 
-  return {
-    success: true,
-    error: null,
-    retryAfter: null,
-  };
+  return { success: true, error: null, retryAfter: null };
+}
+
+function callbackUrl(appUrl: string, locale: string): string {
+  const url = new URL("/auth/callback", appUrl);
+  if (locale !== "en") url.searchParams.set("locale", locale);
+  return url.toString();
 }

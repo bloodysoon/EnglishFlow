@@ -4,28 +4,37 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginAction } from "@/features/auth/actions/login.action";
+import type { AuthErrorCode, CallbackErrorCode } from "@/features/auth/errors";
+import type { AuthDictionary } from "@/features/i18n/auth";
+import { localePath, type Locale } from "@/features/i18n/locales";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
 type LoginFormProps = {
-  // Server-validated message from the email confirmation callback, if any.
-  initialError?: string | null;
+  locale: Locale;
+  dict: Pick<AuthDictionary, "form" | "errors">;
+  // Server-validated code from the email confirmation callback, if any.
+  initialError?: CallbackErrorCode | null;
 };
 
-export function LoginForm({ initialError = null }: LoginFormProps) {
+const linkClass =
+  "inline-flex min-h-11 items-center px-1 font-black underline decoration-[3px] underline-offset-4 transition-colors duration-150 hover:decoration-mark motion-reduce:transition-none";
+
+export function LoginForm({ locale, dict, initialError = null }: LoginFormProps) {
   const router = useRouter();
+  const { form, errors } = dict;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(initialError);
+  const [error, setError] = useState<AuthErrorCode | null>(initialError);
   const [isLoading, setIsLoading] = useState(false);
 
   // The callback error arrives as ?error=...; drop it from the URL once
   // shown, so a reload or shared link doesn't bring the alert back.
   useEffect(() => {
-    if (initialError) window.history.replaceState(null, "", "/login");
-  }, [initialError]);
+    if (initialError) window.history.replaceState(null, "", localePath(locale, "login"));
+  }, [initialError, locale]);
 
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,7 +58,7 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
       router.replace("/dashboard");
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("unexpected");
       setIsLoading(false);
     }
   }
@@ -57,11 +66,11 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-5 shadow-brutal sm:p-8"
+      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-line bg-raised p-5 text-fg shadow-brutal sm:p-8"
     >
       {/* Email */}
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{form.email}</Label>
         <Input
           id="email"
           type="email"
@@ -73,13 +82,13 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
             setError(null); // a stale error shouldn't linger while fixing it
           }}
           aria-describedby={error ? "login-error" : undefined}
-          placeholder="you@example.com"
+          placeholder={form.emailPlaceholder}
         />
       </div>
 
       {/* Password */}
       <div>
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">{form.password}</Label>
         <PasswordInput
           id="password"
           autoComplete="current-password"
@@ -90,7 +99,8 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
             setError(null);
           }}
           aria-describedby={error ? "login-error" : undefined}
-          placeholder="Your password"
+          placeholder={form.passwordPlaceholder}
+          labels={{ show: form.showPassword, hide: form.hidePassword, suffix: form.passwordSuffix }}
         />
       </div>
 
@@ -99,23 +109,23 @@ export function LoginForm({ initialError = null }: LoginFormProps) {
         <p
           id="login-error"
           role="alert"
-          className="border-[3px] border-brand-ink bg-brand-pink p-3 font-semibold text-brand-ink"
+          className="border-[3px] border-line bg-box-1 p-3 font-semibold text-on-box"
         >
-          {error}
+          {errors[error]}
         </p>
       )}
 
       {/* Submit */}
       {/* aria-disabled keeps focus here while loading; handleSubmit guards. */}
       <Button type="submit" aria-disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Log in →"}
+        {isLoading ? form.loggingIn : form.logIn}
       </Button>
 
       {/* Registration */}
-      <p className="text-center text-sm text-brand-ink">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="inline-flex min-h-11 items-center px-1 font-black underline underline-offset-4">
-          Create account
+      <p className="text-center text-sm text-muted">
+        {form.noAccount}{" "}
+        <Link href={localePath(locale, "register")} className={linkClass}>
+          {form.createAccountLink}
         </Link>
       </p>
     </form>

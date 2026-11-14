@@ -7,11 +7,26 @@ import { Button, buttonClasses } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { PASSWORD_MAX_LENGTH } from "@/features/auth/constants";
+import type { AuthErrorCode } from "@/features/auth/errors";
+import type { AuthDictionary } from "@/features/i18n/auth";
+import { fill, localePath, type Locale } from "@/features/i18n/locales";
 
-export function RegisterForm() {
+const PASSWORD_MIN_LENGTH = 8;
+
+const linkClass =
+  "inline-flex min-h-11 items-center px-1 font-black underline decoration-[3px] underline-offset-4 transition-colors duration-150 hover:decoration-mark motion-reduce:transition-none";
+
+type RegisterFormProps = {
+  locale: Locale;
+  dict: Pick<AuthDictionary, "form" | "errors" | "success">;
+};
+
+export function RegisterForm({ locale, dict }: RegisterFormProps) {
+  const { form, errors, success: successText } = dict;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AuthErrorCode | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [retryAfter, setRetryAfter] = useState(0);
@@ -30,12 +45,12 @@ export function RegisterForm() {
 
       // Announce once when the wait is over, not on every tick.
       if (retryAfter === 1) {
-        setRetryEndedMessage("You can try again now.");
+        setRetryEndedMessage(form.retryEnded);
       }
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [retryAfter]);
+  }, [retryAfter, form.retryEnded]);
 
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,7 +60,7 @@ export function RegisterForm() {
     // Checked here instead of maxLength: maxLength silently cuts a pasted
     // password, so the saved one would never match. Mirrors registerSchema.
     if (password.length > PASSWORD_MAX_LENGTH) {
-      setError(`Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`);
+      setError("password_too_long");
       return;
     }
 
@@ -54,7 +69,7 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      const result = await registerAction({ email, password });
+      const result = await registerAction({ email, password, locale });
 
       if (!result.success) {
         setError(result.error);
@@ -66,7 +81,7 @@ export function RegisterForm() {
       setPassword("");
       setRetryAfter(0);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("unexpected");
     } finally {
       setIsLoading(false);
     }
@@ -76,39 +91,32 @@ export function RegisterForm() {
     return (
       <section
         role="status"
-        className="w-full max-w-md border-[3px] border-brand-ink bg-brand-cream p-5 text-center shadow-brutal sm:p-8"
+        className="w-full max-w-md border-[3px] border-line bg-raised p-5 text-center text-fg shadow-brutal sm:p-8"
       >
         <div className="mb-5 text-6xl" aria-hidden="true">
           ✉️
         </div>
 
         {/* Focus moves here: the submit button that had focus unmounts. */}
-        <h2
-          ref={successHeadingRef}
-          tabIndex={-1}
-          className="text-3xl font-black uppercase text-brand-ink focus:outline-none"
-        >
-          Check your inbox!
+        <h2 ref={successHeadingRef} tabIndex={-1} className="text-3xl font-black uppercase focus:outline-none">
+          {successText.title}
         </h2>
 
         {/* Same message whether or not the address is already registered,
             so this screen never reveals which emails have accounts. */}
-        <p className="mt-4 text-brand-ink">
-          If this address can be used, a confirmation link is on its way to{" "}
-          <strong className="break-all">{email}</strong>. Open it to activate
-          your account.
+        <p className="mt-4">
+          {successText.bodyBefore}
+          <strong className="break-all">{email}</strong>
+          {successText.bodyAfter}
         </p>
 
-        <p className="mt-3 text-sm font-semibold text-brand-ink">
-          Nothing after a few minutes? Check your spam folder. Already have an
-          account? Just log in.
-        </p>
+        <p className="mt-3 text-sm font-semibold text-muted">{successText.spam}</p>
 
         <Link
-          href="/login"
+          href={localePath(locale, "login")}
           className={buttonClasses({ variant: "secondary", className: "mt-5" })}
         >
-          Go to login →
+          {successText.goToLogin}
         </Link>
       </section>
     );
@@ -117,10 +125,10 @@ export function RegisterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-brand-ink bg-brand-cream p-5 shadow-brutal sm:p-8"
+      className="flex w-full max-w-md flex-col gap-5 border-[3px] border-line bg-raised p-5 text-fg shadow-brutal sm:p-8"
     >
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{form.email}</Label>
         <Input
           id="email"
           type="email"
@@ -132,29 +140,28 @@ export function RegisterForm() {
             setError(null); // the countdown, if any, stays visible
           }}
           aria-describedby={error ? "register-error" : undefined}
-          placeholder="you@example.com"
+          placeholder={form.emailPlaceholder}
         />
       </div>
 
       <div>
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">{form.password}</Label>
         <PasswordInput
           id="password"
           autoComplete="new-password"
-          minLength={8}
+          minLength={PASSWORD_MIN_LENGTH}
           required
           value={password}
           onChange={(event) => {
             setPassword(event.target.value);
             setError(null);
           }}
-          aria-describedby={
-            error ? "password-hint register-error" : "password-hint"
-          }
+          aria-describedby={error ? "password-hint register-error" : "password-hint"}
+          labels={{ show: form.showPassword, hide: form.hidePassword, suffix: form.passwordSuffix }}
         />
         {/* Visible hint: a placeholder disappears as soon as you type. */}
-        <p id="password-hint" className="mt-2 text-sm font-semibold text-brand-ink">
-          8 to {PASSWORD_MAX_LENGTH} characters.
+        <p id="password-hint" className="mt-2 text-sm font-semibold text-muted">
+          {fill(form.passwordHint, { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH })}
         </p>
       </div>
 
@@ -162,9 +169,9 @@ export function RegisterForm() {
         <p
           id="register-error"
           role="alert"
-          className="border-[3px] border-brand-ink bg-brand-pink p-3 font-semibold text-brand-ink"
+          className="border-[3px] border-line bg-box-1 p-3 font-semibold text-on-box"
         >
-          {error}
+          {fill(errors[error], { max: PASSWORD_MAX_LENGTH })}
         </p>
       )}
 
@@ -178,16 +185,16 @@ export function RegisterForm() {
       {/* aria-disabled keeps focus here; handleSubmit guards. */}
       <Button type="submit" aria-disabled={isLoading || retryAfter > 0}>
         {isLoading
-          ? "Creating account..."
+          ? form.creatingAccount
           : retryAfter > 0
-            ? `Wait ${retryAfter}s`
-            : "Create account →"}
+            ? fill(form.wait, { seconds: retryAfter })
+            : form.createAccount}
       </Button>
 
-      <p className="text-center text-sm text-brand-ink">
-        Already have an account?{" "}
-        <Link href="/login" className="inline-flex min-h-11 items-center px-1 font-black underline underline-offset-4">
-          Log in
+      <p className="text-center text-sm text-muted">
+        {form.haveAccount}{" "}
+        <Link href={localePath(locale, "login")} className={linkClass}>
+          {form.logInLink}
         </Link>
       </p>
     </form>

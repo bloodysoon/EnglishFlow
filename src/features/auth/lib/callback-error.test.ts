@@ -1,28 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { getCallbackErrorMessage } from "./callback-error";
+import { parseCallbackError } from "./callback-error";
 
-describe("getCallbackErrorMessage", () => {
-  it("returns a message for known callback error codes", () => {
-    expect(getCallbackErrorMessage("invalid_callback")).toMatch(/incomplete/);
-    expect(getCallbackErrorMessage("confirmation_failed")).toMatch(/expired/);
+describe("parseCallbackError", () => {
+  it("accepts known callback error codes", () => {
+    expect(parseCallbackError("invalid_callback")).toBe("invalid_callback");
+    expect(parseCallbackError("confirmation_failed")).toBe("confirmation_failed");
   });
 
   it("returns null when there is no error param", () => {
-    expect(getCallbackErrorMessage(undefined)).toBeNull();
+    expect(parseCallbackError(undefined)).toBeNull();
   });
 
   it("ignores unknown codes instead of echoing them", () => {
-    expect(getCallbackErrorMessage("Your account is locked, call us")).toBeNull();
+    expect(parseCallbackError("Your account is locked, call us")).toBeNull();
   });
 
   it("ignores inherited object keys", () => {
-    expect(getCallbackErrorMessage("toString")).toBeNull();
-    expect(getCallbackErrorMessage("__proto__")).toBeNull();
+    expect(parseCallbackError("toString")).toBeNull();
+    expect(parseCallbackError("__proto__")).toBeNull();
   });
 
   it("ignores repeated params", () => {
-    expect(
-      getCallbackErrorMessage(["invalid_callback", "confirmation_failed"]),
-    ).toBeNull();
+    expect(parseCallbackError(["invalid_callback", "confirmation_failed"])).toBeNull();
   });
 });
