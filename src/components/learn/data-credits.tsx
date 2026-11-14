@@ -1,13 +1,13 @@
 // Required credits for the word data (CC BY-SA and CEFR-J terms): keep visible, keep small.
-export function DataCredits() {
+export function DataCredits({ labels }: { labels: { data: string; via: string } }) {
   const link = "underline underline-offset-2 hover:decoration-mark";
   return (
     <p className="text-[0.7rem] leading-snug font-semibold text-muted">
-      Data:{" "}
+      {labels.data}:{" "}
       <a className={link} href="https://www.wiktionary.org/" target="_blank" rel="noreferrer">
         Wiktionary
       </a>
-      {" · "}CEFR-J Wordlist (Tono Lab, TUFS){" · "}Octanove C1/C2, via{" "}
+      {" · "}CEFR-J Wordlist (Tono Lab, TUFS){" · "}Octanove C1/C2, {labels.via}{" "}
       <a className={link} href="https://github.com/openlanguageprofiles/olp-en-cefrj" target="_blank" rel="noreferrer">
         Open Language Profiles
       </a>

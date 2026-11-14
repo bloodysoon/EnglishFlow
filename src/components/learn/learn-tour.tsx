@@ -4,21 +4,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { HelpCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { fill } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
 
 // Each step spotlights the element with the matching data-tour attribute.
-const STEPS = [
-  { target: "add", title: "Add a word", text: "Type any word you want to learn. We fill in the meaning." },
-  { target: "words", title: "My words", text: "Every word you add lives here." },
-  { target: "sets", title: "Word sets", text: "Or start a ready-made set and get new words every day." },
-  { target: "today", title: "Review", text: "Come back daily and review the words waiting for you." },
-];
+const STEPS = ["add", "words", "sets", "today"] as const;
 
 const SEEN_KEY = "ef-learn-tour-seen";
 const PAD = 6;
 
 type Rect = { top: number; left: number; width: number; height: number };
 
-export function LearnTour() {
+export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
   const [step, setStep] = useState<number | null>(null);
   const [rect, setRect] = useState<Rect | null>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +41,7 @@ export function LearnTour() {
 
   useEffect(() => {
     if (step === null) return;
-    const el = document.querySelector<HTMLElement>(`[data-tour="${STEPS[step].target}"]`);
+    const el = document.querySelector<HTMLElement>(`[data-tour="${STEPS[step]}"]`);
     const measure = () => {
       const r = el?.getBoundingClientRect();
       setRect(r ? { top: r.top, left: r.left, width: r.width, height: r.height } : null);
@@ -66,16 +63,16 @@ export function LearnTour() {
     };
   }, [step, close]);
 
-  const current = step === null ? null : STEPS[step];
+  const current = step === null ? null : labels.steps[STEPS[step]];
   const last = step === STEPS.length - 1;
   // Card goes below the spotlight, or above it when the target sits low on screen.
   const below = !rect || rect.top + rect.height / 2 < window.innerHeight / 2;
 
   return (
     <>
-      <Button size="sm" variant="secondary" onClick={() => setStep(0)} aria-label="Show the tour">
+      <Button size="sm" variant="secondary" onClick={() => setStep(0)} aria-label={labels.show}>
         <HelpCircle className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-        <span className="hidden sm:inline">Tour</span>
+        <span className="hidden sm:inline">{labels.button}</span>
       </Button>
 
       {current && (
@@ -109,7 +106,7 @@ export function LearnTour() {
             }
           >
             <p className="text-xs font-black tracking-widest text-muted uppercase">
-              Step {step! + 1} of {STEPS.length}
+              {fill(labels.stepOf, { current: step! + 1, total: STEPS.length })}
             </p>
             <h2 id="tour-title" className="mt-1 text-xl font-black uppercase">
               {current.title}
@@ -120,16 +117,16 @@ export function LearnTour() {
 
             <div className="mt-5 flex items-center justify-between gap-3">
               <button type="button" onClick={close} className="min-h-11 text-sm font-black uppercase hover:underline">
-                Skip
+                {labels.skip}
               </button>
               <div className="flex gap-2">
                 {step! > 0 && (
                   <Button size="sm" variant="secondary" onClick={() => setStep(step! - 1)}>
-                    Back
+                    {labels.back}
                   </Button>
                 )}
                 <Button ref={nextRef} size="sm" onClick={() => (last ? close() : setStep(step! + 1))}>
-                  {last ? "Got it" : "Next"}
+                  {last ? labels.gotIt : labels.next}
                 </Button>
               </div>
             </div>

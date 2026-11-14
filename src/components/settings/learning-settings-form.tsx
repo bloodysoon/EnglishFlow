@@ -5,18 +5,29 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChoiceGroup } from "@/components/ui/choice-group";
 import { updateLearningSettingsAction } from "@/features/settings/actions/update-learning-settings.action";
+import { fill, type Locale } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
+import { plural, type Plural } from "@/features/i18n/plural";
 import type { LearningSettings, TranslationLanguageSetting } from "@/features/settings/schemas";
 
-const ERRORS = {
-  invalid_data: "Those settings could not be saved. Please pick an option in each group.",
-  not_signed_in: "Your session has ended. Please log in again.",
-  unexpected: "Something went wrong. Please try again.",
-} as const;
-
-// Rough time per new word, for the hint under each goal.
-const goalHint = (goal: number) => `about ${goal} min`;
-
-export function LearningSettingsForm({ initial, goalOptions }: { initial: LearningSettings; goalOptions: number[] }) {
+export function LearningSettingsForm({
+  initial,
+  goalOptions,
+  locale,
+  t,
+  words,
+  sessionEnded,
+  unexpected,
+}: {
+  initial: LearningSettings;
+  goalOptions: number[];
+  locale: Locale;
+  t: PlatformDictionary["settings"];
+  words: Plural;
+  sessionEnded: string;
+  unexpected: string;
+}) {
+  const ERRORS = { invalid_data: t.invalidSettings, not_signed_in: sessionEnded, unexpected };
   const [saved, setSaved] = useState(initial);
   const [translationLanguage, setTranslationLanguage] = useState(initial.translationLanguage);
   const [dailyGoal, setDailyGoal] = useState(initial.dailyGoal);
@@ -51,8 +62,8 @@ export function LearningSettingsForm({ initial, goalOptions }: { initial: Learni
     <form onSubmit={handleSubmit} className="space-y-7">
       <ChoiceGroup<TranslationLanguageSetting>
         name="translation-language"
-        legend="Translate words into"
-        description="The language shown on the back of every word card."
+        legend={t.translateInto}
+        description={t.translateIntoDescription}
         columns="sm:grid-cols-2"
         value={translationLanguage}
         onChange={(value) => {
@@ -67,25 +78,30 @@ export function LearningSettingsForm({ initial, goalOptions }: { initial: Learni
 
       <ChoiceGroup<number>
         name="daily-goal"
-        legend="Daily goal"
-        description="How many new words to add each day. Reviews of words you already know don't count."
+        legend={t.dailyGoal}
+        description={t.dailyGoalDescription}
         value={dailyGoal}
         onChange={(value) => {
           setDailyGoal(value);
           setStatus(null);
         }}
         columns={goalOptions.length > 3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-3"}
-        choices={goalOptions.map((goal) => ({ value: goal, label: `${goal} words`, hint: goalHint(goal) }))}
+        // Rough time: about a minute per new word.
+        choices={goalOptions.map((goal) => ({
+          value: goal,
+          label: plural(locale, goal, words),
+          hint: fill(t.goalHint, { n: goal }),
+        }))}
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         {/* aria-disabled keeps focus here; handleSubmit guards. */}
         <Button type="submit" aria-disabled={isSaving || !changed}>
-          {isSaving ? "Saving..." : "Save changes"}
+          {isSaving ? t.saving : t.save}
         </Button>
 
         <p role="status" className="text-sm font-black">
-          {status?.kind === "saved" && "Saved ✓"}
+          {status?.kind === "saved" && t.saved}
         </p>
       </div>
 

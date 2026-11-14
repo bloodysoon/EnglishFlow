@@ -6,6 +6,9 @@ import { Check, RotateCcw } from "lucide-react";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { Button, buttonClasses } from "@/components/ui/button";
+import { fill, type Locale } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
+import { plural } from "@/features/i18n/plural";
 import { reviewWordAction } from "@/features/learning/actions/review-word.action";
 import type { ReviewCard } from "@/features/learning/queries";
 import { LAST_BOX } from "@/features/leitner/boxes";
@@ -14,7 +17,19 @@ type Answer = { wordId: string; lemma: string; remembered: boolean; xp: number; 
 
 const LANGUAGE_NAMES = { ru: "Русский", ro: "Română" } as const;
 
-export function ReviewSession({ cards, language }: { cards: ReviewCard[]; language: "ru" | "ro" }) {
+export function ReviewSession({
+  cards,
+  language,
+  locale,
+  t,
+  sessionEnded,
+}: {
+  cards: ReviewCard[];
+  language: "ru" | "ro";
+  locale: Locale;
+  t: PlatformDictionary["review"];
+  sessionEnded: string;
+}) {
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -63,21 +78,19 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
           setSkipped((n) => n + 1);
         } else {
           setError(
-            result.error === "not_signed_in"
-              ? "Your session has ended. Please log in again."
-              : "That answer was not saved. Please try again.",
+            result.error === "not_signed_in" ? sessionEnded : t.notSaved,
           );
           return;
         }
         setRevealed(false);
         setIndex((i) => i + 1);
       } catch {
-        setError("That answer was not saved. Check your connection and try again.");
+        setError(t.notSavedConnection);
       } finally {
         setPending(false);
       }
     },
-    [card, pending],
+    [card, pending, sessionEnded, t],
   );
 
   // Space/Enter shows the translation; 1/← forgot, 2/→ got it.
@@ -109,14 +122,14 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
     return (
       <section className="card-in max-w-xl border-[3px] border-line bg-raised p-6 text-fg shadow-brutal sm:p-8">
         <h2 ref={doneRef} tabIndex={-1} className="font-display text-3xl font-black uppercase focus:outline-none">
-          Review done ✓
+          {t.done}
         </h2>
         <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            ["Words", answers.length],
-            ["Got it", remembered],
-            ["Mastered", mastered],
-            ["XP", `+${xpEarned}`],
+            [t.statWords, answers.length],
+            [t.statGotIt, remembered],
+            [t.statMastered, mastered],
+            [t.statXp, `+${xpEarned}`],
           ].map(([label, value]) => (
             <div key={label} className="border-[2px] border-line bg-surface px-3 py-2">
               <dt className="text-xs font-black text-muted uppercase">{label}</dt>
@@ -126,18 +139,18 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
         </dl>
         {skipped > 0 && (
           <p className="mt-4 text-sm font-semibold text-muted">
-            {skipped} {skipped === 1 ? "word was" : "words were"} already reviewed elsewhere and skipped.
+            {plural(locale, skipped, t.skipped)}
           </p>
         )}
         <p className="mt-4 font-semibold text-muted">
-          Each word comes back on its own schedule. See you tomorrow!
+          {t.comeBack}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/dashboard" className={buttonClasses()}>
-            Go to dashboard
+            {t.goDashboard}
           </Link>
           <Link href="/learn" className={buttonClasses({ variant: "secondary" })}>
-            Word sets
+            {t.wordSets}
           </Link>
         </div>
       </section>
@@ -151,11 +164,11 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
       {/* Progress */}
       <div className="mb-5 flex items-center gap-4">
         <p className="shrink-0 text-sm font-black tracking-wide uppercase">
-          Word {index + 1} of {cards.length}
+          {fill(t.wordOf, { current: index + 1, total: cards.length })}
         </p>
         <div
           role="progressbar"
-          aria-label="Review progress"
+          aria-label={t.progressAria}
           aria-valuemin={0}
           aria-valuemax={cards.length}
           aria-valuenow={index}
@@ -183,7 +196,7 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span className={`border-2 border-line px-2 py-1 text-xs font-black uppercase ${leitnerBoxStyles[card.box]}`}>
-                  Box {card.box}
+                  {fill(t.box, { box: card.box })}
                 </span>
                 {card.level && <span className="border-2 border-line px-2 py-1 text-xs font-black">{card.level}</span>}
               </div>
@@ -195,7 +208,7 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
                   {[card.ipa, card.partOfSpeech].filter(Boolean).join(" · ")}
                 </p>
               </div>
-              <p className="text-sm font-black uppercase">Do you know the translation?</p>
+              <p className="text-sm font-black uppercase">{t.question}</p>
             </div>
 
             <div
@@ -215,7 +228,7 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
                   )}
                 </div>
               ) : (
-                <p className="font-black">No checked translation yet. Did you know the meaning?</p>
+                <p className="font-black">{t.noChecked}</p>
               )}
               {card.example && (
                 <p lang="en" className="font-semibold italic">
@@ -239,7 +252,7 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
               className="w-full px-3!"
             >
               <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-              Forgot
+              {t.forgot}
             </Button>
             <Button
               ref={gotItRef}
@@ -249,18 +262,18 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
               className="w-full px-3!"
             >
               <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-              Got it
+              {t.gotIt}
             </Button>
           </>
         ) : (
           <Button ref={revealRef} type="button" onClick={reveal} className="col-span-2 w-full">
-            Show translation
+            {t.show}
           </Button>
         )}
       </div>
 
       <p className="mt-3 hidden text-xs font-semibold text-muted sm:block">
-        Keyboard: Space shows the translation · 1 or ← forgot · 2 or → got it
+        {t.keyboard}
       </p>
 
       {error && (
@@ -273,10 +286,10 @@ export function ReviewSession({ cards, language }: { cards: ReviewCard[]; langua
       <p aria-live="polite" className="mt-4 min-h-6 font-black">
         {last &&
           (last.mastered
-            ? `${last.lemma}: mastered! +${last.xp} XP`
+            ? fill(t.lastMastered, { word: last.lemma, xp: last.xp })
             : last.remembered
-              ? `${last.lemma} → box ${last.newBox}${last.newBox === LAST_BOX ? " (mastered)" : ""} · +${last.xp} XP`
-              : `${last.lemma} → back to box 1 · +${last.xp} XP`)}
+              ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, { word: last.lemma, box: last.newBox, xp: last.xp })
+              : fill(t.lastBack, { word: last.lemma, xp: last.xp }))}
       </p>
     </div>
   );

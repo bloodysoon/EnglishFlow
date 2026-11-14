@@ -16,26 +16,28 @@ import {
 
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { logoutAction } from "@/features/auth/actions/logout.action";
+import type { PlatformDictionary } from "@/features/i18n/platform";
 import type { ThemePreference } from "@/features/theme/theme";
 
 // `ready: false` sections have no route yet: they render as a non-clickable
 // "Soon" item instead of a link that would 404. Flip to true once the page exists.
 const navigation = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, ready: true },
-  { label: "Learn", href: "/learn", icon: BookOpen, ready: true },
-  { label: "Subscription", href: "/subscription", icon: Gem, ready: true },
-  { label: "Statistics", href: "/statistics", icon: BarChart3, ready: false },
-  { label: "Achievements", href: "/achievements", icon: Trophy, ready: false },
-];
+  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard, ready: true },
+  { key: "learn", href: "/learn", icon: BookOpen, ready: true },
+  { key: "subscription", href: "/subscription", icon: Gem, ready: true },
+  { key: "statistics", href: "/statistics", icon: BarChart3, ready: false },
+  { key: "achievements", href: "/achievements", icon: Trophy, ready: false },
+] as const;
 
 type PlatformSidebarProps = {
   email: string;
   isAdmin?: boolean;
   themePreference: ThemePreference;
   themeLabels: { label: string; toLight: string; toDark: string };
+  labels: PlatformDictionary["nav"];
 };
 
-export function PlatformSidebar({ email, isAdmin = false, themePreference, themeLabels }: PlatformSidebarProps) {
+export function PlatformSidebar({ email, isAdmin = false, themePreference, themeLabels, labels }: PlatformSidebarProps) {
   const pathname = usePathname();
 
   const initial = email.charAt(0).toUpperCase() || "U";
@@ -61,7 +63,7 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
 
       {/* Navigation */}
       <nav
-        aria-label="Platform navigation"
+        aria-label={labels.label}
         className="flex gap-2 overflow-x-auto p-3 lg:flex-col lg:gap-2 lg:p-4"
       >
         {navigation.map((item) => {
@@ -74,9 +76,9 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
                 className="flex shrink-0 cursor-not-allowed items-center gap-2.5 border-[2px] border-dashed border-line px-3 py-3 text-sm font-black text-muted uppercase"
               >
                 <Icon className="h-5 w-5 shrink-0" />
-                <span>{item.label}</span>
+                <span>{labels[item.key]}</span>
                 <span className="ml-auto shrink-0 border-[2px] border-line bg-raised px-1 py-0.5 text-[10px] leading-none text-fg">
-                  Soon
+                  {labels.soon}
                 </span>
               </span>
             );
@@ -97,7 +99,7 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
               }`}
             >
               <Icon className="h-5 w-5 shrink-0" />
-              <span>{item.label}</span>
+              <span>{labels[item.key]}</span>
             </Link>
           );
         })}
@@ -112,7 +114,7 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
             }`}
           >
             <ShieldCheck className="h-5 w-5 shrink-0" aria-hidden="true" />
-            <span>Admin</span>
+            <span>{labels.admin}</span>
           </Link>
         )}
       </nav>
@@ -127,7 +129,7 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-1 text-xs font-black text-muted uppercase">
               <UserRound className="h-3 w-3" aria-hidden="true" />
-              Your account
+              {labels.yourAccount}
             </p>
 
             <p className="mt-1 truncate text-sm font-bold" title={email}>
@@ -138,8 +140,8 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
           {/* Settings sit with the account, like Notion or Slack. */}
           <Link
             href="/settings"
-            aria-label="Settings"
-            title="Settings"
+            aria-label={labels.settings}
+            title={labels.settings}
             aria-current={settingsActive ? "page" : undefined}
             className={`group flex h-11 w-11 shrink-0 items-center justify-center border-[2px] border-line shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-y-0 active:shadow-none motion-reduce:transition-none ${
               settingsActive ? "bg-chip text-on-box" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
@@ -160,7 +162,7 @@ export function PlatformSidebar({ email, isAdmin = false, themePreference, theme
             className="flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 border-[2px] border-line bg-raised px-4 py-3 text-sm font-black text-fg uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-box-1 hover:text-on-box hover:shadow-brutal-sm active:translate-y-0 active:shadow-none motion-reduce:transition-none"
           >
             <LogOut className="h-4 w-4" />
-            Log out
+            {labels.logOut}
           </button>
         </form>
       </div>

@@ -10,19 +10,31 @@ import {
   changePasswordAction,
   type ChangePasswordError,
 } from "@/features/settings/actions/change-password.action";
+import { fill } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
 import { PASSWORD_MIN_LENGTH } from "@/features/settings/schemas";
 
-const ERRORS: Record<ChangePasswordError, string> = {
-  invalid_data: `The new password must be ${PASSWORD_MIN_LENGTH} to ${PASSWORD_MAX_LENGTH} characters.`,
-  same_password: "The new password must be different from the current one.",
-  wrong_current_password: "Your current password is not correct.",
-  weak_password: "That password is too easy to guess. Try a longer one.",
-  rate_limited: "Too many attempts. Please wait a minute and try again.",
-  not_signed_in: "Your session has ended. Please log in again.",
-  unexpected: "Something went wrong. Please try again.",
-};
+const LENGTHS = { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH };
 
-export function ChangePasswordForm({ email }: { email: string }) {
+export function ChangePasswordForm({
+  email,
+  t,
+  sessionEnded,
+  unexpected,
+  passwordToggle,
+}: {
+  email: string;
+  passwordToggle: { show: string; hide: string; suffix: string };
+  t: PlatformDictionary["settings"];
+  sessionEnded: string;
+  unexpected: string;
+}) {
+  const ERRORS: Record<ChangePasswordError, string> = {
+    ...t.passwordErrors,
+    invalid_data: fill(t.passwordErrors.invalid_data, LENGTHS),
+    not_signed_in: sessionEnded,
+    unexpected,
+  };
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState<ChangePasswordError | null>(null);
@@ -64,15 +76,16 @@ export function ChangePasswordForm({ email }: { email: string }) {
     <form onSubmit={handleSubmit} className="max-w-md space-y-5">
       {/* Read-only, but tells password managers which account this is. */}
       <div>
-        <Label htmlFor="account-email">Email</Label>
+        <Label htmlFor="account-email">{t.email}</Label>
         <Input id="account-email" type="email" autoComplete="username" value={email} readOnly className="bg-surface" />
       </div>
 
       <div>
-        <Label htmlFor="current-password">Current password</Label>
+        <Label htmlFor="current-password">{t.currentPassword}</Label>
         <PasswordInput
           id="current-password"
           autoComplete="current-password"
+          labels={passwordToggle}
           required
           value={currentPassword}
           onChange={(event) => {
@@ -85,10 +98,11 @@ export function ChangePasswordForm({ email }: { email: string }) {
       </div>
 
       <div>
-        <Label htmlFor="new-password">New password</Label>
+        <Label htmlFor="new-password">{t.newPassword}</Label>
         <PasswordInput
           id="new-password"
           autoComplete="new-password"
+          labels={passwordToggle}
           minLength={PASSWORD_MIN_LENGTH}
           required
           value={newPassword}
@@ -100,7 +114,7 @@ export function ChangePasswordForm({ email }: { email: string }) {
           aria-describedby={describedBy("new-password-hint")}
         />
         <p id="new-password-hint" className="mt-2 text-sm font-semibold text-muted">
-          {PASSWORD_MIN_LENGTH} to {PASSWORD_MAX_LENGTH} characters.
+          {fill(t.passwordHint, LENGTHS)}
         </p>
       </div>
 
@@ -113,10 +127,10 @@ export function ChangePasswordForm({ email }: { email: string }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         {/* aria-disabled keeps focus here; handleSubmit guards. */}
         <Button type="submit" aria-disabled={isSaving}>
-          {isSaving ? "Changing..." : "Change password"}
+          {isSaving ? t.changing : t.changePassword}
         </Button>
         <p role="status" className="text-sm font-black">
-          {done && "Password changed ✓"}
+          {done && t.passwordChanged}
         </p>
       </div>
     </form>

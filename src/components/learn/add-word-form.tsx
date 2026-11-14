@@ -11,11 +11,9 @@ import {
   addWordsAction,
   lookupWordAction,
 } from "@/features/learning/actions/word-list.actions";
-import {
-  CUSTOM_WORD_PARTS_OF_SPEECH,
-  PART_OF_SPEECH_LABELS,
-  lemmaSchema,
-} from "@/features/learning/custom-word";
+import { CUSTOM_WORD_PARTS_OF_SPEECH, lemmaSchema } from "@/features/learning/custom-word";
+import { fill } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
 import type { WordLookup } from "@/features/learning/lookup";
 
 type PartOfSpeech = (typeof CUSTOM_WORD_PARTS_OF_SPEECH)[number];
@@ -24,13 +22,16 @@ const LANGUAGE_NAMES = { ru: "Русский", ro: "Română" } as const;
 const asPartOfSpeech = (value: string): PartOfSpeech =>
   (CUSTOM_WORD_PARTS_OF_SPEECH as readonly string[]).includes(value) ? (value as PartOfSpeech) : "";
 
+type T = PlatformDictionary["addWord"];
+type Common = PlatformDictionary["common"];
+
 const splitList = (text: string) =>
   text
     .split(",")
     .map((part) => part.trim())
     .filter(Boolean);
 
-export function AddWordForm({ language }: { language: "ru" | "ro" }) {
+export function AddWordForm({ language, t, common }: { language: "ru" | "ro"; t: T; common: Common }) {
   const [query, setQuery] = useState("");
   const [queryError, setQueryError] = useState<string | null>(null);
   const [isLooking, setIsLooking] = useState(false);
@@ -53,7 +54,7 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
 
     const lemma = lemmaSchema.safeParse(query);
     if (!lemma.success) {
-      setQueryError("Use English letters only, with single spaces, hyphens or apostrophes between words (up to 60 characters).");
+      setQueryError(t.invalidQuery);
       return;
     }
 
@@ -65,9 +66,9 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
     try {
       const result = await lookupWordAction({ lemma: lemma.data });
       if (result.success) setLookup(result.result);
-      else setQueryError(result.error === "not_signed_in" ? "Your session has ended. Please log in again." : "That word could not be looked up.");
+      else setQueryError(result.error === "not_signed_in" ? common.sessionEnded : t.cantLookUp);
     } catch {
-      setQueryError("Lookup failed. Check your connection and try again.");
+      setQueryError(t.lookupFailed);
     } finally {
       setIsLooking(false);
     }
@@ -77,20 +78,20 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
     return (
       <section className="card-in max-w-xl border-[3px] border-line bg-chip p-6 text-on-box shadow-brutal">
         <p className="flex items-center gap-2 font-display text-2xl font-black uppercase">
-          <CheckCircle2 className="h-6 w-6" aria-hidden="true" /> Added
+          <CheckCircle2 className="h-6 w-6" aria-hidden="true" /> {t.added}
         </p>
         <p className="mt-2 font-semibold">
           <span lang="en" className="font-black">
             {done}
           </span>{" "}
-          is in today&apos;s review.
+          {t.inReview}
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link href="/learn/review" className={buttonClasses()}>
-            Review now
+            {t.reviewNow}
           </Link>
           <Button type="button" variant="secondary" onClick={reset}>
-            Add another word
+            {t.addAnother}
           </Button>
         </div>
       </section>
@@ -100,7 +101,7 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
   return (
     <div className="max-w-2xl space-y-6">
       <form onSubmit={search} role="search" className="border-[3px] border-line bg-surface p-5 shadow-brutal sm:p-6">
-        <Label htmlFor="word-query">English word or phrase</Label>
+        <Label htmlFor="word-query">{t.queryLabel}</Label>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Input
             ref={queryRef}
@@ -116,12 +117,12 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
             }}
             aria-invalid={queryError ? true : undefined}
             aria-describedby={queryError ? "word-query-error" : "word-query-hint"}
-            placeholder="e.g. look forward to"
+            placeholder={t.placeholder}
             className="flex-1"
           />
           <Button type="submit" aria-disabled={isLooking}>
             <Search className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-            {isLooking ? "Looking up..." : "Look up"}
+            {isLooking ? t.lookingUp : t.lookUp}
           </Button>
         </div>
         {queryError ? (
@@ -130,18 +131,32 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
           </p>
         ) : (
           <p id="word-query-hint" className="mt-2 text-sm font-semibold text-muted">
-            We check our dictionary first, then Wiktionary.
+            {t.hint}
           </p>
         )}
       </form>
 
       <div aria-live="polite">
         {lookup?.kind === "dictionary" && !ownVersion && (
-          <DictionaryResult lookup={lookup} language={language} onAdded={setDone} onOwnVersion={() => setOwnVersion(true)} />
+          <DictionaryResult
+            lookup={lookup}
+            language={language}
+            t={t}
+            common={common}
+            onAdded={setDone}
+            onOwnVersion={() => setOwnVersion(true)}
+          />
         )}
 
         {lookup && (lookup.kind !== "dictionary" || ownVersion) && (
-          <CustomWordForm key={`${lookup.lemma}-${ownVersion}`} lookup={lookup} language={language} onAdded={setDone} />
+          <CustomWordForm
+            key={`${lookup.lemma}-${ownVersion}`}
+            lookup={lookup}
+            language={language}
+            t={t}
+            common={common}
+            onAdded={setDone}
+          />
         )}
       </div>
     </div>
@@ -151,11 +166,15 @@ export function AddWordForm({ language }: { language: "ru" | "ro" }) {
 function DictionaryResult({
   lookup,
   language,
+  t,
+  common,
   onAdded,
   onOwnVersion,
 }: {
   lookup: Extract<WordLookup, { kind: "dictionary" }>;
   language: "ru" | "ro";
+  t: T;
+  common: Common;
   onAdded: (lemma: string) => void;
   onOwnVersion: () => void;
 }) {
@@ -168,9 +187,9 @@ function DictionaryResult({
     try {
       const result = await addWordsAction({ wordIds: [id], startNow: true });
       if (result.success) onAdded(lookup.lemma);
-      else setError("Could not add this word. Please try again.");
+      else setError(t.addFailed);
     } catch {
-      setError("Could not add this word. Please try again.");
+      setError(t.addFailed);
     } finally {
       setPending(null);
     }
@@ -178,7 +197,7 @@ function DictionaryResult({
 
   return (
     <section className="card-in space-y-4 border-[3px] border-line bg-raised p-5 shadow-brutal">
-      <h2 className="font-black uppercase">In our dictionary</h2>
+      <h2 className="font-black uppercase">{t.inDictionary}</h2>
       <ul className="space-y-3">
         {lookup.matches.map((match) => (
           <li key={match.id} className="flex flex-wrap items-center justify-between gap-3 border-[2px] border-line bg-surface p-4">
@@ -190,17 +209,17 @@ function DictionaryResult({
                 </span>
               </p>
               <p lang={language} className="font-semibold">
-                {match.translation ?? "Translation coming soon"}
+                {match.translation ?? t.translationSoon}
                 {match.alternatives.length > 0 && <span className="text-muted">, {match.alternatives.join(", ")}</span>}
               </p>
             </div>
             {match.inMyWords ? (
               <p className="flex items-center gap-2 font-black">
-                <CheckCircle2 className="h-5 w-5" aria-hidden="true" /> In your words
+                <CheckCircle2 className="h-5 w-5" aria-hidden="true" /> {t.inYourWords}
               </p>
             ) : (
               <Button type="button" onClick={() => add(match.id)} aria-disabled={pending !== null}>
-                {pending === match.id ? "Adding..." : "Add to my words"}
+                {pending === match.id ? common.adding : t.addToMyWords}
               </Button>
             )}
           </li>
@@ -216,7 +235,7 @@ function DictionaryResult({
         onClick={onOwnVersion}
         className="min-h-11 cursor-pointer text-sm font-black underline decoration-[3px] underline-offset-4 hover:decoration-mark"
       >
-        Add my own translation instead
+        {t.ownInstead}
       </button>
     </section>
   );
@@ -225,10 +244,14 @@ function DictionaryResult({
 function CustomWordForm({
   lookup,
   language,
+  t,
+  common,
   onAdded,
 }: {
   lookup: WordLookup;
   language: "ru" | "ro";
+  t: T;
+  common: Common;
   onAdded: (lemma: string) => void;
 }) {
   const suggestion = lookup.kind === "suggestion" ? lookup : null;
@@ -243,7 +266,7 @@ function CustomWordForm({
     event.preventDefault();
     if (isSaving) return;
     if (!translation.trim()) {
-      setError(`Type the ${LANGUAGE_NAMES[language]} translation.`);
+      setError(fill(t.typeTranslation, { language: LANGUAGE_NAMES[language] }));
       return;
     }
     setIsSaving(true);
@@ -262,13 +285,15 @@ function CustomWordForm({
       else
         setError(
           result.error === "daily_limit"
-            ? "You've reached today's limit for new words. Try again tomorrow, or upgrade your plan."
+            ? t.dailyLimit
             : result.error === "invalid_data"
-              ? "Check the fields: translation up to 200 characters, at most 5 alternatives, example up to 300."
-              : "Could not save this word. Please try again.",
+              ? t.invalidFields
+              : result.error === "not_signed_in"
+                ? common.sessionEnded
+                : t.saveFailed,
         );
     } catch {
-      setError("Could not save this word. Please try again.");
+      setError(t.saveFailed);
     } finally {
       setIsSaving(false);
     }
@@ -284,16 +309,16 @@ function CustomWordForm({
         <p className="mt-1 text-sm font-semibold text-muted">
           {suggestion
             ? suggestion.translation
-              ? "Suggested from Wiktionary. Check it and fix anything before saving."
-              : `Wiktionary has this word but no ${LANGUAGE_NAMES[language]} translation. Type it below.`
+              ? t.suggested
+              : fill(t.noTranslation, { language: LANGUAGE_NAMES[language] })
             : lookup.kind === "not_found"
-              ? "Wiktionary doesn't know this word. Type the translation yourself."
-              : "Your own translation, visible only to you."}
+              ? t.notFound
+              : t.ownOnly}
         </p>
       </div>
 
       <div>
-        <Label htmlFor="custom-translation">Translation ({LANGUAGE_NAMES[language]})</Label>
+        <Label htmlFor="custom-translation">{fill(t.translationLabel, { language: LANGUAGE_NAMES[language] })}</Label>
         <Input
           id="custom-translation"
           lang={language}
@@ -308,7 +333,7 @@ function CustomWordForm({
       </div>
 
       <div>
-        <Label htmlFor="custom-alternatives">Other translations</Label>
+        <Label htmlFor="custom-alternatives">{t.otherTranslations}</Label>
         <Input
           id="custom-alternatives"
           lang={language}
@@ -317,13 +342,13 @@ function CustomWordForm({
           aria-describedby="custom-alternatives-hint"
         />
         <p id="custom-alternatives-hint" className="mt-1 text-xs font-semibold text-muted">
-          Optional. Comma-separated, up to 5.
+          {t.otherHint}
         </p>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-[200px_1fr]">
         <div>
-          <Label htmlFor="custom-pos">Part of speech</Label>
+          <Label htmlFor="custom-pos">{t.partOfSpeech}</Label>
           <select
             id="custom-pos"
             value={partOfSpeech}
@@ -332,20 +357,20 @@ function CustomWordForm({
           >
             {CUSTOM_WORD_PARTS_OF_SPEECH.map((pos) => (
               <option key={pos} value={pos}>
-                {PART_OF_SPEECH_LABELS[pos]}
+                {t.partsOfSpeech[pos]}
               </option>
             ))}
           </select>
         </div>
         <div>
-          <Label htmlFor="custom-example">Example sentence</Label>
+          <Label htmlFor="custom-example">{t.example}</Label>
           <Input
             id="custom-example"
             lang="en"
             maxLength={300}
             value={example}
             onChange={(event) => setExample(event.target.value)}
-            placeholder="Optional, in English"
+            placeholder={t.examplePlaceholder}
           />
         </div>
       </div>
@@ -357,7 +382,7 @@ function CustomWordForm({
       )}
 
       <Button type="submit" aria-disabled={isSaving}>
-        {isSaving ? "Adding..." : "Add to my words"}
+        {isSaving ? common.adding : t.addToMyWords}
       </Button>
     </form>
   );

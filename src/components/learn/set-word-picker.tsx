@@ -5,10 +5,27 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { fill, type Locale } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
+import { plural } from "@/features/i18n/plural";
 import { addWordsAction } from "@/features/learning/actions/word-list.actions";
 import type { SetWord } from "@/features/learning/word-lists";
 
-export function SetWordPicker({ words, language }: { words: SetWord[]; language: "ru" | "ro" }) {
+export function SetWordPicker({
+  words,
+  language,
+  locale,
+  t,
+  sessionEnded,
+  adding,
+}: {
+  words: SetWord[];
+  language: "ru" | "ro";
+  locale: Locale;
+  t: PlatformDictionary["wordSet"];
+  sessionEnded: string;
+  adding: string;
+}) {
   const router = useRouter();
   const available = useMemo(() => words.filter((w) => !w.inMyWords), [words]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -40,11 +57,11 @@ export function SetWordPicker({ words, language }: { words: SetWord[]; language:
       } else {
         setStatus({
           kind: "error",
-          message: result.error === "not_signed_in" ? "Your session has ended. Please log in again." : "Could not add those words. Please try again.",
+          message: result.error === "not_signed_in" ? sessionEnded : t.addFailed,
         });
       }
     } catch {
-      setStatus({ kind: "error", message: "Could not add those words. Please try again." });
+      setStatus({ kind: "error", message: t.addFailed });
     } finally {
       setIsSaving(false);
     }
@@ -60,7 +77,7 @@ export function SetWordPicker({ words, language }: { words: SetWord[]; language:
             onChange={() => setSelected(allSelected ? new Set() : new Set(available.map((w) => w.id)))}
             className="h-5 w-5 cursor-pointer accent-[var(--primary)]"
           />
-          Select all new words ({available.length})
+          {fill(t.selectAll, { n: available.length })}
         </label>
       )}
 
@@ -77,7 +94,7 @@ export function SetWordPicker({ words, language }: { words: SetWord[]; language:
                   {[word.partOfSpeech, word.ipa].filter(Boolean).join(" · ")}
                 </span>
                 <span lang={language} className="mt-1 block font-semibold">
-                  {word.translation ?? "Translation coming soon"}
+                  {word.translation ?? t.translationSoon}
                 </span>
               </span>
               <span className="flex shrink-0 flex-col items-end gap-2">
@@ -90,7 +107,7 @@ export function SetWordPicker({ words, language }: { words: SetWord[]; language:
             <li key={word.id}>
               {word.inMyWords ? (
                 <div className="flex gap-3 border-[3px] border-line bg-chip p-4 text-on-box">
-                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0" aria-label="In your words" />
+                  <CheckCircle2 className="mt-1 h-5 w-5 shrink-0" aria-label={t.inYourWordsAria} />
                   {body}
                 </div>
               ) : (
@@ -116,13 +133,13 @@ export function SetWordPicker({ words, language }: { words: SetWord[]; language:
       {/* Sticks to the bottom while picking. */}
       <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-3 border-[3px] border-line bg-surface p-3 shadow-brutal">
         <Button type="button" onClick={add} aria-disabled={isSaving || selected.size === 0}>
-          {isSaving ? "Adding..." : `Add selected (${selected.size})`}
+          {isSaving ? adding : fill(t.addSelected, { n: selected.size })}
         </Button>
         <p role="status" className="text-sm font-black">
           {status?.kind === "added" &&
             (status.count > 0
-              ? `Added ${status.count} ${status.count === 1 ? "word" : "words"}. They join your reviews at your daily goal.`
-              : "Those words were already in your list.")}
+              ? plural(locale, status.count, t.addedStatus)
+              : t.alreadyIn)}
         </p>
         {status?.kind === "error" && (
           <p role="alert" className="w-full border-[3px] border-line bg-box-1 p-2 text-sm font-semibold text-on-box">

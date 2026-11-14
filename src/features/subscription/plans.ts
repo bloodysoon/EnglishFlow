@@ -1,11 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Daily limits are enforced in SQL (supabase/migrations/20261114170000_subscriptions.sql);
-// keep them in sync. null means no limit.
+// keep them in sync. null means no limit. Names live in the platform dictionaries.
 export const PLANS = {
-  free: { name: "Rookie", tagline: "Just getting started", newWordsPerDay: 10, customWordsPerDay: 5 },
-  pro: { name: "Word Nerd", tagline: "Hooked on words", newWordsPerDay: 20, customWordsPerDay: 20 },
-  unlimited: { name: "Legend", tagline: "No limits. At all.", newWordsPerDay: null, customWordsPerDay: null },
+  free: { newWordsPerDay: 10, customWordsPerDay: 5 },
+  pro: { newWordsPerDay: 20, customWordsPerDay: 20 },
+  unlimited: { newWordsPerDay: null, customWordsPerDay: null },
 } as const;
 
 export type Plan = keyof typeof PLANS;

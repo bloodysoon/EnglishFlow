@@ -8,11 +8,17 @@ import { buttonClasses } from "@/components/ui/button";
 import { riseStyle } from "@/components/ui/rise";
 import { getCatalog, getLearningOverview } from "@/features/learning/queries";
 import { introduceTodaysWords } from "@/features/learning/server";
+import { fill } from "@/features/i18n/locales";
+import { getPlatformI18n } from "@/features/i18n/platform";
+import { plural } from "@/features/i18n/plural";
 import { getLearningSettings } from "@/features/settings/profile";
 import { effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: "Learn" };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getPlatformI18n();
+  return { title: t.meta.learn };
+}
 
 const tile =
   "group flex min-h-16 items-center gap-3 border-[3px] border-line bg-raised p-4 font-black uppercase shadow-brutal-md " +
@@ -28,12 +34,14 @@ export default async function LearnPage() {
   if (!user) return null; // the platform layout already redirects
 
   await introduceTodaysWords(supabase);
-  const [overview, catalog, { settings }, plan] = await Promise.all([
+  const [overview, catalog, { settings }, plan, { locale, t }] = await Promise.all([
     getLearningOverview(supabase),
     getCatalog(supabase, user.id),
     getLearningSettings(),
     getPlan(supabase),
+    getPlatformI18n(),
   ]);
+  const l = t.learn;
 
   const dailyGoal = effectiveDailyGoal(plan, settings.dailyGoal);
   const newToday = Math.min(overview.introducedToday, dailyGoal);
@@ -43,9 +51,9 @@ export default async function LearnPage() {
     <div className="space-y-8 sm:space-y-10">
       <div className="flex items-center justify-between gap-3">
         <h1 className="rise text-3xl font-black tracking-tight uppercase sm:text-4xl" style={riseStyle(0)}>
-          Learn<span className="text-primary">.</span>
+          {l.title}<span className="text-primary">.</span>
         </h1>
-        <LearnTour />
+        <LearnTour labels={t.tour} />
       </div>
 
       {/* Today: the one thing to do */}
@@ -58,16 +66,16 @@ export default async function LearnPage() {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 id="today-title" className="text-xs font-black tracking-widest uppercase">
-              Today
+              {l.today}
             </h2>
             {due > 0 ? (
               <p className="mt-1 font-display text-5xl font-black sm:text-6xl">
-                {due} <span className="text-xl uppercase sm:text-2xl">{due === 1 ? "word" : "words"}</span>
+                {due} <span className="text-xl uppercase sm:text-2xl">{plural(locale, due, l.wordUnit)}</span>
               </p>
             ) : (
               <p className="mt-2 flex items-center gap-2 font-display text-2xl font-black uppercase sm:text-3xl">
                 <CheckCircle2 className="h-7 w-7 shrink-0" strokeWidth={3} aria-hidden="true" />
-                {overview.total === 0 ? "Pick a set" : "All done"}
+                {overview.total === 0 ? l.pickSet : l.allDone}
               </p>
             )}
           </div>
@@ -80,7 +88,7 @@ export default async function LearnPage() {
                 className: "group w-full sm:w-auto",
               })}
             >
-              Start review
+              {l.startReview}
               <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">
                 →
               </span>
@@ -90,33 +98,33 @@ export default async function LearnPage() {
 
         <dl className="mt-5 grid grid-cols-2 gap-3 border-t-[3px] border-line pt-4 sm:flex sm:gap-8">
           <div>
-            <dt className="text-xs font-black tracking-widest uppercase">New today</dt>
+            <dt className="text-xs font-black tracking-widest uppercase">{l.newToday}</dt>
             <dd className="font-display text-2xl font-black">
               <Link
                 href="/settings"
                 className="underline-offset-4 hover:underline"
-                aria-label={`${newToday} of ${dailyGoal} new words today, change daily goal`}
+                aria-label={fill(l.newTodayAria, { done: newToday, goal: dailyGoal })}
               >
                 {newToday}/{dailyGoal}
               </Link>
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-black tracking-widest uppercase">Waiting</dt>
+            <dt className="text-xs font-black tracking-widest uppercase">{l.waiting}</dt>
             <dd className="font-display text-2xl font-black">{overview.queued}</dd>
           </div>
         </dl>
       </section>
 
       {/* Quick actions */}
-      <nav aria-label="Your words" className="rise grid grid-cols-2 gap-3 sm:gap-4" style={riseStyle(2)}>
+      <nav aria-label={l.yourWords} className="rise grid grid-cols-2 gap-3 sm:gap-4" style={riseStyle(2)}>
         <Link href="/learn/add" data-tour="add" className={tile}>
           <Plus className="h-6 w-6 shrink-0" strokeWidth={3} aria-hidden="true" />
-          <span className="text-sm sm:text-base">Add word</span>
+          <span className="text-sm sm:text-base">{l.addWord}</span>
         </Link>
         <Link href="/learn/words" data-tour="words" className={tile}>
           <ListChecks className="h-6 w-6 shrink-0" strokeWidth={3} aria-hidden="true" />
-          <span className="text-sm sm:text-base">My words</span>
+          <span className="text-sm sm:text-base">{l.myWords}</span>
           <span className="ml-auto border-[2px] border-line bg-surface px-2 text-sm text-fg">{overview.total}</span>
         </Link>
       </nav>
@@ -124,18 +132,19 @@ export default async function LearnPage() {
       {/* Catalog */}
       <section data-tour="sets" aria-labelledby="sets-title" className="rise" style={riseStyle(3)}>
         <h2 id="sets-title" className="mb-4 text-xl font-black uppercase">
-          Word sets
+          {l.wordSets}
         </h2>
 
         {catalog.length === 0 ? (
           <p className="flex items-center gap-3 border-[3px] border-dashed border-line p-5 font-black">
             <Sparkles className="h-6 w-6 shrink-0" aria-hidden="true" />
-            New sets coming soon
+            {l.setsSoon}
           </p>
         ) : (
           <ul className="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
             {catalog.map((set) => {
-              const title = set.title.en ?? set.slug;
+              const title = set.title[locale] ?? set.title.en ?? set.slug;
+              const description = set.description?.[locale] ?? set.description?.en;
               const complete = set.wordCount > 0 && set.started >= set.wordCount;
               const progress = set.wordCount ? Math.round((set.started / set.wordCount) * 100) : 0;
 
@@ -153,14 +162,12 @@ export default async function LearnPage() {
                       </span>
                     )}
                   </div>
-                  {set.description?.en && (
-                    <p className="mt-1 line-clamp-2 text-sm font-semibold text-muted">{set.description.en}</p>
-                  )}
+                  {description && <p className="mt-1 line-clamp-2 text-sm font-semibold text-muted">{description}</p>}
 
                   <div className="mt-4 flex items-center gap-3">
                     <div
                       role="progressbar"
-                      aria-label={`${title}: words added to your list`}
+                      aria-label={fill(l.progressAria, { title })}
                       aria-valuemin={0}
                       aria-valuemax={set.wordCount}
                       aria-valuenow={set.started}
@@ -177,21 +184,22 @@ export default async function LearnPage() {
                     {complete ? (
                       <p className="flex min-h-11 items-center gap-2 font-black">
                         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-                        Added
+                        {l.added}
                       </p>
                     ) : (
                       <StartSetButton
                         slug={set.slug}
                         title={title}
-                        label={set.started > 0 ? `+${set.wordCount - set.started} more` : "Start"}
+                        label={set.started > 0 ? fill(l.more, { n: set.wordCount - set.started }) : l.start}
+                        texts={{ adding: t.common.adding, failed: l.startFailed, sessionEnded: t.common.sessionEnded }}
                       />
                     )}
                     <Link
                       href={`/learn/sets/${set.slug}`}
-                      aria-label={`Pick words from ${title}`}
+                      aria-label={fill(l.pickAria, { title })}
                       className="inline-flex min-h-11 items-center gap-1 text-sm font-black uppercase hover:underline"
                     >
-                      Pick
+                      {l.pick}
                       <ChevronRight className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
                     </Link>
                   </div>

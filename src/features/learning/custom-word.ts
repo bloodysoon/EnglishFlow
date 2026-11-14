@@ -19,21 +19,6 @@ export const CUSTOM_WORD_PARTS_OF_SPEECH = [
   "phrase",
 ] as const;
 
-export const PART_OF_SPEECH_LABELS: Record<(typeof CUSTOM_WORD_PARTS_OF_SPEECH)[number], string> = {
-  "": "Not sure",
-  noun: "Noun",
-  verb: "Verb",
-  adj: "Adjective",
-  adv: "Adverb",
-  prep: "Preposition",
-  conj: "Conjunction",
-  pron: "Pronoun",
-  det: "Determiner",
-  intj: "Interjection",
-  num: "Number",
-  phrase: "Phrase",
-};
-
 // English letters, single spaces, hyphens or apostrophes between them:
 // "borrow", "look up", "well-known", "o'clock".
 export const LEMMA_PATTERN = /^[a-z]+([ '-][a-z]+)*$/;

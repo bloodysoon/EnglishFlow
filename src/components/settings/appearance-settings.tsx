@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Monitor, Moon, Sun } from "lucide-react";
 
 import { ChoiceGroup } from "@/components/ui/choice-group";
 import { rememberLocale } from "@/features/i18n/client";
 import { LOCALE_NAMES, LOCALES, type Locale } from "@/features/i18n/locales";
+import type { PlatformDictionary } from "@/features/i18n/platform";
 import { changeTheme, onThemeChange } from "@/features/theme/client";
 import type { ThemePreference } from "@/features/theme/theme";
 
@@ -14,10 +16,13 @@ import type { ThemePreference } from "@/features/theme/theme";
 export function AppearanceSettings({
   initialTheme,
   initialLocale,
+  t,
 }: {
   initialTheme: ThemePreference;
   initialLocale: Locale;
+  t: PlatformDictionary["settings"];
 }) {
+  const router = useRouter();
   const [theme, setTheme] = useState(initialTheme);
   const [locale, setLocale] = useState(initialLocale);
 
@@ -28,29 +33,31 @@ export function AppearanceSettings({
     <>
       <ChoiceGroup<ThemePreference>
         name="theme"
-        legend="Theme"
-        description="System follows your device's light or dark mode."
+        legend={t.theme}
+        description={t.themeDescription}
         value={theme}
         // The circle reveal grows from the card that was picked.
         onChange={(value) =>
           changeTheme(value, document.getElementById(`theme-${value}`)?.nextElementSibling as HTMLElement | null)
         }
         choices={[
-          { value: "light", label: "Light", icon: <Sun className="h-5 w-5" strokeWidth={2.5} /> },
-          { value: "dark", label: "Dark", icon: <Moon className="h-5 w-5" strokeWidth={2.5} /> },
-          { value: "system", label: "System", icon: <Monitor className="h-5 w-5" strokeWidth={2.5} /> },
+          { value: "light", label: t.light, icon: <Sun className="h-5 w-5" strokeWidth={2.5} /> },
+          { value: "dark", label: t.dark, icon: <Moon className="h-5 w-5" strokeWidth={2.5} /> },
+          { value: "system", label: t.system, icon: <Monitor className="h-5 w-5" strokeWidth={2.5} /> },
         ]}
       />
 
       <div>
         <ChoiceGroup<Locale>
           name="interface-language"
-          legend="Interface language"
-          description="Used on the home, log in and sign up pages. The app itself is in English for now."
+          legend={t.interfaceLanguage}
+          description={t.interfaceLanguageDescription}
           value={locale}
           onChange={(value) => {
             rememberLocale(value);
             setLocale(value);
+            // Server Components read the cookie: re-render them in the new language.
+            router.refresh();
           }}
           choices={LOCALES.map((value) => ({ value, label: LOCALE_NAMES[value], hint: value.toUpperCase(), lang: value }))}
         />

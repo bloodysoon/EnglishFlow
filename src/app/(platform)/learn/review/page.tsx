@@ -6,12 +6,15 @@ import { ReviewSession } from "@/components/learn/review-session";
 import { buttonClasses } from "@/components/ui/button";
 import { getLearningOverview, getReviewQueue } from "@/features/learning/queries";
 import { introduceTodaysWords } from "@/features/learning/server";
+import { fill } from "@/features/i18n/locales";
+import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
 import { getLearningSettings } from "@/features/settings/profile";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: "Review" };
-
-const dayFormat = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getPlatformI18n();
+  return { title: t.meta.review };
+}
 
 export default async function ReviewPage() {
   const supabase = await createClient();
@@ -21,7 +24,18 @@ export default async function ReviewPage() {
   if (!user) return null; // the platform layout already redirects
 
   await introduceTodaysWords(supabase);
-  const [{ settings }, overview] = await Promise.all([getLearningSettings(), getLearningOverview(supabase)]);
+  const [{ settings }, overview, { locale, t }] = await Promise.all([
+    getLearningSettings(),
+    getLearningOverview(supabase),
+    getPlatformI18n(),
+  ]);
+  const r = t.review;
+  const dayFormat = new Intl.DateTimeFormat(dateLocale(locale), {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    timeZone: "UTC",
+  });
   const cards = await getReviewQueue(supabase, user.id, settings.translationLanguage, overview.today);
 
   return (
@@ -34,29 +48,35 @@ export default async function ReviewPage() {
           className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1 motion-reduce:transition-none"
           aria-hidden="true"
         />
-        Learn
+        {t.common.learn}
       </Link>
 
       <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
-        Review<span className="text-primary">.</span>
+        {r.title}<span className="text-primary">.</span>
       </h1>
 
       {cards.length > 0 ? (
-        <ReviewSession cards={cards} language={settings.translationLanguage} />
+        <ReviewSession
+          cards={cards}
+          language={settings.translationLanguage}
+          locale={locale}
+          t={r}
+          sessionEnded={t.common.sessionEnded}
+        />
       ) : (
         <section className="max-w-xl border-[3px] border-line bg-raised p-6 shadow-brutal sm:p-8">
-          <h2 className="font-display text-2xl font-black uppercase">Nothing to review right now</h2>
+          <h2 className="font-display text-2xl font-black uppercase">{r.nothing}</h2>
           <p className="mt-3 font-semibold text-muted">
             {overview.total === 0
-              ? "Start a word set to get your first words."
+              ? r.startSet
               : overview.nextDueOn
-                ? `Your next words are due on ${dayFormat.format(new Date(`${overview.nextDueOn}T00:00:00Z`))}.`
+                ? fill(r.nextDue, { date: dayFormat.format(new Date(`${overview.nextDueOn}T00:00:00Z`)) })
                 : overview.queued > 0
-                  ? "New words from your sets arrive tomorrow."
-                  : "Start another set for new words."}
+                  ? r.arriveTomorrow
+                  : r.startAnother}
           </p>
           <Link href="/learn" className={buttonClasses({ className: "mt-6" })}>
-            {overview.total === 0 ? "Choose a word set" : "Back to word sets"}
+            {overview.total === 0 ? r.chooseSet : r.backToSets}
           </Link>
         </section>
       )}

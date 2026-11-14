@@ -15,7 +15,8 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   if (!(await getAdmin())) notFound();
 
   return (
-    <div className="space-y-8">
+    // The admin panel stays in English.
+    <div lang="en" className="space-y-8">
       <header className="space-y-5">
         <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
           Admin<span className="text-primary">.</span>
