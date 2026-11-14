@@ -1,16 +1,29 @@
 import Link from "next/link";
 
+type LogoLinkProps = {
+  href?: string;
+  // Accessible name, e.g. "Elevo home" / "Elevo — на главную".
+  label?: string;
+  className?: string;
+};
+
 // Brand wordmark that links home. Gives pages without the landing navbar
 // (login, register) a visible way back to the start page.
-export function LogoLink({ className = "" }: { className?: string }) {
+export function LogoLink({ href = "/", label = "Elevo home", className = "" }: LogoLinkProps) {
   return (
     <Link
-      href="/"
-      className={`inline-flex items-center px-1 py-2 text-xl font-black tracking-tighter text-brand-ink transition-transform duration-200 hover:-rotate-2 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-brand-ink motion-reduce:transition-none sm:text-2xl ${className}`}
+      href={href}
+      aria-label={label}
+      className={`group font-display inline-flex min-h-11 items-center px-1 text-xl font-black tracking-tight text-fg sm:text-2xl ${className}`}
     >
-      ENGLISHFLOW
-      <span aria-hidden="true">✳</span>
-      <span className="sr-only">, back to home page</span>
+      {/* lang="en": the wordmark keeps its Latin font on every page. */}
+      <span lang="en">ELEVO</span>
+      <span
+        aria-hidden="true"
+        className="inline-block text-primary transition-transform duration-500 ease-out group-hover:rotate-180 motion-reduce:transition-none"
+      >
+        ✳
+      </span>
     </Link>
   );
 }

@@ -1,10 +1,12 @@
 import type { ComponentProps } from "react";
 
+// primary: the one main action on a screen. secondary: everything else.
+// Both follow the theme tokens (globals.css).
 type ButtonVariant = "primary" | "secondary";
 type ButtonSize = "sm" | "md" | "lg";
 
 const base =
-  "font-display inline-flex cursor-pointer items-center justify-center gap-3 border-[3px] border-brand-ink font-black uppercase " +
+  "font-display inline-flex cursor-pointer items-center justify-center gap-3 border-[3px] border-line font-black uppercase " +
   "transition-[transform,box-shadow,background-color] duration-150 motion-reduce:transition-none " +
   "interactive:hover:-translate-y-1 " +
   "interactive:active:translate-x-1 interactive:active:translate-y-1 interactive:active:shadow-none " +
@@ -13,8 +15,8 @@ const base =
   "disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-brand-purple text-white",
-  secondary: "bg-brand-green text-brand-ink interactive:hover:bg-brand-cream",
+  primary: "bg-primary text-on-primary",
+  secondary: "bg-raised text-fg interactive:hover:bg-box-2 interactive:hover:text-on-box",
 };
 
 // Pick padding through `size`, not `className`: a px-* passed in className

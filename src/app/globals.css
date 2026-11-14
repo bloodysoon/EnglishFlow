@@ -1,33 +1,49 @@
-
 @import "tailwindcss";
 
 /* Hover/press feedback only for controls that can act right now. */
 @custom-variant interactive (&:not(:disabled, [aria-disabled="true"]));
 
 /* ========================================
-   1. DESIGN TOKENS
+   1. DESIGN TOKENS AND THEMES
+
+   Neo-brutalism with calm colours: thick lines and hard shadows stay,
+   the palette is warm paper by day and soft graphite by night, never
+   pure #000/#fff. <html data-theme="light|dark|system"> picks the theme
+   (root layout, from the ef-theme cookie); "system" follows the OS.
 ======================================== */
 
 :root {
-  /* Brand colors */
-  --color-orange: #f76b16;
-  --color-purple: #8e2bd4;
-  --color-pink: #e92dae;
-  --color-green: #a4e447;
+  color-scheme: light;
 
-  /* Surfaces */
-  --color-sand: #a59a80;
-  --color-cream: #f8e7c5;
+  /* Surfaces, from back to front */
+  --canvas: #f3eee4;
+  --surface: #fbf8f2;
+  --raised: #fffdf8;
 
-  /* Text and borders */
-  --color-ink: #171717;
+  /* Text and lines */
+  --fg: #22201c;
+  --muted: #5e574d;
+  --line: #22201c;
 
-  /* Base */
-  --background: var(--color-orange);
-  --foreground: var(--color-ink);
+  /* Actions and accents */
+  --primary: #2f6b5c;
+  --on-primary: #fbf8f2;
+  --chip: #a9cbb0;
+  --mark: #e9937a;
+
+  /* Leitner boxes, warm (new) to deep (mastered); also the app's
+     secondary accent colours */
+  --box-1: #ee9f86;
+  --box-2: #f0c872;
+  --box-3: #a9cbb0;
+  --box-4: #93c3cf;
+  --box-5: #2f3b4c;
+  --on-box: #22201c;
+  --on-box-3: #22201c;
+  --on-box-5: #f3eee4;
 
   /* Neo-brutalism */
-  --border-brutal: 3px solid var(--color-ink);
+  --border-brutal: 3px solid var(--line);
   --radius-brutal: 2px;
 
   /* Rendered height of the sticky landing navbar (measured: 93px at
@@ -36,32 +52,93 @@
   --navbar-height: 93px;
 }
 
+/* Dark values appear twice: once for an explicit choice, once for
+   "system" on a dark OS. Keep the two blocks identical. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --canvas: #1e242c;
+  --surface: #262d36;
+  --raised: #2d3540;
+  --fg: #ece5d8;
+  --muted: #aaa394;
+  --line: #0d1015;
+  --primary: #7cc0a6;
+  --on-primary: #14181d;
+  --chip: #8fb89a;
+  --mark: #d9907a;
+  --box-1: #d9907a;
+  --box-2: #d9b566;
+  --box-3: #8fb89a;
+  --box-4: #7fafbc;
+  --box-5: #ece5d8;
+  --on-box: #14181d;
+  --on-box-3: #14181d;
+  --on-box-5: #1e242c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+
+    --canvas: #1e242c;
+    --surface: #262d36;
+    --raised: #2d3540;
+    --fg: #ece5d8;
+    --muted: #aaa394;
+    --line: #0d1015;
+    --primary: #7cc0a6;
+    --on-primary: #14181d;
+    --chip: #8fb89a;
+    --mark: #d9907a;
+    --box-1: #d9907a;
+    --box-2: #d9b566;
+    --box-3: #8fb89a;
+    --box-4: #7fafbc;
+    --box-5: #ece5d8;
+    --on-box: #14181d;
+    --on-box-3: #14181d;
+    --on-box-5: #1e242c;
+  }
+}
+
 /* ========================================
    2. TAILWIND THEME
 ======================================== */
 
 @theme inline {
-  --color-brand-orange: var(--color-orange);
-  --color-brand-purple: var(--color-purple);
-  --color-brand-pink: var(--color-pink);
-  --color-brand-green: var(--color-green);
-  --color-brand-cream: var(--color-cream);
-  --color-brand-sand: var(--color-sand);
-  --color-brand-ink: var(--color-ink);
+  /* Semantic, theme-aware colours: bg-canvas, text-fg, border-line… */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-chip: var(--chip);
+  --color-mark: var(--mark);
+  --color-box-1: var(--box-1);
+  --color-box-2: var(--box-2);
+  --color-box-3: var(--box-3);
+  --color-box-4: var(--box-4);
+  --color-box-5: var(--box-5);
+  --color-on-box: var(--on-box);
+  --color-on-box-3: var(--on-box-3);
+  --color-on-box-5: var(--on-box-5);
+
+  --font-sans: var(--font-archivo), Arial, Helvetica, sans-serif;
 
   /* Hard-shadow scale: sm for chips, md for compact controls,
      default for cards and primary buttons, lg for hover lift. */
-  --font-sans: var(--font-archivo), Arial, Helvetica, sans-serif;
-
-  --shadow-brutal-sm: 3px 3px 0 var(--color-ink);
-  --shadow-brutal-md: 4px 4px 0 var(--color-ink);
-  --shadow-brutal: 6px 6px 0 var(--color-ink);
-  --shadow-brutal-lg: 8px 8px 0 var(--color-ink);
+  --shadow-brutal-sm: 3px 3px 0 var(--line);
+  --shadow-brutal-md: 4px 4px 0 var(--line);
+  --shadow-brutal: 6px 6px 0 var(--line);
+  --shadow-brutal-lg: 8px 8px 0 var(--line);
   --radius-brutal: 2px;
 }
 
-/* One keyboard focus ring for every interactive element. Ink reads on all
-   light brand surfaces; elements on purple override it with a light color. */
+/* One keyboard focus ring for every interactive element. */
 @layer base {
   /* Display voice: Archivo stretched wide. Body copy stays normal width.
      Add `font-display` to any non-heading element that should shout. */
@@ -70,6 +147,25 @@
   h3,
   .font-display {
     font-stretch: 110%;
+  }
+
+  /* Fonts by language. Archivo has no Cyrillic, so Russian text gets
+     Onest (reading) and Unbounded (display). :lang() follows the nearest
+     lang attribute, so an English word marked lang="en" inside a Russian
+     page keeps Archivo. (A per-glyph fallback stack does not work here:
+     next/font puts a full-coverage "Archivo Fallback" right after
+     Archivo, which would catch Cyrillic first.) */
+  :lang(ru) {
+    font-family: var(--font-onest), Arial, Helvetica, sans-serif;
+  }
+
+  :lang(en),
+  :lang(ro) {
+    font-family: var(--font-sans);
+  }
+
+  :is(h1, h2, h3, .font-display):lang(ru) {
+    font-family: var(--font-unbounded), var(--font-onest), Arial, sans-serif;
   }
 
   @media (min-width: 480px) {
@@ -82,7 +178,7 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-ink);
+    outline: 3px solid var(--fg);
     outline-offset: 3px;
   }
 }
@@ -92,14 +188,29 @@
 ======================================== */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--canvas);
+  color: var(--fg);
   font-family: var(--font-sans);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* ========================================
-   4. BRUTAL STICKER
+   4. SHARED BRUTAL PIECES
+
+   In the components layer so utilities on the same element win
+   (e.g. `whitespace-normal` on a long translated label).
 ======================================== */
+
+@layer components {
 
 .brutal-sticker {
   display: inline-flex;
@@ -109,14 +220,14 @@ body {
   transform: rotate(-2deg);
 
   border: var(--border-brutal);
-  background-color: var(--color-green);
+  background-color: var(--chip);
   padding: 0.5rem 1rem;
 
-  color: var(--color-ink);
+  color: var(--on-box);
   font-weight: 900;
   text-transform: uppercase;
 
-  box-shadow: 4px 4px 0 var(--color-ink);
+  box-shadow: 4px 4px 0 var(--line);
 
   transition:
     transform 300ms ease-out,
@@ -131,17 +242,13 @@ body {
   transition: transform 500ms ease-out;
 }
 
-/* ========================================
-   5. BRUTAL LIFT
-======================================== */
-
 .brutal-lift {
   display: inline-block;
 
   transform: rotate(-1deg);
 
   border: var(--border-brutal);
-  background-color: var(--color-cream);
+  background-color: var(--surface);
   padding: 0.5rem 0.75rem;
 
   white-space: nowrap;
@@ -150,7 +257,7 @@ body {
      the expanded display width once there is room. */
   font-stretch: 100%;
 
-  box-shadow: 5px 5px 0 var(--color-ink);
+  box-shadow: 5px 5px 0 var(--line);
 
   transition:
     transform 150ms ease,
@@ -159,10 +266,6 @@ body {
   max-width: 100%;
   box-sizing: border-box;
 }
-
-/* ========================================
-   6. RESPONSIVE
-======================================== */
 
 @media (min-width: 480px) {
   .brutal-lift,
@@ -177,24 +280,6 @@ body {
   }
 }
 
-/* ========================================
-   7. ACCESSIBILITY
-======================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  .brutal-sticker,
-  .brutal-sticker__icon,
-  .brutal-lift {
-    transition: none;
-  }
-}
-
-
-
-/* ========================================
-   BRUTAL HIGHLIGHT
-======================================== */
-
 .brutal-highlight {
   display: inline-flex;
   align-items: center;
@@ -203,12 +288,9 @@ body {
   white-space: nowrap;
   cursor: default;
 
-  color: var(--color-ink);
+  color: var(--fg);
 
-  background-image: linear-gradient(
-    var(--color-pink),
-    var(--color-pink)
-  );
+  background-image: linear-gradient(var(--mark), var(--mark));
   background-repeat: no-repeat;
   background-position: left bottom;
   background-size: 100% 4px;
@@ -224,136 +306,149 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .brutal-sticker,
+  .brutal-sticker__icon,
+  .brutal-lift,
   .brutal-highlight,
   .brutal-highlight__bolt {
     transition: none;
   }
 }
-
+}
 
 /* ========================================
-   LANDING PAGE DECORATIONS
+   5. MOTION
+
+   Rule of thumb: everything is opt-in under
+   (prefers-reduced-motion: no-preference), so a reduced-motion visitor
+   gets the final, readable state with nothing hidden. (The build merges
+   duplicate media blocks, so opt-out overrides could end up above.)
 ======================================== */
 
-@keyframes hero-float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-18px);
-  }
-}
-
-@keyframes hero-sway {
-  0%, 100% {
-    transform: rotate(-4deg);
-  }
-
-  50% {
-    transform: rotate(4deg);
-  }
-}
-
-@keyframes hero-spin {
+/* Hero entrance: each piece rises once on load, staggered by --i. */
+@keyframes rise {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(28px);
   }
 
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: none;
   }
 }
 
-.hero-float {
-  animation: hero-float 4s ease-in-out infinite;
-}
-
-.hero-float-delayed {
-  animation: hero-float 5s ease-in-out 1s infinite;
-}
-
-.hero-sway {
-  animation: hero-sway 5s ease-in-out infinite;
-}
-
-.hero-sway-delayed {
-  animation: hero-sway 6s ease-in-out 1.5s infinite;
-}
-
-@keyframes hero-flame {
-  0%, 100% {
-    transform: scale(1) rotate(-3deg);
+/* Gentle idle float for decorative chips. */
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--tilt, 0deg));
   }
 
   50% {
-    transform: scale(1.15) rotate(3deg);
+    transform: translateY(-10px) rotate(var(--tilt, 0deg));
   }
 }
 
-.hero-flame {
-  display: inline-block;
-  transform-origin: 50% 100%;
-  animation: hero-flame 1.2s ease-in-out infinite;
+/* Hero flashcard: front, flip to the meaning, hold, flip back. */
+@keyframes card-flip {
+  0%,
+  38% {
+    transform: rotateY(0deg);
+  }
+
+  46%,
+  88% {
+    transform: rotateY(180deg);
+  }
+
+  96%,
+  100% {
+    transform: rotateY(360deg);
+  }
 }
 
-.hero-spin {
-  animation: hero-spin 20s linear infinite;
+/* Word ticker between hero and method. Track holds two copies. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
-/* How it works: one word card hops through the five Leitner boxes.
-   Each box has its own copy, shown for 1/5 of the 8s cycle in turn. */
+/* One word hops through the five Leitner boxes. Each box shows its own
+   copy for 1/5 of the 8s cycle, offset by LEITNER_HOP_STEP_SECONDS. */
 @keyframes leitner-hop {
   0% {
     opacity: 0;
     transform: translateY(-14px) rotate(-3deg);
   }
 
-  4%, 16% {
+  4%,
+  16% {
     opacity: 1;
     transform: translateY(0) rotate(-3deg);
   }
 
-  20%, 100% {
+  20%,
+  100% {
     opacity: 0;
     transform: translateY(10px) rotate(-3deg);
   }
 }
 
-.leitner-hop {
-  opacity: 0;
-  animation: leitner-hop 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
-
-.hero-spin-reverse {
-  animation: hero-spin 25s linear infinite reverse;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-float,
-  .hero-float-delayed,
-  .hero-sway,
-  .hero-sway-delayed,
-  .hero-flame,
-  .hero-spin,
-  .hero-spin-reverse {
-    animation: none;
+/* The box holding the word lifts while it has it (same timing). */
+@keyframes box-active {
+  0%,
+  20%,
+  100% {
+    transform: none;
+    box-shadow: 6px 6px 0 var(--line);
   }
 
-  /* No hopping: park the word in Box 3 so the idea still reads. */
-  .leitner-hop {
-    animation: none;
-  }
-
-  .leitner-hop--rest {
-    opacity: 1;
+  4%,
+  16% {
+    transform: translate(-3px, -6px);
+    box-shadow: 9px 12px 0 var(--line);
   }
 }
 
-/* Scroll arrows: a short downward nudge with a pause, eased out,
-   instead of Tailwind's rubbery infinite bounce. */
+/* Progress track under the shelf: fills one fifth per hop. */
+@keyframes track-fill {
+  0%,
+  16% {
+    transform: scaleX(0.2);
+  }
+
+  24%,
+  36% {
+    transform: scaleX(0.4);
+  }
+
+  44%,
+  56% {
+    transform: scaleX(0.6);
+  }
+
+  64%,
+  76% {
+    transform: scaleX(0.8);
+  }
+
+  84%,
+  96% {
+    transform: scaleX(1);
+  }
+
+  100% {
+    transform: scaleX(0.2);
+  }
+}
+
+/* Scroll arrow: a short downward nudge with a pause. */
 @keyframes scroll-nudge {
-  0%, 60%, 100% {
+  0%,
+  60%,
+  100% {
     transform: translateY(0);
   }
 
@@ -362,20 +457,180 @@ body {
   }
 }
 
-/* Opt-in to motion rather than opting out: the build merges duplicate
-   reduced-motion blocks, so an override placed after this could move above it. */
+@keyframes scroll-nudge-up {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Review demo: the answered card leaves up (got it) or sideways (forgot),
+   the next one drops onto the stack. */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) rotate(-2deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes chip-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.18) rotate(-4deg);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes flame {
+  0%,
+  100% {
+    transform: scale(1) rotate(-3deg);
+  }
+
+  50% {
+    transform: scale(1.15) rotate(3deg);
+  }
+}
+
+/* Static fallbacks (reduced motion): the word rests in Box 3, the track
+   shows the same point, the card shows its front. */
+.leitner-hop {
+  opacity: 0;
+}
+
+.leitner-hop--rest {
+  opacity: 1;
+}
+
+.track-fill {
+  transform: scaleX(0.6);
+  transform-origin: left;
+}
+
+.flip-card {
+  transform-style: preserve-3d;
+}
+
+.flip-face {
+  backface-visibility: hidden;
+}
+
+.flip-face--back {
+  transform: rotateY(180deg);
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 110ms + 80ms);
+  }
+
+  .bob {
+    animation: bob 5s ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .flip-card {
+    animation: card-flip 7s cubic-bezier(0.65, 0, 0.35, 1) 1.6s infinite;
+  }
+
+  /* Hovering the card holds it where it is, so it can be read. */
+  .flip-card:hover {
+    animation-play-state: paused;
+  }
+
+  .marquee-track {
+    animation: marquee 48s linear infinite;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .leitner-hop {
+    animation: leitner-hop 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .leitner-hop--rest {
+    opacity: 0;
+  }
+
+  .box-active {
+    animation: box-active 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .track-fill {
+    animation: track-fill 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
   .scroll-nudge {
     animation: scroll-nudge 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
-}
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  .scroll-nudge-up {
+    animation: scroll-nudge-up 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
+
+  .card-in {
+    animation: card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .chip-pop {
+    animation: chip-pop 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .flame {
+    display: inline-block;
+    transform-origin: 50% 100%;
+    animation: flame 1.2s ease-in-out infinite;
+  }
+}
+
+/* Theme toggle icons: the moon offers dark in light mode, the sun offers
+   light in dark mode. The hidden one waits below the button. */
+.theme-icon-sun {
+  transform: translateY(160%) rotate(-90deg);
+}
+
+:root[data-theme="dark"] .theme-icon-sun {
+  transform: none;
+}
+
+:root[data-theme="dark"] .theme-icon-moon {
+  transform: translateY(-160%) rotate(90deg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] .theme-icon-sun {
+    transform: none;
+  }
+
+  :root[data-theme="system"] .theme-icon-moon {
+    transform: translateY(-160%) rotate(90deg);
+  }
+}
+
+/* Theme switch: the toggle reveals the new theme as a growing circle
+   (View Transitions API, see theme-toggle.tsx). Turn off the default
+   cross-fade so only the circle animates. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

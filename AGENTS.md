@@ -6,11 +6,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
-# EnglishFlow — AI Development Guidelines
+# Elevo — AI Development Guidelines
 
 ## Project Overview
 
-EnglishFlow is an English-learning web application focused on vocabulary, spaced repetition using the Leitner system, and learning progress.
+Elevo (formerly EnglishFlow) is an English-learning web application. It starts with vocabulary, spaced repetition using the Leitner system, and learning progress, and will grow with more learning features.
 
 ## Tech Stack
 
@@ -36,9 +36,10 @@ EnglishFlow is an English-learning web application focused on vocabulary, spaced
 
 ## Design System
 
-- Visual style: Neo-Brutalism / Retro Web.
-- Use bold typography, thick black borders, hard shadows, vibrant colors, and playful interactions.
-- Reuse design tokens from `src/app/globals.css`.
+- Visual style: Neo-Brutalism with calm, eye-friendly colours.
+- Use bold typography, thick borders, hard shadows and playful interactions, in muted tones (warm paper by day, soft graphite by night; never pure black or white).
+- Support light and dark themes: `<html data-theme="light|dark|system">`, saved in the `ef-theme` cookie and switched with `ThemeToggle`.
+- Use the semantic tokens from `src/app/globals.css` (`bg-canvas`, `bg-raised`, `text-fg`, `text-muted`, `border-line`, `bg-primary`, `bg-box-1`…`bg-box-5`); never hard-code colours.
 - Reuse shared UI components instead of duplicating Tailwind classes.
 - Maintain accessible contrast, keyboard navigation, and visible focus states.
 
