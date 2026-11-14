@@ -1,0 +1,313 @@
+[
+  {
+    "lemma": "hello",
+    "pos": "intj",
+    "source": "wiktionary",
+    "level": "A1",
+    "levelSource": "cefr-j",
+    "ipa": "/həˈləʊ/",
+    "definition": "A greeting (salutation) said when meeting someone or acknowledging someone’s arrival or presence.",
+    "example": "Hello, everyone.",
+    "translations": {
+      "ru": {
+        "translation": "привет",
+        "alternatives": [
+          "здорово",
+          "здравствуйте",
+          "добрый день"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "salut",
+        "alternatives": [
+          "bună",
+          "noroc",
+          "bună ziua"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "borrow",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "A1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈbɒɹəʊ/",
+    "definition": "To receive (something) from somebody temporarily, expecting to return it.",
+    "example": "to borrow the style, manner, or opinions of another",
+    "translations": {
+      "ru": {
+        "translation": "занимать",
+        "alternatives": [
+          "занять",
+          "заимствовать",
+          "позаимствовать"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "împrumuta",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "eager",
+    "pos": "adj",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈiːɡə/",
+    "definition": "Desirous; keen to do or obtain something.",
+    "example": "Stacey is very eager to go cycling this weekend.",
+    "translations": {
+      "ru": {
+        "translation": "жаждущий",
+        "alternatives": [
+          "страстно/сильно желающий",
+          "рвущийся",
+          "нетерпеливый"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "doritor",
+        "alternatives": [
+          "amator",
+          "avid",
+          "dornic"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "whisper",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "B2",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈ(h)wɪspə/",
+    "definition": "To speak softly or under one's breath, so as to be heard only by one near at hand; to utter words without sonant breath; to talk without that vibration of the vocal cords which gives sonorous, or vocal, sound.",
+    "example": null,
+    "translations": {
+      "ru": {
+        "translation": "шептать",
+        "alternatives": [
+          "шепнуть",
+          "прошептать",
+          "шушукаться"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "a șopti",
+        "alternatives": [
+          "a susura"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "afford",
+    "pos": "verb",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/əˈfɔːd/",
+    "definition": "To incur, stand, or bear without serious detriment, as an act which might under other circumstances be injurious; (usually after an expression of ability, as could, able, difficult) to be able or rich enough; to spare.",
+    "example": "I think we can afford the extra hour it will take. We can only afford to buy a small car at the moment.",
+    "translations": {
+      "ru": {
+        "translation": "позволять себе",
+        "alternatives": [
+          "позволить себе",
+          "быть в состоянии"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": null
+    }
+  },
+  {
+    "lemma": "thorough",
+    "pos": "adj",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈθʌɹə/",
+    "definition": "Painstaking and careful not to miss or omit any detail.",
+    "example": "The Prime Minister announced a thorough investigation into the death of a father-of-two in police custody.",
+    "translations": {
+      "ru": {
+        "translation": "тщательный",
+        "alternatives": [
+          "доскональный",
+          "основательный",
+          "исчерпывающий"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "minuțios",
+        "alternatives": [
+          "amănunțit"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "although",
+    "pos": "conj",
+    "source": "wiktionary",
+    "level": "A2",
+    "levelSource": "cefr-j",
+    "ipa": "/ɔːlˈðəʊ/",
+    "definition": "Though, even though, in spite of or despite the fact that: introducing a clause that expresses a concession.",
+    "example": "Although it was very muddy, the football game went on.",
+    "translations": {
+      "ru": {
+        "translation": "хотя",
+        "alternatives": [
+          "несмотря на то, что",
+          "хоть и",
+          "хоть"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "deși",
+        "alternatives": [
+          "cu toate că"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "meanwhile",
+    "pos": "adv",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈmiːnwaɪl/",
+    "definition": "During the time that something is happening, often specifically in a different place.",
+    "example": "There was a party going on downstairs. Meanwhile, I was reading a book.",
+    "translations": {
+      "ru": {
+        "translation": "в это время",
+        "alternatives": [
+          "в то же время"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "între timp",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "reliable",
+    "pos": "adj",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ɹɪˈlaɪəbl̩/",
+    "definition": "Suitable or fit to be relied on; worthy of dependence, reliance or trust; dependable, trustworthy",
+    "example": null,
+    "translations": {
+      "ru": {
+        "translation": "надёжный",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "fiabil",
+        "alternatives": [
+          "sigur"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "curious",
+    "pos": "adj",
+    "source": "wiktionary",
+    "level": "B1",
+    "levelSource": "cefr-j",
+    "ipa": "/ˈkjʊə.ɹi.əs/",
+    "definition": "Tending to ask questions, or to want to explore or investigate; inquisitive; (with a negative connotation) nosy, prying.",
+    "example": "Young children are naturally curious about the world and everything in it.",
+    "translations": {
+      "ru": {
+        "translation": "любопытный",
+        "alternatives": [
+          "любознательный",
+          "проявляющий интерес",
+          "пытливый"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "curios",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  },
+  {
+    "lemma": "resilient",
+    "pos": "adj",
+    "source": "wiktionary",
+    "level": "C1",
+    "levelSource": "octanove",
+    "ipa": "/ɹɪˈzɪl.jənt/",
+    "definition": "Returning quickly to original shape after force is applied; elastic. (of objects or substances)",
+    "example": null,
+    "translations": {
+      "ru": {
+        "translation": "гибкий",
+        "alternatives": [
+          "эластичный",
+          "упругий"
+        ],
+        "source": "wiktionary",
+        "reviewed": false
+      },
+      "ro": {
+        "translation": "rezilient",
+        "alternatives": [],
+        "source": "wiktionary",
+        "reviewed": false
+      }
+    }
+  }
+]

@@ -51,3 +51,6 @@ next-env.d.ts
 .cursor/
 .devin/
 .codex/
+
+# local caches (dictionary downloads)
+/.cache/

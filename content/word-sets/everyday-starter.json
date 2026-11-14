@@ -1,0 +1,28 @@
+{
+  "slug": "everyday-starter",
+  "level": "A2",
+  "published": false,
+  "title": {
+    "en": "Everyday starter",
+    "ru": "Повседневный старт",
+    "ro": "Start de zi cu zi"
+  },
+  "description": {
+    "en": "Useful words for daily conversations.",
+    "ru": "Полезные слова для повседневного общения.",
+    "ro": "Cuvinte utile pentru conversațiile de zi cu zi."
+  },
+  "words": [
+    "hello",
+    { "word": "borrow", "pos": "verb" },
+    { "word": "eager", "pos": "adj" },
+    { "word": "whisper", "pos": "verb" },
+    { "word": "afford", "pos": "verb" },
+    { "word": "thorough", "pos": "adj" },
+    { "word": "although", "pos": "conj" },
+    { "word": "meanwhile", "pos": "adv" },
+    { "word": "reliable", "pos": "adj" },
+    { "word": "curious", "pos": "adj" },
+    { "word": "resilient", "pos": "adj" }
+  ]
+}
