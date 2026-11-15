@@ -80,6 +80,33 @@ export function topicsFromSeed(sql: string): Map<string, string[]> {
   return topics;
 }
 
+// Words learners saved before the CSV was filled keep the translation they got then.
+// Copy the hand-filled one into those copies (add where missing, replace unreviewed
+// Wiktionary ones; manual and reviewed translations stay). It sits in the seed, not
+// a migration, so it runs again every time the dictionary changes.
+// Same split as splitTranslationCell: first part, then up to 5 alternatives, 200 chars each.
+const BACKFILL_SAVED_WORDS = `-- Bring the dictionary translations into words learners already saved.
+with cells as (
+  select w.id as word_id, l.language,
+    array(
+      select left(btrim(p), 200)
+      from unnest(string_to_array(l.cell, ';')) with ordinality as t(p, n)
+      where btrim(p) <> ''
+      order by n
+    ) as parts
+  from public.words w
+  join public.dictionary_entries d on d.lemma = w.lemma
+  cross join lateral (values ('ru', d.translation_ru), ('ro', d.translation_ro)) as l(language, cell)
+  where w.owner_id is not null and w.source = 'wiktionary' and l.cell is not null
+)
+insert into public.word_translations (word_id, language, translation, alternatives, source, reviewed)
+select word_id, language, parts[1], coalesce(parts[2:6], '{}'), 'wiktionary', false
+from cells
+where cardinality(parts) > 0
+on conflict (word_id, language) do update
+  set translation = excluded.translation, alternatives = excluded.alternatives
+  where public.word_translations.source = 'wiktionary' and not public.word_translations.reviewed;`;
+
 // Idempotent SQL for public.dictionary_entries, in chunks the SQL editor handles well.
 export function buildDictionarySeedSql(entries: DictionaryEntry[], chunkSize = 1000): string {
   const parts = [
@@ -117,6 +144,6 @@ export function buildDictionarySeedSql(entries: DictionaryEntry[], chunkSize = 1
       "on conflict (lemma) do update set part_of_speech = excluded.part_of_speech, cefr_level = excluded.cefr_level, level_source = excluded.level_source, parts_of_speech = excluded.parts_of_speech, translation_ru = excluded.translation_ru, translation_ro = excluded.translation_ro, definition_ru = excluded.definition_ru, definition_ro = excluded.definition_ro, topics = excluded.topics;",
     );
   }
-  parts.push("commit;", "");
+  parts.push(BACKFILL_SAVED_WORDS, "commit;", "");
   return parts.join("\n");
 }

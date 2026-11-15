@@ -183,7 +183,7 @@ async function seedDictionary() {
 
   const done = entries.filter((e) => e.ru || e.ro).length;
   console.log(`Wrote ${path.relative(ROOT, seedFile)} (${entries.length} words, ${done} with translations from the CSV).`);
-  console.log(`Fill in ${path.relative(ROOT, translationsFile)}, run this again, then run the SQL in Supabase.`);
+  console.log(`Fill in ${path.relative(ROOT, translationsFile)}, then run npm run db:sync.`);
 }
 
 async function main() {

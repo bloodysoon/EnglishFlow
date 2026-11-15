@@ -58,6 +58,9 @@ describe("dictionaryEntries", () => {
     const sql = buildDictionarySeedSql(entries, 2);
     expect(sql).toContain("('o''clock', 'adv', 'A1', 'cefr-j', '{adv}', null, null, null, null, '{}')");
     expect(sql.match(/on conflict \(lemma\) do update/g)?.length).toBe(Math.ceil(entries.length / 2));
+    // Saved words get the new translations in the same run, after the entries.
+    expect(sql.indexOf("insert into public.word_translations")).toBeGreaterThan(sql.lastIndexOf("dictionary_entries"));
+    expect(sql.trimEnd().endsWith("commit;")).toBe(true);
   });
 });
 
