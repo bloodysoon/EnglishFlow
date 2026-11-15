@@ -20,6 +20,7 @@ describe("learningStats", () => {
         { box: 5, due_on: "2026-11-17", introduced_on: "2026-10-01" },
         { box: 1, due_on: null, introduced_on: null },
         { box: 1, due_on: null, introduced_on: null },
+        { box: 1, due_on: null, introduced_on: null, known: true, count: 4 },
       ],
       today,
     );
@@ -28,6 +29,7 @@ describe("learningStats", () => {
       total: 6,
       dueToday: 2,
       queued: 2,
+      known: 4,
       introducedToday: 1,
       mastered: 1,
       perBox: { 1: 1, 2: 1, 3: 1, 4: 0, 5: 1 },

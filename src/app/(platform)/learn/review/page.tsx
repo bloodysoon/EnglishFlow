@@ -76,7 +76,7 @@ export default async function ReviewPage() {
                   : r.startAnother}
           </p>
           <Link href="/learn" className={buttonClasses({ className: "mt-6" })}>
-            {overview.total === 0 ? r.chooseSet : r.backToSets}
+            {overview.total === 0 ? r.getWords : r.backToLearn}
           </Link>
         </section>
       )}

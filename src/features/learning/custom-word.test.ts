@@ -36,7 +36,7 @@ describe("customWordSchema", () => {
 });
 
 describe("add_custom_word in SQL matches these rules", () => {
-  const sql = readFileSync(path.join(process.cwd(), "supabase/migrations/20261114170000_subscriptions.sql"), "utf8");
+  const sql = readFileSync(path.join(process.cwd(), "supabase/migrations/20261114190000_dictionary_pool.sql"), "utf8");
 
   it("allows the same parts of speech", () => {
     const list = sql.match(/v_pos not in \(([^)]*)\)/)?.[1] ?? "";

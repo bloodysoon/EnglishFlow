@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { CefrLevel } from "@/features/dictionary/cefr";
-import { extractWord, kaikkiUrl, parseKaikkiJsonl } from "@/features/dictionary/kaikki";
+import { extractWord, kaikkiUrl, parseKaikkiJsonl, type WordDraft } from "@/features/dictionary/kaikki";
 import { logSupabaseError } from "@/lib/supabase/log-error";
 
 type Row = Record<string, unknown>;
@@ -76,32 +76,35 @@ async function findInDictionary(
 }
 
 // Wiktionary via kaikki.org; one small file per word, cached for a week.
-async function suggestFromWiktionary(lemma: string, language: "ru" | "ro"): Promise<WordLookup> {
+// Null when Wiktionary has no entry, or on network trouble or timeout.
+export async function fetchWiktionaryDraft(lemma: string, pos?: string): Promise<WordDraft | null> {
   try {
     const response = await fetch(kaikkiUrl(lemma), {
       headers: { "User-Agent": "elevo-word-lookup/1.0" },
       signal: AbortSignal.timeout(6000),
       next: { revalidate: 60 * 60 * 24 * 7 },
     });
-    if (!response.ok) return { kind: "not_found", lemma };
-
-    const draft = extractWord(parseKaikkiJsonl(await response.text()), lemma);
-    if (!draft) return { kind: "not_found", lemma };
-
-    const translation = draft.translations[language];
-    return {
-      kind: "suggestion",
-      lemma,
-      partOfSpeech: draft.pos,
-      ipa: draft.ipa,
-      example: draft.example,
-      translation: translation?.translation ?? null,
-      alternatives: translation?.alternatives ?? [],
-    };
+    if (!response.ok) return null;
+    return extractWord(parseKaikkiJsonl(await response.text()), lemma, pos || undefined);
   } catch {
-    // Network trouble or timeout: let the learner type it in themselves.
-    return { kind: "not_found", lemma };
+    return null;
   }
+}
+
+async function suggestFromWiktionary(lemma: string, language: "ru" | "ro"): Promise<WordLookup> {
+  const draft = await fetchWiktionaryDraft(lemma);
+  if (!draft) return { kind: "not_found", lemma };
+
+  const translation = draft.translations[language];
+  return {
+    kind: "suggestion",
+    lemma,
+    partOfSpeech: draft.pos,
+    ipa: draft.ipa,
+    example: draft.example,
+    translation: translation?.translation ?? null,
+    alternatives: translation?.alternatives ?? [],
+  };
 }
 
 export async function lookupWord(

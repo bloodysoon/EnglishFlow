@@ -17,6 +17,7 @@ export type UserWordRow = {
   box: number;
   due_on: string | null; // null = still waiting in the queue
   introduced_on: string | null;
+  known?: boolean; // marked "I know it": outside the queue and the boxes
   // Rows arrive grouped from my_learning_summary(); 1 if missing.
   count?: number;
 };
@@ -25,6 +26,7 @@ export type LearningStats = {
   total: number;
   dueToday: number;
   queued: number;
+  known: number;
   introducedToday: number;
   mastered: number;
   perBox: Record<number, number>;
@@ -35,6 +37,7 @@ export function learningStats(rows: UserWordRow[], today: string): LearningStats
   const perBox = Object.fromEntries(LEITNER_BOXES.map(({ box }) => [box, 0])) as Record<number, number>;
   let dueToday = 0;
   let queued = 0;
+  let known = 0;
   let introducedToday = 0;
   let mastered = 0;
   let nextDueOn: string | null = null;
@@ -43,6 +46,10 @@ export function learningStats(rows: UserWordRow[], today: string): LearningStats
 
   for (const row of rows) {
     const n = row.count ?? 1;
+    if (row.known) {
+      known += n;
+      continue;
+    }
     total += n;
     if (row.due_on === null) {
       queued += n;
@@ -55,7 +62,7 @@ export function learningStats(rows: UserWordRow[], today: string): LearningStats
     else if (nextDueOn === null || row.due_on < nextDueOn) nextDueOn = row.due_on;
   }
 
-  return { total, dueToday, queued, introducedToday, mastered, perBox, nextDueOn };
+  return { total, dueToday, queued, known, introducedToday, mastered, perBox, nextDueOn };
 }
 
 // Days in a row with at least one review, ending today, or yesterday if

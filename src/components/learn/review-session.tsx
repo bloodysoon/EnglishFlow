@@ -150,7 +150,7 @@ export function ReviewSession({
             {t.goDashboard}
           </Link>
           <Link href="/learn" className={buttonClasses({ variant: "secondary" })}>
-            {t.wordSets}
+            {t.newWords}
           </Link>
         </div>
       </section>
@@ -226,6 +226,7 @@ export function ReviewSession({
                   {card.alternatives.length > 0 && (
                     <p className="mt-1 font-semibold">{card.alternatives.join(", ")}</p>
                   )}
+                  {card.autoTranslation && <p className="mt-2 text-xs font-black uppercase opacity-75">{t.auto}</p>}
                 </div>
               ) : (
                 <p className="font-black">{t.noChecked}</p>

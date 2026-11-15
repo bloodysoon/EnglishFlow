@@ -6,11 +6,13 @@ export const TRANSLATION_LANGUAGES = ["ru", "ro"] as const;
 export type TranslationLanguageSetting = (typeof TRANSLATION_LANGUAGES)[number];
 
 // Mirrors the check constraints on public.profiles. Which goals are on
-// offer is set in the admin panel (app_settings.daily_goal_options); the
-// save action checks the goal against that list.
+// offer is set in the admin panel (app_settings.daily_goal_options);
+// learners may also type their own goal, up to their plan's limit.
+export const MAX_DAILY_GOAL = 100;
+
 export const learningSettingsSchema = z.object({
   translationLanguage: z.enum(TRANSLATION_LANGUAGES),
-  dailyGoal: z.number().int().min(1).max(100),
+  dailyGoal: z.number().int().min(1).max(MAX_DAILY_GOAL),
 });
 
 export type LearningSettings = z.infer<typeof learningSettingsSchema>;

@@ -12,7 +12,7 @@ import { logoutAction } from "@/features/auth/actions/logout.action";
 import { getAuthDictionary } from "@/features/i18n/auth";
 import { getPlatformI18n } from "@/features/i18n/platform";
 import { getLearningSettings } from "@/features/settings/profile";
-import { effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
+import { effectiveDailyGoal, getPlan, maxDailyGoal } from "@/features/subscription/plans";
 import { getThemePreference } from "@/features/theme/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -51,6 +51,7 @@ export default async function SettingsPage() {
           <LearningSettingsForm
             initial={learning}
             goalOptions={goalOptions}
+            maxGoal={maxDailyGoal(plan)}
             locale={locale}
             t={s}
             words={t.common.words}

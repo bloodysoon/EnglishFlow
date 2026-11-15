@@ -32,6 +32,20 @@ checked by a person before learners see them.
 Only published sets and reviewed translations are readable (RLS);
 nothing in the app can write to these tables.
 
+## Dictionary pool
+
+The Learn page's word card draws random words from the whole CEFR word
+list (CEFR-J + Octanove), easiest level first. `npm run words:dictionary`
+writes `supabase/seed/dictionary.sql`; run it after the migrations. Only
+the list goes into the database: each word's Wiktionary details are fetched
+when its card shows, and saved (as the learner's own copy, with an
+automatic, unreviewed translation) when they sort it.
+
+Translations for dictionary words: fill in `content/dictionary/translations.csv`
+(columns `ru` and `ro`; main translation first, alternatives after `;`, e.g.
+`бассейн; пруд`), run `npm run words:dictionary` again, then run the SQL.
+They win over Wiktionary's; Wiktionary only fills words left empty.
+
 ## Word levels and XP
 
 A word's CEFR level multiplies the XP a learner earns for it (A1 ×1 …

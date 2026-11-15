@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "words:fetch": "node scripts/check-node.cjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/word-sets.ts fetch",
-    "words:seed": "node scripts/check-node.cjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/word-sets.ts seed"
+    "words:seed": "node scripts/check-node.cjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/word-sets.ts seed",
+    "words:dictionary": "node scripts/check-node.cjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/word-sets.ts dictionary"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

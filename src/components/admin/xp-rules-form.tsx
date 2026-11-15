@@ -100,7 +100,7 @@ export function XpRulesForm({ initial }: { initial: XpRules }) {
         <legend className="font-black uppercase">XP per answer</legend>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
           <NumberField id="xp-remembered" label="Got it" hint="0–100" value={fields.remembered} onChange={set("remembered")} />
-          <NumberField id="xp-forgot" label="Forgot" hint="0–100, keeps answers honest" value={fields.forgot} onChange={set("forgot")} />
+          <NumberField id="xp-forgot" label="Forgot" hint="0–100, 0 = no XP when a word drops to box 1" value={fields.forgot} onChange={set("forgot")} />
           <NumberField
             id="xp-mastered"
             label="Mastered bonus"

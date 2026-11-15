@@ -7,7 +7,7 @@ import { LAST_BOX, nextBox } from "./boxes";
 // matches them.
 
 export type XpRules = {
-  // Honest "forgot" still earns something, so nobody is tempted to lie.
+  // "Forgot" earns 0 by default: the word just drops back to box 1.
   remembered: number;
   forgot: number;
   // Bonus for moving a word from box 4 into the last box (mastered).
@@ -18,7 +18,7 @@ export type XpRules = {
 
 export const DEFAULT_XP_RULES: XpRules = {
   remembered: 10,
-  forgot: 3,
+  forgot: 0,
   masteredBonus: 50,
   multipliers: { A1: 1, A2: 1.2, B1: 1.5, B2: 2, C1: 2.5, C2: 3 },
 };
@@ -46,6 +46,15 @@ export function reviewXp(
   const bonus = mastered ? Math.round(rules.masteredBonus * multiplier) : 0;
 
   return { xp: base + bonus, bonus, mastered, newBox };
+}
+
+// "I know it" on a new word: base × the word's level multiplier, once per
+// word, at most KNOWN_WORD_XP_DAILY_CAP awards a day (public.award_known_word_xp).
+export const KNOWN_WORD_XP = 2;
+export const KNOWN_WORD_XP_DAILY_CAP = 50;
+
+export function knownWordXp(level: CefrLevel | null, rules: XpRules = DEFAULT_XP_RULES): number {
+  return Math.round(KNOWN_WORD_XP * rules.multipliers[level ?? "A1"]);
 }
 
 // Total XP needed to reach a learner level: level 1 at 0 XP, then a

@@ -125,7 +125,7 @@ export default async function DashboardPage() {
         <h2 id="progress-heading" className="mb-4 text-xl font-black uppercase">
           {d.progress}
         </h2>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <article className={`bg-box-2 p-5 text-on-box ${card}`}>
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-black tracking-wide uppercase">{d.streak}</p>
@@ -157,6 +157,20 @@ export default async function DashboardPage() {
               {mastered} / {total}
             </p>
             <p className="mt-2 text-sm font-semibold">{fill(d.inBox, { box: LEITNER_BOXES.length })}</p>
+          </article>
+
+          <article className={`bg-box-4 p-5 text-on-box ${card}`}>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-black tracking-wide uppercase">{d.known}</p>
+              <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
+            </div>
+            <p className="font-display mt-5 text-3xl font-black tracking-tight sm:text-4xl">{overview.known}</p>
+            <Link
+              href="/learn/known"
+              className="mt-2 inline-block text-sm font-semibold underline decoration-2 underline-offset-2 hover:decoration-mark"
+            >
+              {d.knownHint}
+            </Link>
           </article>
         </div>
       </section>

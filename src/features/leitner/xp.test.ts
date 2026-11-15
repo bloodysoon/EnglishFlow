@@ -4,7 +4,28 @@ import { describe, expect, it } from "vitest";
 
 import { CEFR_LEVELS } from "@/features/dictionary/cefr";
 import { LEITNER_BOXES } from "./boxes";
-import { DEFAULT_XP_RULES, learnerLevel, reviewXp, xpForLevel } from "./xp";
+import {
+  DEFAULT_XP_RULES,
+  KNOWN_WORD_XP,
+  KNOWN_WORD_XP_DAILY_CAP,
+  knownWordXp,
+  learnerLevel,
+  reviewXp,
+  xpForLevel,
+} from "./xp";
+
+describe("knownWordXp", () => {
+  it("gives a small level-based amount, less than a review", () => {
+    expect(CEFR_LEVELS.map((level) => knownWordXp(level))).toEqual([2, 2, 3, 4, 5, 6]);
+    expect(knownWordXp(null)).toBe(2);
+  });
+
+  it("matches public.award_known_word_xp", () => {
+    const sql = readFileSync(path.join(process.cwd(), "supabase/migrations/20261114220000_known_word_xp.sql"), "utf8");
+    expect(sql).toContain(`round(${KNOWN_WORD_XP} * v_multiplier)`);
+    expect(sql).toContain(`>= ${KNOWN_WORD_XP_DAILY_CAP} then`);
+  });
+});
 
 describe("reviewXp", () => {
   it("gives base XP times the word's level multiplier", () => {
@@ -13,9 +34,9 @@ describe("reviewXp", () => {
     expect(reviewXp(2, true, "C2").xp).toBe(30);
   });
 
-  it("still rewards an honest 'forgot'", () => {
-    expect(reviewXp(3, false, "A1")).toEqual({ xp: 3, bonus: 0, mastered: false, newBox: 1 });
-    expect(reviewXp(3, false, "B1").xp).toBe(5); // 4.5 rounds up
+  it("gives nothing for 'forgot': the word just drops back to box 1", () => {
+    expect(reviewXp(3, false, "A1")).toEqual({ xp: 0, bonus: 0, mastered: false, newBox: 1 });
+    expect(reviewXp(3, false, "C2").xp).toBe(0);
   });
 
   it("treats an unknown level like A1", () => {
@@ -60,13 +81,13 @@ describe("the database matches the TypeScript rules", () => {
   const read = (file: string) => readFileSync(path.join(process.cwd(), "supabase/migrations", file), "utf8");
   // xp_rules is created here…
   const sql = read("20261114140000_admin.sql");
-  // …and this is the latest definition of review_word.
-  const learning = read("20261114150000_learning.sql");
-  const reviewWord = learning.slice(learning.indexOf("create or replace function public.review_word"));
+  // …and this is the latest definition of review_word (and the forgot default).
+  const latest = read("20261115120000_no_xp_for_forgot.sql");
+  const reviewWord = latest.slice(latest.indexOf("create or replace function public.review_word"));
 
   it("starts xp_rules with the default values", () => {
     expect(sql).toMatch(new RegExp(`xp_remembered smallint not null default ${DEFAULT_XP_RULES.remembered}\\b`));
-    expect(sql).toMatch(new RegExp(`xp_forgot smallint not null default ${DEFAULT_XP_RULES.forgot}\\b`));
+    expect(latest).toContain(`alter column xp_forgot set default ${DEFAULT_XP_RULES.forgot};`);
     expect(sql).toMatch(new RegExp(`xp_mastered_bonus smallint not null default ${DEFAULT_XP_RULES.masteredBonus}\\b`));
     for (const level of CEFR_LEVELS) {
       expect(sql).toMatch(

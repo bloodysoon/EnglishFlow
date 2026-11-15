@@ -1,9 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { getAppSettings } from "../app-settings";
 import { learningSettingsSchema } from "../schemas";
-import { effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
+import { getPlan, maxDailyGoal } from "@/features/subscription/plans";
 
 type Result = { success: true } | { success: false; error: "invalid_data" | "not_signed_in" | "unexpected" };
 
@@ -18,13 +17,9 @@ export async function updateLearningSettingsAction(input: unknown): Promise<Resu
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "not_signed_in" };
 
-    // Only the goals currently on offer (set in the admin panel).
-    const app = await getAppSettings(supabase);
-    if (!app.dailyGoalOptions.includes(parsed.data.dailyGoal)) {
-      return { success: false, error: "invalid_data" };
-    }
-    // Goals above the plan's limit need a bigger plan (the SQL caps them anyway).
-    if (effectiveDailyGoal(await getPlan(supabase), parsed.data.dailyGoal) < parsed.data.dailyGoal) {
+    // Any goal from 1 up to the plan's limit: the admin's options or a custom one.
+    // (The SQL caps new words by plan anyway.)
+    if (parsed.data.dailyGoal > maxDailyGoal(await getPlan(supabase))) {
       return { success: false, error: "invalid_data" };
     }
 

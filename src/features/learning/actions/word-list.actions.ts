@@ -6,10 +6,17 @@ import { z } from "zod";
 import { getLearningSettings } from "@/features/settings/profile";
 import { logSupabaseError } from "@/lib/supabase/log-error";
 import { createClient } from "@/lib/supabase/server";
+import { TOPICS, TOPIC_PARTS_OF_SPEECH } from "@/features/dictionary/topics";
 import { customWordSchema, lemmaSchema } from "../custom-word";
-import { lookupWord, type WordLookup } from "../lookup";
+import { fetchWiktionaryDraft, lookupWord, type WordLookup } from "../lookup";
+import { filledTranslations, pickDictionaryCards, type TriageCard } from "../queries";
 
 type Failure<E extends string> = { success: false; error: E };
+
+const cardFiltersSchema = z.object({
+  topics: z.array(z.enum(TOPICS)).max(TOPICS.length),
+  partsOfSpeech: z.array(z.enum(TOPIC_PARTS_OF_SPEECH)).max(TOPIC_PARTS_OF_SPEECH.length),
+});
 
 function refreshLearningPages() {
   revalidatePath("/learn", "layout");
@@ -121,5 +128,97 @@ export async function removeMyWordAction(
   }
 
   refreshLearningPages();
+  return { success: true };
+}
+
+// ---------------------------------------------------------------------
+// Word triage and the known-words quiz
+// ---------------------------------------------------------------------
+
+export async function triageWordAction(
+  input: unknown,
+): Promise<{ success: true } | Failure<"invalid_data" | "daily_limit" | "not_signed_in" | "unexpected">> {
+  const parsed = z
+    .object({
+      wordId: z.uuid().nullable(),
+      lemma: lemmaSchema,
+      partOfSpeech: z.string().max(20),
+      known: z.boolean(),
+    })
+    .safeParse(input);
+  if (!parsed.success) return { success: false, error: "invalid_data" };
+
+  const session = await signedIn();
+  if (!session) return { success: false, error: "not_signed_in" };
+  const { wordId, lemma, partOfSpeech, known } = parsed.data;
+
+  let error;
+  if (wordId) {
+    // A checked word from a published set.
+    ({ error } = await session.supabase.rpc("triage_word", { p_word_id: wordId, p_known: known }));
+  } else {
+    // A dictionary word: the details come from Wiktionary here on the
+    // server (cached), never from the browser.
+    const [{ settings }, draft] = await Promise.all([getLearningSettings(), fetchWiktionaryDraft(lemma, partOfSpeech)]);
+    const filled = await filledTranslations(session.supabase, [lemma], settings.translationLanguage);
+    const translation = filled.get(lemma) ?? draft?.translations[settings.translationLanguage] ?? null;
+    ({ error } = await session.supabase.rpc("add_dictionary_word", {
+      p_lemma: lemma,
+      p_known: known,
+      p_part_of_speech: draft?.pos || partOfSpeech,
+      p_ipa: draft?.ipa?.slice(0, 100) ?? null,
+      p_definition: draft?.definition?.slice(0, 500) ?? null,
+      p_example: draft?.example?.slice(0, 300) ?? null,
+      p_language: settings.translationLanguage,
+      p_translation: translation?.translation.slice(0, 200) ?? null,
+      p_alternatives: (translation?.alternatives ?? []).slice(0, 5).map((a) => a.slice(0, 200)),
+    }));
+  }
+
+  if (error) {
+    if (error.message.includes("daily_limit")) return { success: false, error: "daily_limit" };
+    if (error.message.includes("invalid_word")) return { success: false, error: "invalid_data" };
+    logSupabaseError("[Learn] Triage failed", error);
+    return { success: false, error: "unexpected" };
+  }
+
+  refreshLearningPages();
+  return { success: true };
+}
+
+// More random words for the triage card, in the learner's language.
+export async function pickNewWordsAction(
+  input: unknown,
+): Promise<{ success: true; cards: TriageCard[] } | Failure<"invalid_data" | "not_signed_in" | "unexpected">> {
+  const parsed = cardFiltersSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "invalid_data" };
+
+  const session = await signedIn();
+  if (!session) return { success: false, error: "not_signed_in" };
+  try {
+    return { success: true, cards: await pickDictionaryCards(session.supabase, parsed.data) };
+  } catch (error) {
+    logSupabaseError("[Learn] Picking new words failed", error);
+    return { success: false, error: "unexpected" };
+  }
+}
+
+export async function forgetKnownWordAction(
+  input: unknown,
+): Promise<{ success: true } | Failure<"invalid_data" | "not_signed_in" | "unexpected">> {
+  const parsed = z.object({ wordId: z.uuid() }).safeParse(input);
+  if (!parsed.success) return { success: false, error: "invalid_data" };
+
+  const session = await signedIn();
+  if (!session) return { success: false, error: "not_signed_in" };
+
+  const { error } = await session.supabase.rpc("forget_known_word", { p_word_id: parsed.data.wordId });
+  if (error) {
+    logSupabaseError("[Learn] Forgetting a known word failed", error);
+    return { success: false, error: "unexpected" };
+  }
+
+  // No revalidation here: it would re-render the quiz page mid-round.
+  // Learning pages are dynamic and fetch fresh data on the next visit.
   return { success: true };
 }

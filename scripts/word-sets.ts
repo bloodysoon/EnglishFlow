@@ -24,6 +24,8 @@ import {
   parseKaikkiJsonl,
   type WordDraft,
 } from "../src/features/dictionary/kaikki.ts";
+import { buildTranslationsCsv, parseTranslationsCsv } from "../src/features/dictionary/dictionary-translations.ts";
+import { buildDictionarySeedSql, dictionaryEntries, topicsFromSeed } from "../src/features/dictionary/dictionary-seed.ts";
 import { buildSeedSql } from "../src/features/dictionary/seed-sql.ts";
 import {
   mergeWordDraft,
@@ -165,13 +167,34 @@ async function seedSet(slug: string) {
   if (warnings.length) console.log(`\nWarnings:\n  ${warnings.join("\n  ")}`);
 }
 
+// The whole CEFR word list as the pool the Learn page draws random words from.
+async function seedDictionary() {
+  const seedFile = path.join(SEED_DIR, "dictionary.sql");
+  const translationsFile = path.join(ROOT, "content", "dictionary", "translations.csv");
+  // Keep the topics and translations already filled in by hand.
+  const previous = await readFile(seedFile, "utf8").catch(() => "");
+  const filled = parseTranslationsCsv(await readFile(translationsFile, "utf8").catch(() => ""));
+  const entries = dictionaryEntries(await loadCefrIndex(), topicsFromSeed(previous), filled);
+
+  await mkdir(SEED_DIR, { recursive: true });
+  await writeFile(seedFile, buildDictionarySeedSql(entries), "utf8");
+  await mkdir(path.dirname(translationsFile), { recursive: true });
+  await writeFile(translationsFile, buildTranslationsCsv(entries, filled), "utf8");
+
+  const done = entries.filter((e) => e.ru || e.ro).length;
+  console.log(`Wrote ${path.relative(ROOT, seedFile)} (${entries.length} words, ${done} with translations from the CSV).`);
+  console.log(`Fill in ${path.relative(ROOT, translationsFile)}, run this again, then run the SQL in Supabase.`);
+}
+
 async function main() {
   const [command, slugArg] = process.argv.slice(2);
+  if (command === "dictionary") return seedDictionary();
+
   // The slug becomes part of file paths, so it must be a plain slug.
   const slug = slugArgumentSchema.safeParse(slugArg);
 
   if ((command !== "fetch" && command !== "seed") || !slug.success) {
-    console.error("Usage: npm run words:fetch -- <slug>   |   npm run words:seed -- <slug>");
+    console.error("Usage: npm run words:fetch -- <slug>   |   npm run words:seed -- <slug>   |   npm run words:dictionary");
     process.exit(1);
   }
 
