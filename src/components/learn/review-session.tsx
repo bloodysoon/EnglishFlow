@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Check, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, RotateCcw } from "lucide-react";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
+import { WordExample, WordHead, WordTranslation, speak } from "@/components/learn/word-card";
 import { Button, buttonClasses } from "@/components/ui/button";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import { fill, type Locale } from "@/features/i18n/locales";
 import type { PlatformDictionary } from "@/features/i18n/platform";
 import { plural } from "@/features/i18n/plural";
@@ -15,19 +17,19 @@ import { LAST_BOX } from "@/features/leitner/boxes";
 
 type Answer = { wordId: string; lemma: string; remembered: boolean; xp: number; newBox: number; mastered: boolean };
 
-const LANGUAGE_NAMES = { ru: "Русский", ro: "Română" } as const;
-
 export function ReviewSession({
   cards,
   language,
   locale,
   t,
+  c,
   sessionEnded,
 }: {
   cards: ReviewCard[];
   language: "ru" | "ro";
   locale: Locale;
   t: PlatformDictionary["review"];
+  c: PlatformDictionary["triage"]; // labels shared with the Learn card
   sessionEnded: string;
 }) {
   const [index, setIndex] = useState(0);
@@ -36,6 +38,8 @@ export function ReviewSession({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [skipped, setSkipped] = useState(0);
+  // Starts at the Settings language; switching here only changes what the card shows.
+  const [shownLanguage, setShownLanguage] = useState(language);
 
   const revealRef = useRef<HTMLButtonElement>(null);
   const gotItRef = useRef<HTMLButtonElement>(null);
@@ -71,15 +75,20 @@ export function ReviewSession({
         if (result.success) {
           setAnswers((prev) => [
             ...prev,
-            { wordId: card.wordId, lemma: card.lemma, remembered, xp: result.xp, newBox: result.newBox, mastered: result.mastered },
+            {
+              wordId: card.wordId,
+              lemma: card.lemma,
+              remembered,
+              xp: result.xp,
+              newBox: result.newBox,
+              mastered: result.mastered,
+            },
           ]);
         } else if (result.error === "not_due" || result.error === "not_found") {
           // Answered elsewhere (another tab) or removed: just move on.
           setSkipped((n) => n + 1);
         } else {
-          setError(
-            result.error === "not_signed_in" ? sessionEnded : t.notSaved,
-          );
+          setError(result.error === "not_signed_in" ? sessionEnded : t.notSaved);
           return;
         }
         setRevealed(false);
@@ -93,12 +102,28 @@ export function ReviewSession({
     [card, pending, sessionEnded, t],
   );
 
-  // Space/Enter shows the translation; 1/← forgot, 2/→ got it.
+  // Next word without an answer: it stays due and comes back in the next session.
+  const skip = useCallback(() => {
+    if (pending) return;
+    interacted.current = true;
+    setError(null);
+    setRevealed(false);
+    setIndex((i) => i + 1);
+  }, [pending]);
+
+  // Space shows the translation; 1/← forgot, 2/→ got it; S skips, P pronounces.
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if (done || event.altKey || event.ctrlKey || event.metaKey) return;
       const target = event.target as HTMLElement | null;
       if (target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
+      const key = event.key.toLowerCase();
+      if (!event.repeat && (key === "s" || key === "p")) {
+        event.preventDefault();
+        if (key === "s") skip();
+        else if (card) speak(card.lemma);
+        return;
+      }
 
       if (!revealed && event.key === " " && target?.tagName !== "BUTTON") {
         event.preventDefault();
@@ -113,7 +138,7 @@ export function ReviewSession({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [done, revealed, reveal, answer]);
+  }, [done, revealed, reveal, answer, skip, card]);
 
   if (done) {
     const remembered = answers.filter((a) => a.remembered).length;
@@ -137,14 +162,8 @@ export function ReviewSession({
             </div>
           ))}
         </dl>
-        {skipped > 0 && (
-          <p className="mt-4 text-sm font-semibold text-muted">
-            {plural(locale, skipped, t.skipped)}
-          </p>
-        )}
-        <p className="mt-4 font-semibold text-muted">
-          {t.comeBack}
-        </p>
+        {skipped > 0 && <p className="mt-4 text-sm font-semibold text-muted">{plural(locale, skipped, t.skipped)}</p>}
+        <p className="mt-4 font-semibold text-muted">{t.comeBack}</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/dashboard" className={buttonClasses()}>
             {t.goDashboard}
@@ -159,123 +178,125 @@ export function ReviewSession({
 
   if (!card) return null;
 
+  const translation = card.translations[shownLanguage];
+  const translatedDefinition = card.definitions[shownLanguage];
+
   return (
-    <div className="max-w-xl">
-      {/* Progress */}
-      <div className="mb-5 flex items-center gap-4">
-        <p className="shrink-0 text-sm font-black tracking-wide uppercase">
-          {fill(t.wordOf, { current: index + 1, total: cards.length })}
-        </p>
-        <div
-          role="progressbar"
-          aria-label={t.progressAria}
-          aria-valuemin={0}
-          aria-valuemax={cards.length}
-          aria-valuenow={index}
-          className="h-3 flex-1 overflow-hidden border-[3px] border-line bg-raised"
+    <div>
+      {/* Progress, in the same box as "Today's learning" on Learn. */}
+      <div className="border-[3px] border-line bg-raised p-4 sm:p-5">
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="text-sm font-black tracking-widest uppercase">
+            {fill(t.wordOf, { current: index + 1, total: cards.length })}
+          </p>
+          <p className="font-display text-xl font-black">+{xpEarned} XP</p>
+        </div>
+        <ProgressBar
+          label={t.progressAria}
+          value={index}
+          max={cards.length}
+          tone="bg-primary"
+          className="mt-3 h-3 border-[2px]"
+        />
+      </div>
+
+      {/* The card: the word first, the answer after "Show translation". */}
+      <div key={card.wordId} className="card-in mt-6 border-[3px] border-line bg-raised p-5 shadow-brutal sm:p-7">
+        <WordHead
+          lemma={card.lemma}
+          ipa={card.ipa}
+          partOfSpeech={card.partOfSpeech}
+          language={shownLanguage}
+          onLanguage={revealed ? setShownLanguage : undefined}
+          listenLabel={c.listen}
+          translateLabel={c.translateTo}
         >
-          <div
-            className="h-full bg-primary transition-[width] duration-500 ease-out motion-reduce:transition-none"
-            style={{ width: `${(index / cards.length) * 100}%` }}
-          />
-        </div>
-        <p className="shrink-0 font-display text-sm font-black">+{xpEarned} XP</p>
-      </div>
-
-      {/* The card */}
-      <div className="relative">
-        <div aria-hidden="true" className="absolute inset-0 translate-x-3 translate-y-3 border-[3px] border-line bg-box-4" />
-        <div key={card.wordId} className="card-in relative [perspective:1400px]">
-          <div
-            className="relative h-[300px] transition-transform duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] [transform-style:preserve-3d] motion-reduce:transition-none sm:h-[320px]"
-            style={{ transform: revealed ? "rotateY(180deg)" : "none" }}
+          <span
+            className={`border-2 border-line px-2 py-0.5 text-xs font-black uppercase ${leitnerBoxStyles[card.box]}`}
           >
-            <div
-              className="flip-face absolute inset-0 flex flex-col justify-between border-[3px] border-line bg-raised p-6 text-fg shadow-brutal"
-              aria-hidden={revealed}
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <span className={`border-2 border-line px-2 py-1 text-xs font-black uppercase ${leitnerBoxStyles[card.box]}`}>
-                  {fill(t.box, { box: card.box })}
-                </span>
-                {card.level && <span className="border-2 border-line px-2 py-1 text-xs font-black">{card.level}</span>}
-              </div>
-              <div lang="en">
-                <p className="font-display text-[clamp(2.25rem,9vw,3.5rem)] leading-none font-black tracking-tight break-words">
-                  {card.lemma}
-                </p>
-                <p className="mt-3 font-bold text-muted">
-                  {[card.ipa, card.partOfSpeech].filter(Boolean).join(" · ")}
-                </p>
-              </div>
-              <p className="text-sm font-black uppercase">{t.question}</p>
-            </div>
+            {fill(t.box, { box: card.box })}
+          </span>
+          {card.level && <span className="border-2 border-line px-2 py-0.5 text-xs font-black">{card.level}</span>}
+        </WordHead>
 
-            <div
-              className="flip-face flip-face--back absolute inset-0 flex flex-col justify-center gap-3 border-[3px] border-line bg-box-3 p-6 text-on-box-3 shadow-brutal"
-              aria-hidden={!revealed}
-            >
-              <p className="text-xs font-black tracking-widest uppercase">
-                <span lang="en">{card.lemma}</span> · {LANGUAGE_NAMES[language]}
+        {revealed && (
+          <div className="mt-4">
+            {translation ? (
+              <WordTranslation translation={translation} language={shownLanguage} autoLabel={t.auto} />
+            ) : (
+              <p className="font-black">{t.noChecked}</p>
+            )}
+            {(translatedDefinition ?? card.definition) && (
+              <p lang={translatedDefinition ? shownLanguage : "en"} className="mt-3 font-semibold">
+                {translatedDefinition ?? card.definition}
               </p>
-              {card.translation ? (
-                <div lang={language}>
-                  <p className="font-display text-[clamp(1.75rem,7vw,2.5rem)] leading-tight font-black break-words">
-                    {card.translation}
-                  </p>
-                  {card.alternatives.length > 0 && (
-                    <p className="mt-1 font-semibold">{card.alternatives.join(", ")}</p>
-                  )}
-                  {card.autoTranslation && <p className="mt-2 text-xs font-black uppercase opacity-75">{t.auto}</p>}
-                </div>
-              ) : (
-                <p className="font-black">{t.noChecked}</p>
-              )}
-              {card.example && (
-                <p lang="en" className="font-semibold italic">
-                  &ldquo;{card.example}&rdquo;
-                </p>
-              )}
-            </div>
+            )}
+            {card.example && <WordExample example={card.example} lemma={card.lemma} label={c.example} />}
           </div>
+        )}
+
+        <p className="mt-4 border-t-[2px] border-line pt-4 text-sm font-black uppercase">{t.question}</p>
+        <div className="mt-3 grid min-h-[60px] grid-cols-2 gap-3">
+          {revealed ? (
+            <>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => void answer(false)}
+                aria-disabled={pending}
+                aria-keyshortcuts="ArrowLeft 1"
+                className="w-full flex-col gap-1! px-3!"
+              >
+                <span className="flex items-center gap-2">
+                  <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+                  {t.forgot}
+                </span>
+                {/* Key hint, for pointer-and-keyboard screens only. */}
+                <ArrowLeft className="hidden h-4 w-4 opacity-70 lg:block" strokeWidth={2.5} aria-hidden="true" />
+              </Button>
+              <Button
+                ref={gotItRef}
+                type="button"
+                onClick={() => void answer(true)}
+                aria-disabled={pending}
+                aria-keyshortcuts="ArrowRight 2"
+                className="w-full flex-col gap-1! px-3!"
+              >
+                <span className="flex items-center gap-2">
+                  <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+                  {t.gotIt}
+                </span>
+                <ArrowRight className="hidden h-4 w-4 opacity-70 lg:block" strokeWidth={2.5} aria-hidden="true" />
+              </Button>
+            </>
+          ) : (
+            <Button
+              ref={revealRef}
+              type="button"
+              onClick={reveal}
+              aria-keyshortcuts="Space"
+              className="col-span-2 w-full"
+            >
+              {t.show}
+            </Button>
+          )}
+        </div>
+
+        <div className="mt-2 flex justify-end">
+          <button
+            type="button"
+            onClick={skip}
+            aria-disabled={pending}
+            aria-keyshortcuts="S"
+            className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-bold underline-offset-4 hover:underline aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+          >
+            {c.skip}
+            <ChevronRight className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+          </button>
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="mt-8 grid min-h-[60px] grid-cols-2 gap-3">
-        {revealed ? (
-          <>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => void answer(false)}
-              aria-disabled={pending}
-              className="w-full px-3!"
-            >
-              <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-              {t.forgot}
-            </Button>
-            <Button
-              ref={gotItRef}
-              type="button"
-              onClick={() => void answer(true)}
-              aria-disabled={pending}
-              className="w-full px-3!"
-            >
-              <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-              {t.gotIt}
-            </Button>
-          </>
-        ) : (
-          <Button ref={revealRef} type="button" onClick={reveal} className="col-span-2 w-full">
-            {t.show}
-          </Button>
-        )}
-      </div>
-
-      <p className="mt-3 hidden text-xs font-semibold text-muted sm:block">
-        {t.keyboard}
-      </p>
+      <p className="mt-3 hidden text-xs font-semibold text-muted sm:block">{t.keyboard}</p>
 
       {error && (
         <p role="alert" className="mt-4 border-[3px] border-line bg-box-1 p-3 font-semibold text-on-box">
@@ -289,7 +310,11 @@ export function ReviewSession({
           (last.mastered
             ? fill(t.lastMastered, { word: last.lemma, xp: last.xp })
             : last.remembered
-              ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, { word: last.lemma, box: last.newBox, xp: last.xp })
+              ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, {
+                  word: last.lemma,
+                  box: last.newBox,
+                  xp: last.xp,
+                })
               : fill(t.lastBack, { word: last.lemma, xp: last.xp }))}
       </p>
     </div>

@@ -137,7 +137,9 @@ export async function removeMyWordAction(
 
 export async function triageWordAction(
   input: unknown,
-): Promise<{ success: true } | Failure<"invalid_data" | "daily_limit" | "not_signed_in" | "unexpected">> {
+): Promise<
+  { success: true; wordId: string } | Failure<"invalid_data" | "daily_limit" | "not_signed_in" | "unexpected">
+> {
   const parsed = z
     .object({
       wordId: z.uuid().nullable(),
@@ -153,6 +155,8 @@ export async function triageWordAction(
   const { wordId, lemma, partOfSpeech, known } = parsed.data;
 
   let error;
+  // The saved word's id, so the card can undo this answer (removeMyWordAction).
+  let savedId = wordId;
   if (wordId) {
     // A checked word from a published set.
     ({ error } = await session.supabase.rpc("triage_word", { p_word_id: wordId, p_known: known }));
@@ -162,7 +166,8 @@ export async function triageWordAction(
     const [{ settings }, draft] = await Promise.all([getLearningSettings(), fetchWiktionaryDraft(lemma, partOfSpeech)]);
     const filled = await filledTranslations(session.supabase, [lemma], settings.translationLanguage);
     const translation = filled.get(lemma) ?? draft?.translations[settings.translationLanguage] ?? null;
-    ({ error } = await session.supabase.rpc("add_dictionary_word", {
+    let data;
+    ({ data, error } = await session.supabase.rpc("add_dictionary_word", {
       p_lemma: lemma,
       p_known: known,
       p_part_of_speech: draft?.pos || partOfSpeech,
@@ -173,6 +178,7 @@ export async function triageWordAction(
       p_translation: translation?.translation.slice(0, 200) ?? null,
       p_alternatives: (translation?.alternatives ?? []).slice(0, 5).map((a) => a.slice(0, 200)),
     }));
+    savedId = (data as string | null) ?? null;
   }
 
   if (error) {
@@ -181,9 +187,10 @@ export async function triageWordAction(
     logSupabaseError("[Learn] Triage failed", error);
     return { success: false, error: "unexpected" };
   }
+  if (!savedId) return { success: false, error: "unexpected" };
 
   refreshLearningPages();
-  return { success: true };
+  return { success: true, wordId: savedId };
 }
 
 // More random words for the triage card, in the learner's language.

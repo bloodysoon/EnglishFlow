@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { ReviewSession } from "@/components/learn/review-session";
 import { buttonClasses } from "@/components/ui/button";
+import { riseStyle } from "@/components/ui/rise";
 import { getLearningOverview, getReviewQueue } from "@/features/learning/queries";
 import { introduceTodaysWords } from "@/features/learning/server";
 import { fill } from "@/features/i18n/locales";
@@ -36,24 +37,21 @@ export default async function ReviewPage() {
     month: "long",
     timeZone: "UTC",
   });
-  const cards = await getReviewQueue(supabase, user.id, settings.translationLanguage, overview.today);
+  const cards = await getReviewQueue(supabase, user.id, overview.today);
 
   return (
-    <div className="space-y-8">
-      <Link
-        href="/learn"
-        className="group inline-flex min-h-11 items-center gap-2 text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark"
-      >
-        <ArrowLeft
-          className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1 motion-reduce:transition-none"
-          aria-hidden="true"
-        />
-        {t.common.learn}
-      </Link>
-
-      <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
-        {r.title}<span className="text-primary">.</span>
-      </h1>
+    <div className="space-y-6 sm:space-y-8">
+      {/* Same header as Learn: title, then the one way back. */}
+      <header className="rise flex flex-wrap items-center justify-between gap-3" style={riseStyle(0)}>
+        <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
+          {r.title}
+          <span className="text-primary">.</span>
+        </h1>
+        <Link href="/learn" className={buttonClasses({ size: "toolbar", variant: "secondary" })}>
+          <ArrowLeft className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+          {t.common.learn}
+        </Link>
+      </header>
 
       {cards.length > 0 ? (
         <ReviewSession
@@ -61,6 +59,7 @@ export default async function ReviewPage() {
           language={settings.translationLanguage}
           locale={locale}
           t={r}
+          c={t.triage}
           sessionEnded={t.common.sessionEnded}
         />
       ) : (

@@ -137,7 +137,8 @@ export function ActiveFilterChips({
   if (active.length === 0) return null;
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2">
+    <div className="mt-3 flex flex-wrap items-center gap-2">
+      <span className="text-sm font-semibold text-muted">{t.activeFilters}</span>
       {active.map(({ kind, value, name }) => (
         <Link
           key={`${kind}-${value}`}

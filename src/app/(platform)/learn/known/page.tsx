@@ -58,9 +58,13 @@ export default async function KnownWordsPage() {
           <ul className="divide-y-2 divide-line border-[3px] border-line bg-raised shadow-brutal">
             {words.map((word) => (
               <li key={word.id} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3">
-                <span lang="en" className="font-black break-words">
+                <Link
+                  href={`/learn/words/${word.id}`}
+                  lang="en"
+                  className="font-black break-words underline decoration-2 underline-offset-4 hover:decoration-mark"
+                >
                   {word.lemma}
-                </span>
+                </Link>
                 <span lang={settings.translationLanguage} className="text-sm font-semibold text-muted">
                   {word.translation ?? "—"}
                 </span>

@@ -9,7 +9,8 @@ import { fill } from "@/features/i18n/locales";
 import type { PlatformDictionary } from "@/features/i18n/platform";
 
 // Each step spotlights the element with the matching data-tour attribute.
-const STEPS = ["card", "filters", "add", "words", "known", "today"] as const;
+// In page order: review in the header, the toolbar, then the new-word card.
+const STEPS = ["today", "add", "words", "known", "filters", "card"] as const;
 
 const SEEN_KEY = "ef-learn-tour-seen";
 const PAD = 6;
@@ -86,7 +87,6 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
     <>
       <Button size="toolbar" variant="secondary" onClick={() => setStep(0)} aria-label={labels.show}>
         <HelpCircle className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-        <span className="hidden sm:inline">{labels.button}</span>
       </Button>
 
       {/* Portal: the header row is animated (transform) and layered, which would trap a fixed overlay. */}

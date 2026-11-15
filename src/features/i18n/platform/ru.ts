@@ -100,14 +100,15 @@ export const ru: PlatformDictionary = {
   learn: {
     known: "Знаю",
     title: "Учить",
+    // Header button; {n} is how many words wait for review.
+    review: "Повторение ({n})",
     today: "Сегодня",
-    wordUnit: { one: "слово", few: "слова", many: "слов", other: "слова" },
-    pickWords: "Выберите слова выше",
-    allDone: "Всё готово",
-    startReview: "Начать повторение",
-    newToday: "Новых сегодня",
-    waiting: "Ждут",
-    newTodayAria: "{done} из {goal} новых слов сегодня, изменить цель",
+    addedToday: {
+      one: "{n} новое слово добавлено сегодня",
+      few: "{n} новых слова добавлено сегодня",
+      many: "{n} новых слов добавлено сегодня",
+      other: "{n} новых слова добавлено сегодня",
+    },
     yourWords: "Ваши слова",
     addWord: "Добавить",
     myWords: "Мои слова",
@@ -115,7 +116,6 @@ export const ru: PlatformDictionary = {
 
   tour: {
     show: "Показать тур",
-    button: "Тур",
     stepOf: "Шаг {current} из {total}",
     skip: "Пропустить",
     back: "Назад",
@@ -124,7 +124,7 @@ export const ru: PlatformDictionary = {
     steps: {
       card: {
         title: "Новые слова",
-        text: "Знаете слово? Нажмите «Знаю». Новое? Нажмите «Учить», и оно попадёт в повторения.",
+        text: "По одному слову. Знаете? Оно откладывается. Новое? «Учить» добавит его в ежедневные повторения, где оно проходит 5 коробок. Клавиши: ← знаю, → учить, Пробел перевод, S пропустить, Z отменить, P послушать.",
       },
       filters: { title: "Фильтры", text: "Выберите темы или части речи, чтобы получать только нужные слова." },
       add: { title: "Добавьте слово", text: "Введите любое слово, которое хотите выучить. Перевод подскажем мы." },
@@ -171,17 +171,24 @@ export const ru: PlatformDictionary = {
     filters: "Фильтры",
     clearFilters: "Сбросить",
     removeFilter: "Убрать фильтр {name}",
-    title: "Новое слово",
+    title: "Новые слова",
     question: "Знаете это слово?",
     know: "Знаю",
     learn: "Учить",
     show: "Показать перевод",
-    learningToday: "Учу сегодня: {done}/{limit}",
-    learningTodayUnlimited: "Учу сегодня: {done}",
     limitReached: "Это ваши {limit} новых слов на сегодня. Возвращайтесь завтра или",
     upgrade: "улучшите тариф",
     allSeen: "Вы разобрали все слова словаря. Отличная работа!",
     failed: "Не сохранилось. Попробуйте ещё раз.",
+    example: "Пример",
+    listen: "Послушать слово",
+    skip: "Пропустить слово",
+    undo: "Отменить последнее действие",
+    session: "Текущая сессия",
+    seen: "Просмотрено слов",
+    added: "Добавлено в изучение",
+    alreadyKnown: "Уже знаю",
+    activeFilters: "Активные фильтры:",
   },
 
   known: {
@@ -285,6 +292,20 @@ export const ru: PlatformDictionary = {
     cancel: "Отмена",
   },
 
+  wordPage: {
+    timeline: "История",
+    added: "Добавлено в ваши слова",
+    known: "Отмечено как знакомое",
+    remembered: "Вспомнил",
+    forgot: "Забыл",
+    mastered: "Выучено",
+    boxMove: "Коробка {from} → коробка {to}",
+    box: "Коробка",
+    statusKnown: "Знаю",
+    nextReview: "Следующее повторение",
+    reviews: "Повторений",
+  },
+
   review: {
     auto: "Автоматический перевод",
     title: "Повторение",
@@ -317,7 +338,7 @@ export const ru: PlatformDictionary = {
     forgot: "Забыл",
     gotIt: "Помню",
     show: "Показать перевод",
-    keyboard: "Клавиши: пробел показывает перевод · 1 или ← забыл · 2 или → помню",
+    keyboard: "Клавиши: пробел показывает перевод · 1 или ← забыл · 2 или → помню · S пропустить · P послушать",
     notSaved: "Ответ не сохранился. Попробуйте ещё раз.",
     notSavedConnection: "Ответ не сохранился. Проверьте соединение и попробуйте ещё раз.",
     lastMastered: "{word}: выучено! +{xp} XP",

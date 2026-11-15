@@ -95,14 +95,10 @@ export const en = {
   learn: {
     known: "Known",
     title: "Learn",
-    today: "Today",
-    wordUnit: p({ one: "word", other: "words" }),
-    pickWords: "Pick words above",
-    allDone: "All done",
-    startReview: "Start review",
-    newToday: "New today",
-    waiting: "Waiting",
-    newTodayAria: "{done} of {goal} new words today, change daily goal",
+    // Header button; {n} is how many words wait for review.
+    review: "Review ({n})",
+    today: "Today's learning",
+    addedToday: p({ one: "{n} new word added today", other: "{n} new words added today" }),
     yourWords: "Your words",
     addWord: "Add word",
     myWords: "My words",
@@ -110,7 +106,6 @@ export const en = {
 
   tour: {
     show: "Show the tour",
-    button: "Tour",
     stepOf: "Step {current} of {total}",
     skip: "Skip",
     back: "Back",
@@ -119,7 +114,7 @@ export const en = {
     steps: {
       card: {
         title: "New words",
-        text: 'Know it? Tap "I know it". New to you? Tap "Learn it" and it joins your reviews.',
+        text: 'One word at a time. Know it? It is set aside. New to you? "Learn it" adds it to your daily reviews, where it moves through 5 boxes. Keys: ← know, → learn, Space translation, S skip, Z undo, P listen.',
       },
       filters: { title: "Filters", text: "Pick topics or parts of speech to get only the words you want." },
       add: { title: "Add a word", text: "Type any word you want to learn. We fill in the meaning." },
@@ -163,17 +158,24 @@ export const en = {
     filters: "Filters",
     clearFilters: "Clear",
     removeFilter: "Remove filter {name}",
-    title: "New word",
+    title: "Discover words",
     question: "Do you know this word?",
     know: "I know it",
     learn: "Learn it",
     show: "Show translation",
-    learningToday: "Learning today: {done}/{limit}",
-    learningTodayUnlimited: "Learning today: {done}",
     limitReached: "That's your {limit} new words for today. Come back tomorrow, or",
     upgrade: "upgrade",
     allSeen: "You've sorted every word in the dictionary. Great work!",
     failed: "That didn't save. Please try again.",
+    example: "Example",
+    listen: "Listen to the word",
+    skip: "Skip word",
+    undo: "Undo last action",
+    session: "Current session",
+    seen: "Words seen",
+    added: "Added to learn",
+    alreadyKnown: "Already known",
+    activeFilters: "Active filters:",
   },
 
   known: {
@@ -276,6 +278,20 @@ export const en = {
     cancel: "Cancel",
   },
 
+  wordPage: {
+    timeline: "Timeline",
+    added: "Added to your words",
+    known: "Marked as known",
+    remembered: "Remembered",
+    forgot: "Forgot",
+    mastered: "Mastered",
+    boxMove: "Box {from} → box {to}",
+    box: "Box",
+    statusKnown: "Known",
+    nextReview: "Next review",
+    reviews: "Reviews",
+  },
+
   review: {
     auto: "Automatic translation",
     title: "Review",
@@ -306,7 +322,7 @@ export const en = {
     forgot: "Forgot",
     gotIt: "Got it",
     show: "Show translation",
-    keyboard: "Keyboard: Space shows the translation · 1 or ← forgot · 2 or → got it",
+    keyboard: "Keyboard: Space shows the translation · 1 or ← forgot · 2 or → got it · S skip · P listen",
     notSaved: "That answer was not saved. Please try again.",
     notSavedConnection: "That answer was not saved. Check your connection and try again.",
     lastMastered: "{word}: mastered! +{xp} XP",

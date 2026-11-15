@@ -16,6 +16,7 @@ import {
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { buttonClasses } from "@/components/ui/button";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import { riseStyle } from "@/components/ui/rise";
 import { getLandingDictionary } from "@/features/i18n/landing";
 import { fill } from "@/features/i18n/locales";
@@ -40,22 +41,6 @@ const exercises = [
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getPlatformI18n();
   return { title: t.meta.dashboard };
-}
-
-function ProgressBar({ label, value, max, tone }: { label: string; value: number; max: number; tone: string }) {
-  const percent = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
-  return (
-    <div
-      role="progressbar"
-      aria-label={label}
-      aria-valuenow={value}
-      aria-valuemin={0}
-      aria-valuemax={max}
-      className="mt-4 h-5 overflow-hidden border-[3px] border-line bg-surface"
-    >
-      <div className={`h-full ${tone}`} style={{ width: `${percent}%` }} />
-    </div>
-  );
 }
 
 export default async function DashboardPage() {
@@ -84,7 +69,8 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-10">
       <h1 className="rise text-3xl font-black tracking-tight uppercase sm:text-4xl" style={riseStyle(0)}>
-        {d.title}<span className="text-primary">.</span>
+        {d.title}
+        <span className="text-primary">.</span>
       </h1>
 
       {/* What to do next */}
@@ -182,7 +168,10 @@ export default async function DashboardPage() {
         </h2>
         <ol className="grid grid-cols-5 gap-2 sm:gap-4">
           {LEITNER_BOXES.map(({ box }) => (
-            <li key={box} className={`flex flex-col items-center border-[3px] border-line px-1 py-3 shadow-brutal-sm sm:py-4 ${leitnerBoxStyles[box]}`}>
+            <li
+              key={box}
+              className={`flex flex-col items-center border-[3px] border-line px-1 py-3 shadow-brutal-sm sm:py-4 ${leitnerBoxStyles[box]}`}
+            >
               <span className="text-[10px] font-black tracking-wider uppercase sm:text-xs">{fill(d.box, { box })}</span>
               <span className="font-display text-2xl font-black sm:text-4xl">{perBox[box] ?? 0}</span>
               <span className="hidden text-center text-xs font-bold sm:block">{boxLabels[box]}</span>
@@ -190,9 +179,7 @@ export default async function DashboardPage() {
           ))}
         </ol>
         {overview.queued > 0 && (
-          <p className="mt-3 text-sm font-semibold text-muted">
-            {plural(locale, overview.queued, d.queued)}
-          </p>
+          <p className="mt-3 text-sm font-semibold text-muted">{plural(locale, overview.queued, d.queued)}</p>
         )}
       </section>
 
@@ -212,7 +199,10 @@ export default async function DashboardPage() {
           <ProgressBar label={d.newToday} value={newToday} max={dailyGoal} tone="bg-box-3" />
           <p className="mt-3 text-sm font-semibold text-muted">
             {dueToday > 0 ? fill(d.toReview, { n: dueToday }) : d.nothingToReview}{" "}
-            <Link href="/settings" className="font-black underline decoration-2 underline-offset-2 hover:decoration-mark">
+            <Link
+              href="/settings"
+              className="font-black underline decoration-2 underline-offset-2 hover:decoration-mark"
+            >
               {d.changeGoal}
             </Link>
           </p>
@@ -229,7 +219,12 @@ export default async function DashboardPage() {
               {level.xpIntoLevel} / {level.xpForNextLevel} XP
             </span>
           </div>
-          <ProgressBar label={d.nextLevelProgress} value={level.xpIntoLevel} max={level.xpForNextLevel} tone="bg-primary" />
+          <ProgressBar
+            label={d.nextLevelProgress}
+            value={level.xpIntoLevel}
+            max={level.xpForNextLevel}
+            tone="bg-primary"
+          />
           <p className="mt-3 text-sm font-semibold text-muted">
             {fill(d.xpToLevel, { xp: level.xpForNextLevel - level.xpIntoLevel, level: level.level + 1 })}
           </p>
@@ -264,7 +259,10 @@ export default async function DashboardPage() {
                   {href ? (
                     <span className="inline-flex items-center gap-2 text-sm font-black uppercase">
                       <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> {d.open}
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
                     </span>
                   ) : (
                     <span className="text-xs font-black uppercase">{d.inDevelopment}</span>

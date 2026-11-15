@@ -5,6 +5,7 @@ import { learnerLevel, type LearnerLevel } from "@/features/leitner/xp";
 import { splitTranslationCell } from "@/features/dictionary/dictionary-translations";
 import { fetchWiktionaryDraft } from "./lookup";
 import { learningStats, streakDays, utcDay, type LearningStats, type UserWordRow } from "./stats";
+import { wordTimeline, type TimelineStep } from "./timeline";
 
 type Row = Record<string, unknown>;
 
@@ -54,7 +55,8 @@ export type WordCard = {
   autoTranslation: boolean;
 };
 
-export type ReviewCard = WordCard & { box: number };
+// Both translations and definitions, so the review card can switch language like the Learn card.
+export type ReviewCard = Omit<TriageCard, "wordId"> & { wordId: string; box: number };
 
 // A words row (with its one translation in the learner's language) as a card.
 function toCard(word: Row): WordCard {
@@ -76,13 +78,12 @@ function toCard(word: Row): WordCard {
 const CARD_COLUMNS =
   "id, lemma, part_of_speech, ipa, example, definition, cefr_level, word_translations(language, translation, alternatives, reviewed)";
 
-// Words due today with their translation in the learner's language. RLS
-// hides words of unpublished sets and unreviewed translations, so those
-// drop out here (a word without a translation still shows, with a note).
+// Words due today with their translations. RLS hides words of unpublished
+// sets and unreviewed translations, so those drop out here (a word without
+// a translation still shows, with a note).
 export async function getReviewQueue(
   supabase: SupabaseClient,
   userId: string,
-  language: "ru" | "ro",
   today: string = utcDay(),
 ): Promise<ReviewCard[]> {
   const { data, error } = await supabase
@@ -90,16 +91,91 @@ export async function getReviewQueue(
     .select(`word_id, box, due_on, words(${CARD_COLUMNS})`)
     .eq("user_id", userId)
     .lte("due_on", today)
-    .eq("words.word_translations.language", language)
     .order("due_on", { ascending: true })
     .order("box", { ascending: true })
     .limit(200);
 
   if (error) throw error;
 
-  return ((data as Row[] | null) ?? [])
+  const cards = ((data as Row[] | null) ?? [])
     .filter((row) => row.words)
-    .map((row) => ({ ...toCard(row.words as Row), box: Number(row.box) }));
+    .map((row) => ({ ...sharedTriageCard(row.words as Row), wordId: String(row.word_id), box: Number(row.box) }));
+
+  return fillFromDictionary(supabase, cards);
+}
+
+// A saved word carries one language; the dictionary fills the other and the definitions.
+async function fillFromDictionary<T extends Pick<TriageCard, "lemma" | "translations" | "definitions">>(
+  supabase: SupabaseClient,
+  cards: T[],
+): Promise<T[]> {
+  const lemmas = cards.map((card) => card.lemma);
+  const [ru, ro, definitions] = await Promise.all([
+    filledTranslations(supabase, lemmas, "ru"),
+    filledTranslations(supabase, lemmas, "ro"),
+    filledDefinitions(supabase, lemmas),
+  ]);
+  const filled = { ru, ro };
+  const pick = (card: T, language: "ru" | "ro"): CardTranslation | null => {
+    const t = filled[language].get(card.lemma);
+    return card.translations[language] ?? (t ? { ...t, auto: true } : null);
+  };
+  return cards.map((card) => ({
+    ...card,
+    translations: { ru: pick(card, "ru"), ro: pick(card, "ro") },
+    definitions: definitions.get(card.lemma) ?? card.definitions,
+  }));
+}
+
+// One of my words with its whole story (the word page). Null when it is not in my words.
+export type WordHistory = {
+  card: ReviewCard;
+  known: boolean;
+  dueOn: string | null;
+  reviewCount: number;
+  steps: TimelineStep[];
+};
+
+export async function getWordHistory(
+  supabase: SupabaseClient,
+  userId: string,
+  wordId: string,
+): Promise<WordHistory | null> {
+  const [mine, log] = await Promise.all([
+    supabase
+      .from("user_words")
+      .select(`box, due_on, known, added_at, review_count, words(${CARD_COLUMNS})`)
+      .eq("user_id", userId)
+      .eq("word_id", wordId)
+      .maybeSingle(),
+    supabase
+      .from("xp_events")
+      .select("reason, amount, created_at")
+      .eq("user_id", userId)
+      .eq("word_id", wordId)
+      .order("created_at", { ascending: true })
+      .limit(500),
+  ]);
+  if (mine.error) throw mine.error;
+  if (log.error) throw log.error;
+  const row = mine.data as Row | null;
+  if (!row?.words) return null;
+
+  const [card] = await fillFromDictionary(supabase, [
+    { ...sharedTriageCard(row.words as Row), wordId, box: Number(row.box) },
+  ]);
+  const events = ((log.data as Row[] | null) ?? []).map((e) => ({
+    reason: String(e.reason),
+    amount: Number(e.amount),
+    at: String(e.created_at),
+  }));
+  return {
+    card,
+    known: row.known === true,
+    dueOn: (row.due_on as string | null) ?? null,
+    reviewCount: Number(row.review_count),
+    steps: wordTimeline(String(row.added_at), events),
+  };
 }
 
 // ---------------------------------------------------------------------

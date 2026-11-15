@@ -94,14 +94,14 @@ export const ro: PlatformDictionary = {
   learn: {
     known: "Știute",
     title: "Învață",
-    today: "Azi",
-    wordUnit: { one: "cuvânt", few: "cuvinte", other: "de cuvinte" },
-    pickWords: "Alege cuvinte mai sus",
-    allDone: "Gata",
-    startReview: "Începe recapitularea",
-    newToday: "Noi azi",
-    waiting: "În așteptare",
-    newTodayAria: "{done} din {goal} cuvinte noi azi, schimbă obiectivul",
+    // Header button; {n} is how many words wait for review.
+    review: "Recapitulare ({n})",
+    today: "Învățat azi",
+    addedToday: {
+      one: "{n} cuvânt nou adăugat azi",
+      few: "{n} cuvinte noi adăugate azi",
+      other: "{n} de cuvinte noi adăugate azi",
+    },
     yourWords: "Cuvintele tale",
     addWord: "Adaugă",
     myWords: "Cuvintele mele",
@@ -109,7 +109,6 @@ export const ro: PlatformDictionary = {
 
   tour: {
     show: "Arată turul",
-    button: "Tur",
     stepOf: "Pasul {current} din {total}",
     skip: "Sari peste",
     back: "Înapoi",
@@ -118,7 +117,7 @@ export const ro: PlatformDictionary = {
     steps: {
       card: {
         title: "Cuvinte noi",
-        text: "Îl știi? Apasă „Îl știu”. E nou? Apasă „Învăț” și intră în recapitulări.",
+        text: "Câte un cuvânt pe rând. Îl știi? Se pune deoparte. E nou? „Învăț” îl adaugă la recapitularea zilnică, unde trece prin 5 cutii. Taste: ← știu, → învăț, Spațiu traducere, S sari, Z anulează, P ascultă.",
       },
       filters: { title: "Filtre", text: "Alege teme sau părți de vorbire ca să primești doar cuvintele dorite." },
       add: { title: "Adaugă un cuvânt", text: "Scrie orice cuvânt vrei să înveți. Noi completăm sensul." },
@@ -165,17 +164,24 @@ export const ro: PlatformDictionary = {
     filters: "Filtre",
     clearFilters: "Resetează",
     removeFilter: "Elimină filtrul {name}",
-    title: "Cuvânt nou",
+    title: "Descoperă cuvinte",
     question: "Știi cuvântul ăsta?",
     know: "Îl știu",
     learn: "Învăț",
     show: "Arată traducerea",
-    learningToday: "Învăț azi: {done}/{limit}",
-    learningTodayUnlimited: "Învăț azi: {done}",
     limitReached: "Ai atins limita de azi ({limit}). Revino mâine sau",
     upgrade: "treci la un abonament mai mare",
     allSeen: "Ai sortat toate cuvintele din dicționar. Bravo!",
     failed: "Nu s-a salvat. Încearcă din nou.",
+    example: "Exemplu",
+    listen: "Ascultă cuvântul",
+    skip: "Sari peste cuvânt",
+    undo: "Anulează ultima acțiune",
+    session: "Sesiunea curentă",
+    seen: "Cuvinte văzute",
+    added: "Adăugate la învățat",
+    alreadyKnown: "Știute deja",
+    activeFilters: "Filtre active:",
   },
 
   known: {
@@ -280,6 +286,20 @@ export const ro: PlatformDictionary = {
     cancel: "Anulează",
   },
 
+  wordPage: {
+    timeline: "Istoric",
+    added: "Adăugat în cuvintele tale",
+    known: "Marcat ca știut",
+    remembered: "Ți-ai amintit",
+    forgot: "Ai uitat",
+    mastered: "Învățat",
+    boxMove: "Cutia {from} → cutia {to}",
+    box: "Cutie",
+    statusKnown: "Știut",
+    nextReview: "Următoarea recapitulare",
+    reviews: "Recapitulări",
+  },
+
   review: {
     auto: "Traducere automată",
     title: "Recapitulare",
@@ -311,7 +331,7 @@ export const ro: PlatformDictionary = {
     forgot: "Am uitat",
     gotIt: "Știu",
     show: "Arată traducerea",
-    keyboard: "Tastatură: Spațiu arată traducerea · 1 sau ← am uitat · 2 sau → știu",
+    keyboard: "Tastatură: Spațiu arată traducerea · 1 sau ← am uitat · 2 sau → știu · S sari · P ascultă",
     notSaved: "Răspunsul nu s-a salvat. Încearcă din nou.",
     notSavedConnection: "Răspunsul nu s-a salvat. Verifică conexiunea și încearcă din nou.",
     lastMastered: "{word}: învățat! +{xp} XP",

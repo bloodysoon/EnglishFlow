@@ -44,7 +44,8 @@ export default async function MyWordsPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
-            {m.title}<span className="text-primary">.</span>
+            {m.title}
+            <span className="text-primary">.</span>
           </h1>
           <p className="mt-2 font-semibold text-muted">
             {plural(locale, words.length, t.common.words)}
@@ -57,9 +58,7 @@ export default async function MyWordsPage() {
       </header>
 
       {words.length === 0 ? (
-        <p className="max-w-xl border-[3px] border-line bg-surface p-5 font-semibold shadow-brutal-md">
-          {m.empty}
-        </p>
+        <p className="max-w-xl border-[3px] border-line bg-surface p-5 font-semibold shadow-brutal-md">{m.empty}</p>
       ) : (
         <ul className="divide-y-2 divide-line border-[3px] border-line bg-raised shadow-brutal">
           {words.map((word) => (
@@ -69,7 +68,13 @@ export default async function MyWordsPage() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-black break-words">
-                  <span lang="en">{word.lemma}</span>
+                  <Link
+                    href={`/learn/words/${word.id}`}
+                    lang="en"
+                    className="underline decoration-2 underline-offset-4 hover:decoration-mark"
+                  >
+                    {word.lemma}
+                  </Link>
                   {word.custom && (
                     <span className="ml-2 border-[2px] border-line bg-box-4 px-1.5 text-[10px] font-black text-on-box uppercase">
                       {m.mine}
