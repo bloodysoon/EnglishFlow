@@ -4,6 +4,7 @@ import type { CefrLevel } from "@/features/dictionary/cefr";
 import { learnerLevel, type LearnerLevel } from "@/features/leitner/xp";
 import { splitTranslationCell } from "@/features/dictionary/dictionary-translations";
 import { fetchWiktionaryDraft } from "./lookup";
+import type { Statistics } from "./statistics";
 import { learningStats, streakDays, utcDay, type LearningStats, type UserWordRow } from "./stats";
 import { wordTimeline, type TimelineStep } from "./timeline";
 
@@ -34,6 +35,72 @@ export async function getLearningOverview(supabase: SupabaseClient): Promise<Lea
     level: learnerLevel(xpTotal),
     streak: streakDays(summary.active_days ?? [], today),
     today,
+  };
+}
+
+// ---------------------------------------------------------------------
+// Hard words: the ones the learner forgets most (ranked in SQL)
+// ---------------------------------------------------------------------
+
+export type HardWord = {
+  wordId: string;
+  lemma: string;
+  box: number;
+  forgot: number;
+  reviews: number;
+};
+
+export async function getHardWords(supabase: SupabaseClient, limit = 5, offset = 0): Promise<HardWord[]> {
+  const { data, error } = await supabase.rpc("my_hard_words", { p_limit: limit, p_offset: offset });
+  if (error) throw error;
+
+  return ((data ?? []) as Row[]).map((row) => ({
+    wordId: String(row.word_id),
+    lemma: String(row.lemma),
+    box: Number(row.box),
+    forgot: Number(row.forgot),
+    reviews: Number(row.reviews),
+  }));
+}
+
+// ---------------------------------------------------------------------
+// Statistics page (aggregated in SQL by my_statistics)
+// ---------------------------------------------------------------------
+
+export async function getStatistics(supabase: SupabaseClient): Promise<Statistics> {
+  const { data, error } = await supabase.rpc("my_statistics");
+  if (error) throw error;
+
+  const raw = (data ?? {}) as {
+    today?: string;
+    days?: Row[];
+    hours?: Row[];
+    levels?: Row[];
+    mastery?: { count?: number; avg_days?: number | string | null };
+  };
+
+  const hoursUtc = Array<number>(24).fill(0);
+  for (const row of raw.hours ?? []) hoursUtc[Number(row.hour)] = Number(row.reviews);
+
+  return {
+    today: raw.today ?? utcDay(),
+    days: (raw.days ?? []).map((row) => ({
+      day: String(row.day),
+      remembered: Number(row.remembered),
+      forgot: Number(row.forgot),
+      xp: Number(row.xp),
+    })),
+    hoursUtc,
+    levels: (raw.levels ?? []).map((row) => ({
+      level: String(row.level),
+      remembered: Number(row.remembered),
+      forgot: Number(row.forgot),
+    })),
+    mastery: {
+      count: Number(raw.mastery?.count ?? 0),
+      // numeric arrives as a number or a string; null when nothing was mastered.
+      avgDays: raw.mastery?.avg_days == null ? null : Number(raw.mastery.avg_days),
+    },
   };
 }
 

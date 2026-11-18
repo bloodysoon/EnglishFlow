@@ -28,8 +28,8 @@ const navigation = [
   { key: "dashboard", href: "/dashboard", icon: LayoutDashboard, ready: true },
   { key: "learn", href: "/learn", icon: BookOpen, ready: true },
   { key: "subscription", href: "/subscription", icon: Gem, ready: true },
-  { key: "statistics", href: "/statistics", icon: BarChart3, ready: false },
-  { key: "achievements", href: "/achievements", icon: Trophy, ready: false },
+  { key: "statistics", href: "/statistics", icon: BarChart3, ready: true },
+  { key: "achievements", href: "/achievements", icon: Trophy, ready: true },
 ] as const;
 
 type PlatformSidebarProps = {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, ChevronRight, Plus, Sparkles, Undo2 } from "lucide-react";
 
+import { countInSession } from "@/components/learn/learn-session";
 import { WordExample, WordHead, WordTranslation, speak } from "@/components/learn/word-card";
 import { Button } from "@/components/ui/button";
 import { fill } from "@/features/i18n/locales";
@@ -19,21 +20,6 @@ import type { CardFilters, TriageCard } from "@/features/learning/queries";
 // The last card that left the pile, kept so it can come back (undo).
 // wordId is the saved word to remove; null for a skipped card.
 type LastMove = { card: TriageCard; wordId: string | null; known: boolean | null };
-
-// Session numbers live in the tab (sessionStorage): they survive a reload,
-// a filter change and a trip to another page, and end when the tab closes.
-const SESSION_KEY = "ef-learn-session";
-type Session = { seen: number; added: number; known: number };
-
-function savedSession(): Session | null {
-  try {
-    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? "null") as Partial<Session> | null;
-    const ok = (n: unknown) => Number.isInteger(n) && (n as number) >= 0;
-    return s && ok(s.seen) && ok(s.added) && ok(s.known) ? { seen: s.seen!, added: s.added!, known: s.known! } : null;
-  } catch {
-    return null; // storage blocked or the value is not ours
-  }
-}
 
 const quiet =
   "inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-bold underline-offset-4 hover:underline aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
@@ -69,33 +55,11 @@ export function WordTriage({
   // Starts at the Settings language; switching here only changes what this card shows.
   const [shownLanguage, setShownLanguage] = useState(language);
   const [last, setLast] = useState<LastMove | null>(null);
-  const [session, setSession] = useState<Session>({ seen: 0, added: 0, known: 0 });
-
-  // After mount, so the server and the first client render agree (both show zero).
-  useEffect(() => {
-    const saved = savedSession();
-    if (!saved) return;
-    const id = requestAnimationFrame(() => setSession(saved));
-    return () => cancelAnimationFrame(id);
-  }, []);
 
   const card = cards[0];
   const translation = card?.translations[shownLanguage] ?? null;
   const translatedDefinition = card?.definitions[shownLanguage] ?? null;
   const limitReached = limit !== null && learned >= limit;
-
-  // One call per action (guarded by `pending`), so reading `session` here is safe.
-  const count = (known: boolean | null, by: 1 | -1) => {
-    const next = {
-      seen: Math.max(0, session.seen + by),
-      added: Math.max(0, session.added + (known === false ? by : 0)),
-      known: Math.max(0, session.known + (known === true ? by : 0)),
-    };
-    setSession(next);
-    try {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(next));
-    } catch {} // storage blocked: the numbers still work until reload
-  };
 
   // Drop the top card; top up before the pile runs out, skipping words already on screen.
   async function advance(current: TriageCard) {
@@ -129,7 +93,7 @@ export function WordTriage({
       }
       if (!known) setLearned((n) => n + 1);
       setLast({ card, wordId: result.wordId, known });
-      count(known, 1);
+      countInSession(known, 1);
       await advance(card);
       router.refresh();
     } catch {
@@ -146,7 +110,7 @@ export function WordTriage({
     setError(null);
     try {
       setLast({ card, wordId: null, known: null });
-      count(null, 1);
+      countInSession(null, 1);
       await advance(card);
     } catch {
       setError(t.failed);
@@ -170,7 +134,7 @@ export function WordTriage({
         if (last.known === false) setLearned((n) => Math.max(0, n - 1));
         router.refresh();
       }
-      count(last.known, -1);
+      countInSession(last.known, -1);
       setCards((pile) => [last.card, ...pile.filter((c) => c.lemma !== last.card.lemma)]);
       setRevealed(false);
       setLast(null);
@@ -209,33 +173,6 @@ export function WordTriage({
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  const decided = session.added + session.known;
-  const sessionStats = session.seen > 0 && (
-    <section aria-labelledby="session-title" className="mt-6 border-[3px] border-line bg-surface p-4 sm:p-5">
-      <h3 id="session-title" className="text-xs font-black tracking-widest uppercase">
-        {t.session}
-      </h3>
-      <dl className="mt-2 grid grid-cols-3 gap-3">
-        {[
-          [session.seen, t.seen],
-          [session.added, t.added],
-          [session.known, t.alreadyKnown],
-        ].map(([value, label]) => (
-          <div key={label} className="flex flex-col-reverse">
-            <dt className="text-xs font-semibold text-muted sm:text-sm">{label}</dt>
-            <dd className="font-display text-2xl font-black">{value}</dd>
-          </div>
-        ))}
-      </dl>
-      {decided > 0 && (
-        <div aria-hidden="true" className="mt-3 flex h-3 border-[2px] border-line">
-          <span className="bg-primary" style={{ width: `${(session.added / decided) * 100}%` }} />
-          <span className="flex-1 bg-box-4" />
-        </div>
-      )}
-    </section>
-  );
-
   const undoButton = last && (
     <button type="button" onClick={() => void undo()} aria-disabled={pending} aria-keyshortcuts="Z" className={quiet}>
       <Undo2 className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
@@ -256,7 +193,6 @@ export function WordTriage({
             {error}
           </p>
         )}
-        {sessionStats}
       </div>
     );
   }
@@ -362,8 +298,6 @@ export function WordTriage({
           </p>
         )}
       </div>
-
-      {sessionStats}
     </div>
   );
 }

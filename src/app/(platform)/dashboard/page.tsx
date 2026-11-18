@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
+import { HardWordList } from "@/components/learn/hard-word-list";
 import { buttonClasses } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { riseStyle } from "@/components/ui/rise";
@@ -22,7 +23,7 @@ import { getLandingDictionary } from "@/features/i18n/landing";
 import { fill } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
 import { plural } from "@/features/i18n/plural";
-import { getLearningOverview } from "@/features/learning/queries";
+import { getHardWords, getLearningOverview } from "@/features/learning/queries";
 import { introduceTodaysWords } from "@/features/learning/server";
 import { effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
 import { LEITNER_BOXES } from "@/features/leitner/boxes";
@@ -46,8 +47,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DashboardPage() {
   const supabase = await createClient();
   await introduceTodaysWords(supabase);
-  const [overview, { settings }, plan, { locale, t }] = await Promise.all([
+  const [overview, hardWords, { settings }, plan, { locale, t }] = await Promise.all([
     getLearningOverview(supabase),
+    getHardWords(supabase),
     getLearningSettings(),
     getPlan(supabase),
     getPlatformI18n(),
@@ -182,6 +184,25 @@ export default async function DashboardPage() {
           <p className="mt-3 text-sm font-semibold text-muted">{plural(locale, overview.queued, d.queued)}</p>
         )}
       </section>
+
+      {/* Hardest words: shown only once some word has been forgotten twice */}
+      {hardWords.length > 0 && (
+        <section aria-labelledby="hard-words-heading" className="rise" style={riseStyle(4)}>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 id="hard-words-heading" className="text-xl font-black uppercase">
+              {d.hardWords}
+            </h2>
+            <Link
+              href="/learn/hard-words"
+              className="inline-flex min-h-11 items-center text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark"
+            >
+              {d.seeAll}
+            </Link>
+          </div>
+          <p className="mb-4 text-sm font-semibold text-muted">{d.hardWordsHint}</p>
+          <HardWordList words={hardWords} locale={locale} d={d} />
+        </section>
+      )}
 
       {/* Daily goal and level */}
       <section className="grid gap-5 lg:grid-cols-2">
