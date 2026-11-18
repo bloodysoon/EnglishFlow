@@ -308,6 +308,18 @@ export const en = {
     reviews: "Reviews",
   },
 
+  sentenceCheck: {
+    title: "Practice",
+    prompt: "Write a sentence with",
+    check: "Check",
+    checking: "Checking...",
+    empty: "Write a sentence first (up to 300 characters).",
+    noMistakes: "No mistakes found. Nice!",
+    rateLimited: "Too many checks right now. Try again in a minute.",
+    failed: "We couldn't check your sentence. Please try again.",
+    credit: "Checked by LanguageTool. Explanations are in English.",
+  },
+
   review: {
     auto: "Automatic translation",
     title: "Review",

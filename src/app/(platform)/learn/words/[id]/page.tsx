@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { BackLink } from "@/components/learn/back-link";
+import { SentenceCheck } from "@/components/learn/sentence-check";
 import { WordExample, WordHead, WordTranslation } from "@/components/learn/word-card";
 import { riseStyle } from "@/components/ui/rise";
 import { fill } from "@/features/i18n/locales";
@@ -121,7 +122,11 @@ export default async function WordPage({ params }: Props) {
         </dl>
       </section>
 
-      <section aria-labelledby="timeline-title" className="rise" style={riseStyle(1)}>
+      <div className="rise" style={riseStyle(1)}>
+        <SentenceCheck lemma={card.lemma} t={t.sentenceCheck} common={t.common} />
+      </div>
+
+      <section aria-labelledby="timeline-title" className="rise" style={riseStyle(2)}>
         <h2 id="timeline-title" className="text-sm font-black tracking-widest uppercase">
           {w.timeline}
         </h2>

@@ -316,6 +316,18 @@ export const ro: PlatformDictionary = {
     reviews: "Recapitulări",
   },
 
+  sentenceCheck: {
+    title: "Exersează",
+    prompt: "Scrie o propoziție cu",
+    check: "Verifică",
+    checking: "Se verifică...",
+    empty: "Scrie mai întâi o propoziție (până la 300 de caractere).",
+    noMistakes: "Nicio greșeală. Bravo!",
+    rateLimited: "Prea multe verificări acum. Încearcă din nou peste un minut.",
+    failed: "Nu am putut verifica propoziția. Încearcă din nou.",
+    credit: "Verificat de LanguageTool. Explicațiile sunt în engleză.",
+  },
+
   review: {
     auto: "Traducere automată",
     title: "Recapitulare",
