@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { BadgeCheck, ListChecks, Plus, RotateCcw } from "lucide-react";
+import { ListChecks, RotateCcw } from "lucide-react";
 
 import { ActiveFilterChips, CardFilterMenu } from "@/components/learn/card-filters";
 import { LearnPanels, LearnPanelsProvider, PanelChips } from "@/components/learn/learn-panels";
@@ -98,33 +98,19 @@ export default async function LearnPage({ searchParams }: PageProps<"/learn">) {
           <LearnPanels today={today} labels={panelLabels} />
         </div>
 
-        {/* Toolbar: your word lists, then a rule before the cards. */}
-        <nav
-          aria-label={l.yourWords}
-          className="rise flex flex-wrap items-center gap-1.5 border-b-[2px] border-line pb-6 sm:gap-2"
-          style={riseStyle(2)}
-        >
-          <Link href="/learn/add" data-tour="add" aria-label={l.addWord} className={quick}>
-            <Plus className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-            <span className="hidden sm:inline">{l.addWord}</span>
-          </Link>
-          <Link href="/learn/words" data-tour="words" aria-label={l.myWords} className={quick}>
-            <ListChecks className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-            <span className="hidden sm:inline">{l.myWords}</span>
-          </Link>
-          <Link href="/learn/known" data-tour="known" aria-label={l.known} className={quick}>
-            <BadgeCheck className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-            <span className="hidden sm:inline">{l.known}</span>
-          </Link>
-        </nav>
-
-        {/* Discover words: know it or learn it, with the filters for this pile. */}
-        <section aria-labelledby="discover-title" className="rise" style={riseStyle(3)}>
+        {/* Discover words: one toolbar (my words + this pile's filters), then the card. */}
+        <section aria-labelledby="discover-title" className="rise" style={riseStyle(2)}>
+          <h2 id="discover-title" className="sr-only">
+            {t.triage.title}
+          </h2>
           {/* Above the card so the filter panel opens over it. */}
-          <div className="relative z-20 flex items-center justify-between gap-3">
-            <h2 id="discover-title" className="text-sm font-black tracking-widest uppercase">
-              {t.triage.title}
-            </h2>
+          <div className="relative z-20 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
+            <nav aria-label={l.yourWords} className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <Link href="/learn/words" data-tour="words" aria-label={l.myWords} className={quick}>
+                <ListChecks className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+                <span className="hidden sm:inline">{l.myWords}</span>
+              </Link>
+            </nav>
             <CardFilterMenu
               filters={filters}
               topicsInUse={topicsInUse}
