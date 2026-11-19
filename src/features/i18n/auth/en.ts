@@ -13,10 +13,10 @@ export const en: AuthDictionary = {
 
   register: {
     sticker: "Welcome to Elevo",
-    titleLine1: "Stop scrolling.",
-    titleLine2: "Start remembering.",
-    lead: "Your English won't learn itself.",
-    leadHighlight: "Let's fix that.",
+    titleLine1: "Your first set",
+    titleLine2: "is waiting.",
+    lead: "Create an account and start with a ready-made word set.",
+    leadHighlight: "Free to start.",
   },
 
   form: {

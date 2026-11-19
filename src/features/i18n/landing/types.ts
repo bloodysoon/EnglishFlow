@@ -14,6 +14,7 @@ export type LandingDictionary = {
     home: string;
     method: string;
     review: string;
+    sentences: string;
     start: string;
     logIn: string;
     dashboard: string;
@@ -30,19 +31,20 @@ export type LandingDictionary = {
   scroll: {
     toMethod: string;
     toReview: string;
+    toSentences: string;
     toStart: string;
     toTop: string;
   };
 
   hero: {
-    sticker: string;
     titleLine1: string;
     titleLine2: string;
     lead: string;
-    leadHighlight: string;
     ctaStart: string;
     ctaContinue: string;
     ctaMethod: string;
+    already: string;
+    logIn: string;
     facts: string[];
   };
 
@@ -52,12 +54,11 @@ export type LandingDictionary = {
     question: string;
     translation: string;
     gotIt: string;
-    streak: string;
+    nextReview: string;
     xp: string;
   };
 
   how: {
-    eyebrow: string;
     titleLine1: string;
     titleLine2: string;
     lead: string;
@@ -74,7 +75,6 @@ export type LandingDictionary = {
   };
 
   review: {
-    eyebrow: string;
     titleLine1: string;
     titleLine2: string;
     lead: string;
@@ -95,8 +95,27 @@ export type LandingDictionary = {
     liveBack: string; // {word}
   };
 
+  // A worked example of sentence practice: one try with a mistake, one fixed.
+  sentence: {
+    titleLine1: string;
+    titleLine2: string;
+    lead: string;
+    points: { title: string; text: string }[];
+    prompt: string;
+    firstTry: string;
+    // The learner's first sentence, split around the mistaken word.
+    before: string;
+    mistake: string;
+    after: string;
+    hint: string;
+    secondTry: string;
+    fixed: string; // the whole corrected sentence, with the word in place
+    fixedWord: string;
+    noMistakes: string;
+    tense: string;
+  };
+
   cta: {
-    sticker: string;
     titleLine1: string;
     titleStick: string;
     lead: string;

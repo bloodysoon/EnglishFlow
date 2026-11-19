@@ -1,11 +1,9 @@
 import { ArrowUp, RotateCcw } from "lucide-react";
 
+import { LeitnerCrate } from "@/components/landing/leitner-crate";
 import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { WordTranslation } from "@/components/landing/word-translation";
-import {
-  LEITNER_HOP_STEP_SECONDS,
-  leitnerBoxStyles as boxStyles,
-} from "@/components/landing/leitner-box-styles";
+import { LEITNER_HOP_STEP_SECONDS } from "@/components/landing/leitner-box-styles";
 import { LEITNER_BOXES } from "@/features/leitner/boxes";
 import { fill, type Locale } from "@/features/i18n/locales";
 import type { LandingDictionary } from "@/features/i18n/landing";
@@ -25,16 +23,13 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
       id="how-it-works"
       aria-labelledby="how-it-works-title"
       className="
-        flex min-h-[calc(100dvh-var(--navbar-height))] scroll-mt-(--navbar-height)
-        flex-col justify-center bg-canvas px-4 py-16 sm:px-8 sm:py-20 lg:px-10
+        flex scroll-mt-(--navbar-height)
+        flex-col justify-center lg:min-h-[calc(100dvh-var(--navbar-height))] bg-canvas px-4 py-16 sm:px-8 sm:py-20 lg:px-10
       "
     >
       <div className="mx-auto w-full max-w-[1360px]">
         <div className="mb-12 grid gap-5 lg:grid-cols-2 lg:items-end lg:gap-10">
           <div>
-            <p className="mb-4 inline-block border-[3px] border-line bg-box-4 px-3 py-1 text-xs font-black text-on-box uppercase shadow-brutal-sm">
-              {how.eyebrow}
-            </p>
             <h2
               id="how-it-works-title"
               className="text-[clamp(2rem,6vw,4rem)] leading-[0.98] font-black tracking-tight uppercase"
@@ -43,7 +38,7 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
             </h2>
           </div>
 
-          <p className="max-w-xl text-base leading-relaxed font-semibold text-muted sm:text-lg lg:justify-self-end">
+          <p className="max-w-xl text-base leading-relaxed font-semibold text-pretty text-muted sm:text-lg lg:justify-self-end">
             {how.lead}
           </p>
         </div>
@@ -54,34 +49,17 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
             const delay = { animationDelay: `${index * LEITNER_HOP_STEP_SECONDS}s` };
 
             return (
-              <li
-                key={box}
-                className={`box-active flex min-w-0 border-[3px] border-line shadow-brutal md:flex-col ${boxStyles[box]}`}
-                style={delay}
-              >
-                <p className="flex min-w-18 shrink-0 flex-col items-center justify-center border-r-[3px] border-line px-2 py-3 md:flex-row md:items-baseline md:justify-start md:gap-2 md:border-r-0 md:border-b-[3px] md:px-4">
-                  <span className="text-[10px] font-black tracking-wider uppercase md:text-xs">
-                    {how.box}
-                  </span>
-                  <span className="font-display text-4xl leading-none font-black">{box}</span>
-                  <span className="sr-only"> {fill(how.boxOf, { total: LEITNER_BOXES.length })}</span>
-                </p>
-
-                <div className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 md:flex-col md:items-stretch md:py-5">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-black uppercase">{how.boxLabels[box]}</p>
-                    <p className="mt-1 text-sm font-bold">
-                      {fill(how.review, { interval: formatReviewIntervalFor(locale, intervalDays) })}
-                    </p>
-                  </div>
-
-                  {/* One word with its translation hops box to box. */}
-                  <div
-                    aria-hidden="true"
-                    className="relative flex h-16 w-28 shrink-0 items-center justify-center md:mt-2 md:w-full"
-                  >
+              <li key={box} className="flex min-w-0 flex-col">
+                <LeitnerCrate
+                  box={box}
+                  className="md:flex-col"
+                  style={delay}
+                  hop
+                  open={box === 3}
+                  inside={
+                    // One word with its translation drops box to box.
                     <span
-                      className={`leitner-hop ${box === 3 ? "leitner-hop--rest" : ""} absolute flex min-w-24 flex-col items-center border-2 border-line bg-raised px-2.5 py-1.5 text-center text-fg shadow-brutal-sm`}
+                      className={`crate-drop ${box === 3 ? "leitner-hop--rest" : ""} absolute inset-x-0 bottom-[calc(100%-1.75rem)] mx-auto flex w-fit min-w-24 flex-col items-center border-2 border-line bg-raised px-2.5 py-1.5 text-center text-fg shadow-brutal-sm`}
                       style={delay}
                     >
                       <span lang="en" className="text-sm leading-tight font-black uppercase">
@@ -93,8 +71,21 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
                         className={`text-xs leading-tight font-bold text-muted ${dict.translationLanguages.length > 1 ? "items-center" : ""}`}
                       />
                     </span>
+                  }
+                >
+                  <p className="flex min-w-18 shrink-0 flex-col items-center justify-center border-r-[3px] border-line px-2 py-3 md:flex-row md:items-baseline md:justify-start md:gap-2 md:border-r-0 md:border-b-[3px] md:px-4">
+                    <span className="text-xs font-black tracking-wider uppercase">{how.box}</span>
+                    <span className="font-display text-4xl leading-none font-black">{box}</span>
+                    <span className="sr-only"> {fill(how.boxOf, { total: LEITNER_BOXES.length })}</span>
+                  </p>
+
+                  <div className="min-w-0 flex-1 px-4 py-3 md:py-5">
+                    <p className="font-black uppercase">{how.boxLabels[box]}</p>
+                    <p className="mt-1 text-sm font-bold">
+                      {fill(how.review, { interval: formatReviewIntervalFor(locale, intervalDays) })}
+                    </p>
                   </div>
-                </div>
+                </LeitnerCrate>
               </li>
             );
           })}

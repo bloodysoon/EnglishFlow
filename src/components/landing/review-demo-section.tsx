@@ -17,23 +17,20 @@ export function ReviewDemoSection({ isAuthenticated, locale, dict }: ReviewDemoS
       id="daily-review"
       aria-labelledby="daily-review-title"
       className="
-        flex min-h-[calc(100dvh-var(--navbar-height))] scroll-mt-(--navbar-height)
-        flex-col justify-center border-y-[3px] border-line bg-surface
+        flex scroll-mt-(--navbar-height)
+        flex-col justify-center lg:min-h-[calc(100dvh-var(--navbar-height))] border-y-[3px] border-line bg-surface
         px-4 py-16 sm:px-8 sm:py-20 lg:px-10
       "
     >
       <div className="mx-auto grid w-full max-w-[1360px] items-center gap-14 lg:grid-cols-2 lg:gap-16">
         <div>
-          <p className="mb-4 inline-block border-[3px] border-line bg-box-2 px-3 py-1 text-xs font-black text-on-box uppercase shadow-brutal-sm">
-            {review.eyebrow}
-          </p>
           <h2
             id="daily-review-title"
             className="text-[clamp(2rem,6vw,4rem)] leading-[0.98] font-black tracking-tight uppercase"
           >
             {review.titleLine1} <span className="block">{review.titleLine2}</span>
           </h2>
-          <p className="mt-5 max-w-lg text-base leading-relaxed font-semibold text-muted sm:text-lg">
+          <p className="mt-5 max-w-lg text-base leading-relaxed font-semibold text-pretty text-muted sm:text-lg">
             {review.lead}
           </p>
 
@@ -67,7 +64,7 @@ export function ReviewDemoSection({ isAuthenticated, locale, dict }: ReviewDemoS
         </div>
       </div>
 
-      <SectionScrollLink href="#join-us" label={dict.scroll.toStart} className="mt-14" />
+      <SectionScrollLink href="#sentence-practice" label={dict.scroll.toSentences} className="mt-14" />
     </section>
   );
 }

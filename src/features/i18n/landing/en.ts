@@ -4,7 +4,7 @@ export const en: LandingDictionary = {
   meta: {
     title: "Elevo · Learn words. Remember forever.",
     description:
-      "Learn English vocabulary with spaced repetition and the Leitner system. Practice a little every day.",
+      "Learn English words from ready-made sets, use each one in your own sentences, and review it right before you would forget. Free to start.",
   },
 
   translationLanguages: ["ru", "ro"],
@@ -14,7 +14,8 @@ export const en: LandingDictionary = {
     home: "Elevo home",
     method: "The method",
     review: "Try a review",
-    start: "Get started",
+    sentences: "Sentences",
+    start: "Start",
     logIn: "Log in",
     dashboard: "Dashboard",
     openDashboardFor: "Open dashboard for {email}",
@@ -29,20 +30,21 @@ export const en: LandingDictionary = {
   scroll: {
     toMethod: "See the method",
     toReview: "Try a review",
+    toSentences: "Then use it",
     toStart: "Ready to start?",
     toTop: "Back to top",
   },
 
   hero: {
-    sticker: "Flashcards that know when you'll forget",
     titleLine1: "Learn words.",
     titleLine2: "Remember forever.",
-    lead: "Learn English vocabulary with spaced repetition: every word comes back right before you would forget it.",
-    leadHighlight: "Practice a little. Remember a lot.",
+    lead: "Pick a ready-made word set, write your own sentences with each word, and every word comes back right before you would forget it.",
     ctaStart: "Start learning free",
     ctaContinue: "Continue learning",
     ctaMethod: "See the method",
-    facts: ["5 boxes", "1 simple rule", "A few minutes a day"],
+    already: "Already learning?",
+    logIn: "Log in",
+    facts: ["Ready-made sets", "Your own sentences", "RU & RO translations", "Free to start"],
   },
 
   card: {
@@ -51,12 +53,11 @@ export const en: LandingDictionary = {
     question: "Do you know the translation?",
     translation: "Translation",
     gotIt: "Got it",
-    streak: "7-day streak",
+    nextReview: "Next review in 3 days",
     xp: "+25 XP",
   },
 
   how: {
-    eyebrow: "The Leitner method",
     titleLine1: "Five boxes.",
     titleLine2: "One rule.",
     lead: "Every word lives in one of five boxes. The better you know it, the further it moves and the less often you see it. Your time goes to the words you are about to forget.",
@@ -79,10 +80,9 @@ export const en: LandingDictionary = {
   },
 
   review: {
-    eyebrow: "Try it here",
     titleLine1: "A review takes",
     titleLine2: "minutes.",
-    lead: "Flip the card, be honest, and watch each word move to its box. This is the whole daily routine.",
+    lead: "Flip the card, be honest, and watch each word move to its box. A few minutes a day is enough.",
     points: [
       { title: "Only what's due", text: "Each day shows the words whose box says it's time, nothing else." },
       { title: "One honest tap", text: "Got it or forgot. The box does the scheduling for you." },
@@ -104,20 +104,41 @@ export const en: LandingDictionary = {
     liveBack: "{word} went back to Box 1.",
   },
 
+  sentence: {
+    titleLine1: "Then use it",
+    titleLine2: "in a sentence.",
+    lead: "Knowing a word means using it. Write your own sentence with each word, and Elevo marks the mistakes and names the tense you used.",
+    points: [
+      { title: "Your words, your sentences", text: "Practise right on the word's page, as often as you like." },
+      { title: "Mistakes marked", text: "Grammar and spelling are checked, with a suggestion for each mistake." },
+      { title: "Tenses named", text: "See which tense you used, or pick one to practise." },
+    ],
+    prompt: "Write a sentence with this word",
+    firstTry: "First try",
+    before: "Yesterday I ",
+    mistake: "borrow",
+    after: " my sister's bike.",
+    hint: "“Yesterday” is in the past: try “borrowed”.",
+    secondTry: "Second try",
+    fixed: "Yesterday I borrowed my sister's bike.",
+    fixedWord: "borrowed",
+    noMistakes: "No mistakes",
+    tense: "Past Simple",
+  },
+
   cta: {
-    sticker: "Your next chapter starts here ✳",
-    titleLine1: "Ready to make your English",
-    titleStick: "stick?",
-    lead: "A few minutes a day make a big difference. Your journey starts with one word.",
+    titleLine1: "Your first word set",
+    titleStick: "is ready.",
+    lead: "Pick a set, review a few words, write one sentence. That's a day's practice.",
     create: "Create a free account",
     dashboard: "Go to dashboard",
     already: "Already learning?",
     logIn: "Log in",
-    stickers: ["You got this ⚡", "Let's go ✳", "Big progress ✓", "Start today ↗"],
+    stickers: ["Free to start", "No decks to build", "5 minutes a day", "EN · RU · RO"],
   },
 
   footer: {
-    tagline: "Make your English stick.",
+    tagline: "Learn words. Remember forever.",
     signUp: "Sign up",
   },
 };

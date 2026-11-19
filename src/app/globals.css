@@ -40,6 +40,7 @@
   --box-5: #2f3b4c;
   --on-box: #22201c;
   --on-box-3: #22201c;
+  --cta: var(--box-3);
   --on-box-5: #f3eee4;
 
   /* Neo-brutalism */
@@ -61,7 +62,7 @@
   --surface: #262d36;
   --raised: #2d3540;
   --fg: #ece5d8;
-  --muted: #aaa394;
+  --muted: #b5ae9f;
   --line: #0d1015;
   --primary: #7cc0a6;
   --on-primary: #14181d;
@@ -74,6 +75,7 @@
   --box-5: #ece5d8;
   --on-box: #14181d;
   --on-box-3: #14181d;
+  --cta: #6e9a7a;
   --on-box-5: #1e242c;
 }
 
@@ -85,7 +87,7 @@
     --surface: #262d36;
     --raised: #2d3540;
     --fg: #ece5d8;
-    --muted: #aaa394;
+    --muted: #b5ae9f;
     --line: #0d1015;
     --primary: #7cc0a6;
     --on-primary: #14181d;
@@ -98,6 +100,7 @@
     --box-5: #ece5d8;
     --on-box: #14181d;
     --on-box-3: #14181d;
+  --cta: #6e9a7a;
     --on-box-5: #1e242c;
   }
 }
@@ -121,6 +124,7 @@
   --color-box-1: var(--box-1);
   --color-box-2: var(--box-2);
   --color-box-3: var(--box-3);
+  --color-cta: var(--cta);
   --color-box-4: var(--box-4);
   --color-box-5: var(--box-5);
   --color-on-box: var(--on-box);
@@ -425,6 +429,48 @@ html {
   }
 }
 
+/* Crate boxes: the flaps fold open, the word drops in, sits, lifts out,
+   and the flaps fold shut. Same 8s cycle and 20% window as leitner-hop.
+   --lid goes 0 (shut) to 1 (open); every flap derives its angle from it. */
+@property --lid {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes crate-lid {
+  0%,
+  22%,
+  100% {
+    --lid: 0;
+  }
+
+  4%,
+  18% {
+    --lid: 1;
+  }
+}
+
+@keyframes crate-drop {
+  0%,
+  3% {
+    opacity: 0;
+    transform: translateY(-40px) rotate(-3deg);
+  }
+
+  8%,
+  15% {
+    opacity: 1;
+    transform: translateY(0) rotate(-3deg);
+  }
+
+  19%,
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) rotate(-3deg);
+  }
+}
+
 /* The box holding the word lifts while it has it (same timing). */
 @keyframes box-active {
   0%,
@@ -568,8 +614,87 @@ html {
   opacity: 0;
 }
 
+.crate-drop {
+  opacity: 0;
+  transform: rotate(-3deg);
+}
+
 .leitner-hop--rest {
   opacity: 1;
+}
+
+/* A 3D cardboard box: the front face is in the flow and sets the size; the
+   other faces and the four flaps are placed around it. --d is the depth. */
+.crate {
+  container-type: inline-size;
+  perspective: 900px;
+}
+
+.crate-scene {
+  --d: min(4.5rem, 40cqw);
+  --half: calc(var(--d) / 2);
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-18deg) rotateY(-18deg);
+}
+
+.crate-front {
+  transform: translateZ(var(--half));
+}
+
+.crate-back {
+  transform: translateZ(calc(var(--half) * -1));
+}
+
+.crate-left,
+.crate-right {
+  width: var(--d);
+}
+
+.crate-left {
+  left: 0;
+  transform: translateX(calc(var(--half) * -1)) rotateY(-90deg);
+}
+
+.crate-right {
+  right: 0;
+  transform: translateX(var(--half)) rotateY(90deg);
+}
+
+.crate-bottom {
+  bottom: 0;
+  height: var(--d);
+  transform: translateY(var(--half)) rotateX(-90deg);
+}
+
+/* Flaps hinge on the top edges: 90deg lies folded inward, negative leans
+   out. The front one stays steeper so it still reads from above. */
+.crate-flap {
+  position: absolute;
+  bottom: 100%;
+  height: var(--half);
+  transform-origin: bottom center;
+}
+
+.crate-flap-front {
+  transform: translateZ(var(--half)) rotateX(calc(90deg - var(--lid) * 125deg));
+}
+
+.crate-flap-back {
+  transform: translateZ(calc(var(--half) * -1)) rotateX(calc(-90deg + var(--lid) * 150deg));
+}
+
+/* Side flaps fold just under the front and back ones (92deg). */
+.crate-flap-left {
+  transform: translateX(calc(var(--half) * -1)) rotateY(-90deg) rotateX(calc(92deg - var(--lid) * 152deg));
+}
+
+.crate-flap-right {
+  transform: translateX(var(--half)) rotateY(90deg) rotateX(calc(92deg - var(--lid) * 152deg));
+}
+
+.crate-open {
+  --lid: 1;
 }
 
 .track-fill {
@@ -672,7 +797,7 @@ html {
 
 /* MotionToggle on the landing stops every looping animation. Scroll-driven
    ones (.scroll-tilt) stay: they only move while the visitor scrolls. */
-[data-motion-paused] :is(.bob, .flip-card, .marquee-track, .leitner-hop, .box-active, .track-fill, .scroll-nudge, .scroll-nudge-up, .flame) {
+[data-motion-paused] :is(.bob, .flip-card, .marquee-track, .leitner-hop, .crate-hop, .crate-drop, .box-active, .track-fill, .scroll-nudge, .scroll-nudge-up, .flame) {
   animation-play-state: paused;
 }
 
@@ -748,6 +873,14 @@ html {
 
   .leitner-hop--rest {
     opacity: 0;
+  }
+
+  .crate-hop {
+    animation: crate-lid 8s cubic-bezier(0.22, 1, 0.36, 1) infinite backwards;
+  }
+
+  .crate-drop {
+    animation: crate-drop 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
   .box-active {

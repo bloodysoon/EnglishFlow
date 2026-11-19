@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { CalendarClock } from "lucide-react";
 
 import { HeroShelf } from "@/components/landing/hero-shelf";
 import { HeroTilt } from "@/components/landing/hero-tilt";
@@ -75,7 +76,7 @@ export function HeroDeck({ dict }: { dict: LandingDictionary }) {
           className="bob absolute -top-1 right-0 z-10 translate-z-14 flex items-center gap-1.5 border-[3px] border-line bg-raised px-3 py-1.5 text-xs font-black text-fg uppercase shadow-brutal-sm sm:-right-2 sm:text-sm"
           style={{ "--tilt": "4deg" } as CSSProperties}
         >
-          <span className="flame">🔥</span> {card.streak}
+          <CalendarClock className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" /> {card.nextReview}
         </span>
 
         <span

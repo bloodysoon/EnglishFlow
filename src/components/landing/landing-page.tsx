@@ -7,6 +7,7 @@ import { WordMarquee } from "@/components/landing/word-marquee";
 import { MotionToggle } from "@/components/landing/motion-toggle";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { ReviewDemoSection } from "@/components/landing/review-demo-section";
+import { SentenceSection } from "@/components/landing/sentence-section";
 import { FinalCtaSection } from "@/components/landing/final-cta-section";
 import { Footer } from "@/components/landing/footer";
 import { createClient } from "@/lib/supabase/server";
@@ -90,6 +91,8 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         <HowItWorksSection locale={locale} dict={dict} />
 
         <ReviewDemoSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
+
+        <SentenceSection dict={dict} />
 
         <FinalCtaSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
       </main>

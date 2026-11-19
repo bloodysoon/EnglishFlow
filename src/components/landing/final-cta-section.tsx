@@ -27,9 +27,9 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
       id="join-us"
       aria-labelledby="join-us-title"
       className="
-        relative flex min-h-[calc(100dvh-var(--navbar-height))] scroll-mt-(--navbar-height)
-        flex-col items-center justify-center overflow-hidden
-        bg-box-3 px-4 py-16 text-center text-on-box-3 sm:px-8
+        relative flex scroll-mt-(--navbar-height) border-t-[3px] border-line
+        flex-col items-center justify-center overflow-hidden lg:min-h-[calc(100dvh-var(--navbar-height))]
+        bg-cta px-4 py-20 text-center text-on-box-3 sm:px-8
       "
     >
       {/* Floating stickers, only where there is room for them. */}
@@ -46,10 +46,6 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
       </div>
 
       <div className="scroll-tilt relative z-10 flex w-full max-w-4xl flex-col items-center gap-8">
-        <span className="-rotate-2 border-[3px] border-line bg-raised px-4 py-2 text-xs font-black text-fg uppercase shadow-brutal-sm sm:text-sm">
-          {cta.sticker}
-        </span>
-
         <h2
           id="join-us-title"
           className="flex flex-col items-center gap-3 text-[clamp(1.75rem,6vw,4.75rem)] leading-[0.98] font-black tracking-tight uppercase"
@@ -58,7 +54,7 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
           <span className="brutal-lift text-[0.85em] text-fg sm:text-[1em]">{cta.titleStick}</span>
         </h2>
 
-        <p className="max-w-xl text-base leading-relaxed font-semibold sm:text-xl">{cta.lead}</p>
+        <p className="max-w-xl text-base leading-relaxed font-semibold text-pretty sm:text-xl">{cta.lead}</p>
 
         <Link
           href={isAuthenticated ? "/dashboard" : localePath(locale, "register")}

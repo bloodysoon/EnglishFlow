@@ -46,9 +46,12 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
 
   useEffect(() => {
     if (!interacted.current) return;
-    if (done) restartRef.current?.focus();
-    else if (revealed) gotItRef.current?.focus();
-    else revealRef.current?.focus();
+    // The next control takes the same slot, so it is already in view: scrolling
+    // to it would only push the card's top under the sticky header.
+    const options = { preventScroll: true };
+    if (done) restartRef.current?.focus(options);
+    else if (revealed) gotItRef.current?.focus(options);
+    else revealRef.current?.focus(options);
   }, [done, revealed, index]);
 
   function reveal() {
@@ -213,7 +216,7 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
               className={`flex flex-col items-center border-[3px] border-line py-2 shadow-brutal-sm ${leitnerBoxStyles[box]}`}
             >
               {/* Phones show only the number: the colour marks the box. */}
-              <span className="text-[10px] font-black tracking-wider uppercase">
+              <span className="text-xs font-black tracking-wider uppercase">
                 <span className="hidden sm:inline">{fill(boxLabel, { box })}</span>
                 <span className="sm:hidden" aria-hidden="true">{box}</span>
                 <span className="sr-only sm:hidden">{fill(boxLabel, { box })}</span>

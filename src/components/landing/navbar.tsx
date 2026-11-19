@@ -13,7 +13,7 @@ import type { ThemePreference } from "@/features/theme/theme";
 const SECTIONS = [
   { id: "how-it-works", key: "method" },
   { id: "daily-review", key: "review" },
-  { id: "join-us", key: "start" },
+  { id: "sentence-practice", key: "sentences" },
 ] as const;
 
 type SectionId = (typeof SECTIONS)[number]["id"];
@@ -127,17 +127,28 @@ export function Navbar({ isAuthenticated, email, themePreference, locale, dict }
             </Link>
           )}
 
+          {/* Phones have no room for "Log in" next to the sign-up button;
+              the hero repeats it under its call to action. */}
+          {!isAuthenticated && (
+            <Link
+              href={localePath(locale, "login")}
+              className="inline-flex min-h-11 items-center px-1 text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark max-sm:hidden"
+            >
+              {dict.logIn}
+            </Link>
+          )}
+
           {/* On phones a signed-in visitor gets only the avatar link above:
               "Dashboard" next to it would not fit a 320px row. */}
           <Link
-            href={isAuthenticated ? "/dashboard" : localePath(locale, "login")}
+            href={isAuthenticated ? "/dashboard" : localePath(locale, "register")}
             className={buttonClasses({
               variant: "primary",
               size: "toolbar",
               className: isAuthenticated ? "max-sm:hidden" : "",
             })}
           >
-            {isAuthenticated ? dict.dashboard : dict.logIn}
+            {isAuthenticated ? dict.dashboard : dict.start}
           </Link>
         </div>
       </nav>

@@ -4,7 +4,7 @@ export const ro: LandingDictionary = {
   meta: {
     title: "Elevo · Învață cuvinte. Ține-le minte.",
     description:
-      "Învață vocabular englezesc prin repetare spațiată și sistemul Leitner. Exersează puțin în fiecare zi.",
+      "Învață cuvinte englezești din seturi gata făcute, folosește-le în propozițiile tale și repetă fiecare cuvânt exact înainte să-l uiți. Totul în română. Începi gratuit.",
   },
 
   translationLanguages: ["ro"],
@@ -14,6 +14,7 @@ export const ro: LandingDictionary = {
     home: "Elevo — pagina principală",
     method: "Metoda",
     review: "Încearcă",
+    sentences: "Propoziții",
     start: "Începe",
     logIn: "Intră",
     dashboard: "Panou",
@@ -29,20 +30,21 @@ export const ro: LandingDictionary = {
   scroll: {
     toMethod: "Cum funcționează",
     toReview: "Încearcă singur",
+    toSentences: "Apoi folosește-l",
     toStart: "Gata să începi?",
     toTop: "Sus",
   },
 
   hero: {
-    sticker: "Cartonașe care știu când vei uita",
     titleLine1: "Învață cuvinte.",
     titleLine2: "Ține-le minte.",
-    lead: "Învață vocabular englezesc prin repetare spațiată: fiecare cuvânt revine exact înainte să-l uiți.",
-    leadHighlight: "Exersează puțin. Reține mult.",
+    lead: "Alegi un set gata făcut, scrii propozițiile tale cu fiecare cuvânt, iar fiecare cuvânt revine exact înainte să-l uiți.",
     ctaStart: "Începe gratuit",
     ctaContinue: "Continuă",
     ctaMethod: "Cum funcționează",
-    facts: ["5 cutii", "1 regulă simplă", "Câteva minute pe zi"],
+    already: "Înveți deja?",
+    logIn: "Intră",
+    facts: ["Seturi gata făcute", "Propozițiile tale", "Totul în română", "Start gratuit"],
   },
 
   card: {
@@ -51,12 +53,11 @@ export const ro: LandingDictionary = {
     question: "Știi traducerea?",
     translation: "Traducere",
     gotIt: "Știu",
-    streak: "7 zile la rând",
+    nextReview: "Recapitulare în 3 zile",
     xp: "+25 XP",
   },
 
   how: {
-    eyebrow: "Metoda Leitner",
     titleLine1: "Cinci cutii.",
     titleLine2: "O regulă.",
     lead: "Fiecare cuvânt stă într-una din cinci cutii. Cu cât îl știi mai bine, cu atât avansează și îl vezi mai rar. Timpul tău merge spre cuvintele pe care ești pe cale să le uiți.",
@@ -79,10 +80,9 @@ export const ro: LandingDictionary = {
   },
 
   review: {
-    eyebrow: "Încearcă aici",
     titleLine1: "O recapitulare",
     titleLine2: "durează minute.",
-    lead: "Întoarce cartonașul, fii sincer și privește cum fiecare cuvânt se mută în cutia lui. Asta e toată rutina zilnică.",
+    lead: "Întoarce cartonașul, fii sincer și privește cum fiecare cuvânt se mută în cutia lui. Câteva minute pe zi sunt de ajuns.",
     points: [
       { title: "Doar ce e la rând", text: "În fiecare zi vezi doar cuvintele pentru care cutia spune că e momentul." },
       { title: "O singură apăsare sinceră", text: "Știu sau am uitat. Cutia se ocupă de program." },
@@ -104,20 +104,41 @@ export const ro: LandingDictionary = {
     liveBack: "{word}: înapoi în cutia 1.",
   },
 
+  sentence: {
+    titleLine1: "Apoi folosește-l",
+    titleLine2: "într-o propoziție.",
+    lead: "Să știi un cuvânt înseamnă să-l folosești. Scrie propoziția ta cu fiecare cuvânt, iar Elevo marchează greșelile și numește timpul folosit.",
+    points: [
+      { title: "Cuvintele tale, propozițiile tale", text: "Exersezi direct pe pagina cuvântului, de câte ori vrei." },
+      { title: "Greșeli marcate", text: "Gramatica și ortografia sunt verificate, cu o sugestie pentru fiecare greșeală." },
+      { title: "Timpul numit", text: "Vezi ce timp ai folosit sau alege unul pe care să-l exersezi." },
+    ],
+    prompt: "Scrie o propoziție cu acest cuvânt",
+    firstTry: "Prima încercare",
+    before: "Yesterday I ",
+    mistake: "borrow",
+    after: " my sister's bike.",
+    hint: "„Yesterday” e la trecut: încearcă „borrowed”.",
+    secondTry: "A doua încercare",
+    fixed: "Yesterday I borrowed my sister's bike.",
+    fixedWord: "borrowed",
+    noMistakes: "Fără greșeli",
+    tense: "Past Simple",
+  },
+
   cta: {
-    sticker: "Următorul capitol începe aici ✳",
-    titleLine1: "Gata ca engleza ta",
-    titleStick: "să rămână?",
-    lead: "Câteva minute pe zi fac o mare diferență. Drumul începe cu un singur cuvânt.",
+    titleLine1: "Primul tău set",
+    titleStick: "e gata.",
+    lead: "Alege un set, repetă câteva cuvinte, scrie o propoziție. Asta e practica unei zile.",
     create: "Creează un cont gratuit",
     dashboard: "Mergi la panou",
     already: "Înveți deja?",
     logIn: "Intră",
-    stickers: ["Poți ⚡", "Hai ✳", "Progres mare ✓", "Începe azi ↗"],
+    stickers: ["Start gratuit", "Fără liste de făcut", "5 minute pe zi", "Totul în română"],
   },
 
   footer: {
-    tagline: "Ca engleza să rămână.",
+    tagline: "Învață cuvinte. Ține-le minte.",
     signUp: "Înregistrare",
   },
 };

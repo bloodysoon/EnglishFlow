@@ -26,17 +26,10 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
       "
     >
       <div className="flex min-w-0 flex-col items-start gap-6 sm:gap-7">
-        <span className="rise brutal-sticker text-xs sm:text-sm" style={rise(0)}>
-          {hero.sticker}
-          <span className="brutal-sticker__icon" aria-hidden="true">
-            ✳
-          </span>
-        </span>
-
         <h1
           id="hero-title"
           className="rise flex flex-col items-start gap-3 text-[clamp(2rem,8vw,4.5rem)] leading-[0.98] font-black tracking-tight uppercase xl:text-[4.8vw] 2xl:text-[4.25rem]"
-          style={rise(1)}
+          style={rise(0)}
         >
           <span>{hero.titleLine1}</span>{" "}
           <span className="brutal-lift text-[clamp(1.25rem,5.4vw,3.25rem)] xl:text-[3.3vw] 2xl:text-[2.9rem]">
@@ -45,16 +38,13 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
         </h1>
 
         <p
-          className="rise max-w-xl text-base leading-relaxed font-semibold text-muted sm:text-xl"
-          style={rise(2)}
+          className="rise max-w-xl text-base leading-relaxed font-semibold text-pretty text-muted sm:text-xl"
+          style={rise(1)}
         >
-          {hero.lead}{" "}
-          <span className="brutal-highlight font-black whitespace-normal">
-            {hero.leadHighlight}
-          </span>
+          {hero.lead}
         </p>
 
-        <div className="rise w-full sm:w-auto" style={rise(3)}>
+        <div className="rise w-full sm:w-auto" style={rise(2)}>
           <Link
             href={isAuthenticated ? "/dashboard" : localePath(locale, "register")}
             className={buttonClasses({ variant: "primary", size: "lg", className: "group w-full sm:w-auto" })}
@@ -67,11 +57,23 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
               ↗
             </span>
           </Link>
+          {/* The navbar has no room for "Log in" on phones; returning learners find it here. */}
+          {!isAuthenticated && (
+            <p className="mt-3 text-sm font-semibold text-muted sm:hidden">
+              {hero.already}{" "}
+              <Link
+                href={localePath(locale, "login")}
+                className="inline-flex min-h-11 items-center font-black text-fg underline decoration-[3px] underline-offset-4"
+              >
+                {hero.logIn}
+              </Link>
+            </p>
+          )}
         </div>
 
         <ul
           className="rise flex flex-wrap gap-x-5 gap-y-2 pt-2 text-sm font-black tracking-wide uppercase"
-          style={rise(4)}
+          style={rise(3)}
         >
           {hero.facts.map((fact) => (
             <li key={fact} className="flex items-center gap-2">
@@ -82,7 +84,7 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
         </ul>
       </div>
 
-      <div className="rise min-w-0" style={rise(3)}>
+      <div className="rise min-w-0" style={rise(2)}>
         <HeroDeck dict={dict} />
       </div>
     </section>

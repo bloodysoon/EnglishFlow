@@ -13,10 +13,10 @@ export const ru: AuthDictionary = {
 
   register: {
     sticker: "Добро пожаловать в Elevo",
-    titleLine1: "Хватит листать.",
-    titleLine2: "Начни запоминать.",
-    lead: "Английский сам себя не выучит.",
-    leadHighlight: "Давай это исправим.",
+    titleLine1: "Первый набор",
+    titleLine2: "уже ждёт.",
+    lead: "Создай аккаунт и начни с готового набора слов.",
+    leadHighlight: "Начать можно бесплатно.",
   },
 
   form: {

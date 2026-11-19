@@ -14,7 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 
-import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
+import { LeitnerCrate } from "@/components/landing/leitner-crate";
 import { HardWordList } from "@/components/learn/hard-word-list";
 import { buttonClasses } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
@@ -168,16 +168,28 @@ export default async function DashboardPage() {
           {d.boxes}
         </h2>
         <ol className="grid grid-cols-5 gap-2 sm:gap-4">
-          {LEITNER_BOXES.map(({ box }) => (
-            <li
-              key={box}
-              className={`flex flex-col items-center border-[3px] border-line px-1 py-3 shadow-brutal-sm sm:py-4 ${leitnerBoxStyles[box]}`}
-            >
-              <span className="text-[10px] font-black tracking-wider uppercase sm:text-xs">{fill(d.box, { box })}</span>
-              <span className="font-display text-2xl font-black sm:text-4xl">{perBox[box] ?? 0}</span>
-              <span className="hidden text-center text-xs font-bold sm:block">{boxLabels[box]}</span>
-            </li>
-          ))}
+          {LEITNER_BOXES.map(({ box }) => {
+            const count = perBox[box] ?? 0;
+            return (
+              <li key={box} className="flex min-w-0 flex-col">
+                <LeitnerCrate
+                  box={box}
+                  className="flex-col items-center px-1 py-3 sm:py-4"
+                  open={count > 0}
+                  // Words in the box peek out of its open mouth.
+                  inside={
+                    count > 0 && (
+                      <span className="absolute inset-x-0 bottom-[calc(100%-1rem)] mx-auto h-9 w-3/5 -rotate-3 border-2 border-line bg-raised shadow-brutal-sm" />
+                    )
+                  }
+                >
+                  <span className="text-[10px] font-black tracking-wider uppercase sm:text-xs">{fill(d.box, { box })}</span>
+                  <span className="font-display text-2xl font-black sm:text-4xl">{count}</span>
+                  <span className="hidden text-center text-xs font-bold sm:block">{boxLabels[box]}</span>
+                </LeitnerCrate>
+              </li>
+            );
+          })}
         </ol>
         {overview.queued > 0 && (
           <p className="mt-3 text-sm font-semibold text-muted">{plural(locale, overview.queued, d.queued)}</p>
