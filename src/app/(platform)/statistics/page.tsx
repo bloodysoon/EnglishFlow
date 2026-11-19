@@ -150,7 +150,8 @@ export default async function StatisticsPage() {
         <h2 id="records-heading" className="mb-4 text-xl font-black uppercase">
           {s.records}
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* A card left alone on the last row of three spans the row. */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:[&>*:last-child:nth-child(3n+1)]:col-span-3">
           <StatCard
             label={s.currentStreak}
             value={plural(locale, overview.streak, t.dashboard.days)}
