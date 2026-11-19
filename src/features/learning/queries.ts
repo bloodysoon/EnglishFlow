@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import type { TimelineDay } from "@/features/achievements/timeline";
 import type { CefrLevel } from "@/features/dictionary/cefr";
 import { learnerLevel, type LearnerLevel } from "@/features/leitner/xp";
 import { splitTranslationCell } from "@/features/dictionary/dictionary-translations";
@@ -102,6 +103,36 @@ export async function getStatistics(supabase: SupabaseClient): Promise<Statistic
       avgDays: raw.mastery?.avg_days == null ? null : Number(raw.mastery.avg_days),
     },
   };
+}
+
+// ---------------------------------------------------------------------
+// Timeline page (one row per day, from my_timeline)
+// ---------------------------------------------------------------------
+
+export async function getTimeline(supabase: SupabaseClient): Promise<TimelineDay[]> {
+  const { data, error } = await supabase.rpc("my_timeline");
+  if (error) throw error;
+
+  const words = (list: unknown) =>
+    ((list as Row[] | null) ?? []).map((w) => ({ id: String(w.id), lemma: String(w.lemma), known: w.known === true }));
+  return ((data as Row[] | null) ?? []).map((row) => ({
+    day: String(row.day),
+    active: row.active === true,
+    remembered: Number(row.remembered),
+    forgot: Number(row.forgot),
+    xp: Number(row.xp),
+    mastered: Number(row.mastered),
+    levels: (row.levels ?? {}) as Record<string, number>,
+    added: Number(row.added),
+    known: Number(row.known),
+    words: words(row.words),
+    boxes: Object.fromEntries(
+      Object.entries((row.boxes ?? {}) as Record<string, Row>).map(([box, b]) => [
+        Number(box),
+        { count: Number(b.count), words: words(b.words) },
+      ]),
+    ),
+  }));
 }
 
 // ---------------------------------------------------------------------

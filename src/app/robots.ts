@@ -12,6 +12,7 @@ const PRIVATE_PATHS = [
   "/settings",
   "/statistics",
   "/subscription",
+  "/timeline",
 ];
 
 export default function robots(): MetadataRoute.Robots {

@@ -7,6 +7,7 @@ import {
   BarChart3,
   BookOpen,
   Gem,
+  History,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -30,6 +31,7 @@ const navigation = [
   { key: "subscription", href: "/subscription", icon: Gem, ready: true },
   { key: "statistics", href: "/statistics", icon: BarChart3, ready: true },
   { key: "achievements", href: "/achievements", icon: Trophy, ready: true },
+  { key: "timeline", href: "/timeline", icon: History, ready: true },
 ] as const;
 
 type PlatformSidebarProps = {
@@ -147,7 +149,7 @@ export function PlatformSidebar({
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none ${
+                className={`lift-safe flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none ${
                   active ? "bg-chip text-on-box shadow-brutal-sm" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
                 }`}
               >
@@ -162,7 +164,7 @@ export function PlatformSidebar({
             <Link
               href="/admin"
               aria-current={adminActive ? "page" : undefined}
-              className={`flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none lg:mt-4 ${
+              className={`lift-safe flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none lg:mt-4 ${
                 adminActive
                   ? "bg-box-5 text-on-box-5 shadow-brutal-sm"
                   : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
@@ -198,7 +200,7 @@ export function PlatformSidebar({
               aria-label={labels.settings}
               title={labels.settings}
               aria-current={settingsActive ? "page" : undefined}
-              className={`group flex h-11 w-11 shrink-0 items-center justify-center border-[2px] border-line shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-y-0 active:shadow-none motion-reduce:transition-none ${
+              className={`lift-safe group flex h-11 w-11 shrink-0 items-center justify-center border-[2px] border-line shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-md active:translate-y-0 active:shadow-none motion-reduce:transition-none ${
                 settingsActive ? "bg-chip text-on-box" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
               }`}
             >
@@ -214,7 +216,7 @@ export function PlatformSidebar({
           <form action={logoutAction} className="mt-4">
             <button
               type="submit"
-              className="flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 border-[2px] border-line bg-raised px-4 py-3 text-sm font-black text-fg uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-box-1 hover:text-on-box hover:shadow-brutal-sm active:translate-y-0 active:shadow-none motion-reduce:transition-none"
+              className="lift-safe flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 border-[2px] border-line bg-raised px-4 py-3 text-sm font-black text-fg uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-box-1 hover:text-on-box hover:shadow-brutal-sm active:translate-y-0 active:shadow-none motion-reduce:transition-none"
             >
               <LogOut className="h-4 w-4" />
               {labels.logOut}
