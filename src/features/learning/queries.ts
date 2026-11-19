@@ -355,23 +355,19 @@ export async function pickDictionaryCards(
   const entries = (picked.data as { lemma: string; part_of_speech: string; cefr_level: CefrLevel }[] | null) ?? [];
   if (entries.length === 0) return [];
 
-  // RLS returns shared words only when they sit in a published set.
-  const { data: shared, error } = await supabase
-    .from("words")
-    .select(CARD_COLUMNS)
-    .in(
-      "lemma",
-      entries.map((e) => e.lemma),
-    )
-    .is("owner_id", null);
+  const lemmas = entries.map((e) => e.lemma);
+  // All four lookups need only the lemmas, so they run together (one round
+  // trip instead of four in a row).
+  const [{ data: shared, error }, ru, ro, definitions] = await Promise.all([
+    // RLS returns shared words only when they sit in a published set.
+    supabase.from("words").select(CARD_COLUMNS).in("lemma", lemmas).is("owner_id", null),
+    filledTranslations(supabase, lemmas, "ru"),
+    filledTranslations(supabase, lemmas, "ro"),
+    filledDefinitions(supabase, lemmas),
+  ]);
   if (error) throw error;
   const checked = new Map(((shared as Row[] | null) ?? []).map((w) => [String(w.lemma), sharedTriageCard(w)]));
-  const lemmas = entries.map((e) => e.lemma);
-  const filled = {
-    ru: await filledTranslations(supabase, lemmas, "ru"),
-    ro: await filledTranslations(supabase, lemmas, "ro"),
-  };
-  const definitions = await filledDefinitions(supabase, lemmas);
+  const filled = { ru, ro };
   const noDefinitions = { ru: null, ro: null };
 
   return Promise.all(

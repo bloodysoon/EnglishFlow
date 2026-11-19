@@ -19,16 +19,22 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ReviewPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // introduce_new_words finds the user itself, so it does not wait for getUser.
+  const [
+    {
+      data: { user },
+    },
+  ] = await Promise.all([supabase.auth.getUser(), introduceTodaysWords(supabase)]);
   if (!user) return null; // the platform layout already redirects
 
-  await introduceTodaysWords(supabase);
-  const [{ settings }, overview, { locale, t }] = await Promise.all([
+  // The queue needs only the overview's date, so it starts as soon as that
+  // arrives instead of waiting for the slower settings.
+  const overviewLoad = getLearningOverview(supabase);
+  const [{ settings }, overview, { locale, t }, cards] = await Promise.all([
     getLearningSettings(),
-    getLearningOverview(supabase),
+    overviewLoad,
     getPlatformI18n(),
+    overviewLoad.then((o) => getReviewQueue(supabase, user.id, o.today)),
   ]);
   const r = t.review;
   const dayFormat = new Intl.DateTimeFormat(dateLocale(locale), {
@@ -37,7 +43,6 @@ export default async function ReviewPage() {
     month: "long",
     timeZone: "UTC",
   });
-  const cards = await getReviewQueue(supabase, user.id, overview.today);
 
   return (
     <div className="space-y-6 sm:space-y-8">

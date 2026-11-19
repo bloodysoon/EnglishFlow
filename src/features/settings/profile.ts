@@ -8,11 +8,13 @@ import { learningSettingsSchema, type LearningSettings } from "./schemas";
 // app_settings); a missing row falls back to the defaults as well.
 export async function getLearningSettings(): Promise<{ settings: LearningSettings; app: AppSettings }> {
   const supabase = await createClient();
-  const app = await getAppSettings(supabase);
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Independent round trips, so in parallel; only the profile needs the user.
+  const [
+    app,
+    {
+      data: { user },
+    },
+  ] = await Promise.all([getAppSettings(supabase), supabase.auth.getUser()]);
 
   const { data } = user
     ? await supabase.from("profiles").select("translation_language, daily_goal").eq("id", user.id).maybeSingle()

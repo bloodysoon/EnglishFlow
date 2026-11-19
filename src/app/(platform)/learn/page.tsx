@@ -31,29 +31,29 @@ const quick = buttonClasses({ size: "toolbar", variant: "secondary" });
 
 export default async function LearnPage({ searchParams }: PageProps<"/learn">) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // introduce_new_words finds the user itself, so it does not wait for getUser.
+  const [
+    {
+      data: { user },
+    },
+  ] = await Promise.all([supabase.auth.getUser(), introduceTodaysWords(supabase)]);
   if (!user) return null; // the platform layout already redirects
 
-  await introduceTodaysWords(supabase);
-  const [overview, { settings }, plan, { locale, t }] = await Promise.all([
+  const filters = parseCardFilters(await searchParams);
+  // Everything after today's introduction is independent, so it runs together.
+  const [overview, { settings }, plan, { locale, t }, newCards, topicsInUse] = await Promise.all([
     getLearningOverview(supabase),
     getLearningSettings(),
     getPlan(supabase),
     getPlatformI18n(),
-  ]);
-  const l = t.learn;
-
-  // The page still works if picking fails (e.g. the migration is not applied yet).
-  const filters = parseCardFilters(await searchParams);
-  const [newCards, topicsInUse] = await Promise.all([
+    // The page still works if picking fails (e.g. the migration is not applied yet).
     pickDictionaryCards(supabase, filters).catch((error: unknown): TriageCard[] => {
       logSupabaseError("[Learn] pick_dictionary_words failed", error);
       return [];
     }),
     getTopicsInUse(supabase).catch((): string[] => []),
   ]);
+  const l = t.learn;
   const due = overview.dueToday;
   const dailyGoal = effectiveDailyGoal(plan, settings.dailyGoal);
   const newToday = Math.min(overview.introducedToday, dailyGoal);

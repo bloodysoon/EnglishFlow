@@ -46,13 +46,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  await introduceTodaysWords(supabase);
-  const [overview, hardWords, { settings }, plan, { locale, t }] = await Promise.all([
-    getLearningOverview(supabase),
-    getHardWords(supabase),
-    getLearningSettings(),
-    getPlan(supabase),
-    getPlatformI18n(),
+  // Only the counts need today's words introduced first; the rest runs alongside.
+  const [[overview, hardWords], [{ settings }, plan, { locale, t }]] = await Promise.all([
+    introduceTodaysWords(supabase).then(() =>
+      Promise.all([getLearningOverview(supabase), getHardWords(supabase)]),
+    ),
+    Promise.all([getLearningSettings(), getPlan(supabase), getPlatformI18n()]),
   ]);
   const d = t.dashboard;
   const boxLabels = getLandingDictionary(locale).how.boxLabels;

@@ -23,18 +23,24 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettingsPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const [{ settings: learning, app }, theme, { locale, t }] = await Promise.all([
+  // None of these depend on each other, so one round of requests, not three.
+  const [
+    {
+      data: { user },
+    },
+    { settings: learning, app },
+    theme,
+    { locale, t },
+    plan,
+  ] = await Promise.all([
+    supabase.auth.getUser(),
     getLearningSettings(),
     getThemePreference(),
     getPlatformI18n(),
+    getPlan(supabase),
   ]);
   const s = t.settings;
   const { form } = getAuthDictionary(locale);
-  const plan = await getPlan(supabase);
   const goalOptions = app.dailyGoalOptions.filter((g) => effectiveDailyGoal(plan, g) === g);
 
   return (

@@ -17,12 +17,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function KnownWordsPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [
+    {
+      data: { user },
+    },
+    { settings },
+    { locale, t },
+  ] = await Promise.all([supabase.auth.getUser(), getLearningSettings(), getPlatformI18n()]);
   if (!user) return null; // the platform layout already redirects
 
-  const [{ settings }, { locale, t }] = await Promise.all([getLearningSettings(), getPlatformI18n()]);
   const words = await getMyWords(supabase, user.id, settings.translationLanguage, true);
   const k = t.known;
 
