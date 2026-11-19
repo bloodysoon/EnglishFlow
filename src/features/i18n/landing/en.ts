@@ -24,6 +24,8 @@ export const en: LandingDictionary = {
     themeToDark: "Switch to dark theme",
   },
 
+  pauseMotion: "Pause animations",
+
   scroll: {
     toMethod: "See the method",
     toReview: "Try a review",

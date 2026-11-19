@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Archivo, Onest, Unbounded } from "next/font/google";
 import "./globals.css";
+import { getMotionPaused } from "@/features/motion/server";
 import { getThemePreference } from "@/features/theme/server";
+import { SITE_URL } from "@/lib/site-url";
 
 // One variable family for the whole app: normal width for reading,
 // expanded width (wdth axis) for the display voice. See globals.css.
@@ -28,6 +30,8 @@ const onest = Onest({
 });
 
 export const metadata: Metadata = {
+  metadataBase: SITE_URL,
+  twitter: { card: "summary_large_image" },
   title: {
     default: "Elevo · Learn words. Remember forever.",
     template: "%s · Elevo",
@@ -39,11 +43,13 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Theme on <html> so every page, the body and the scrollbars match.
   const themePreference = await getThemePreference();
+  const motionPaused = await getMotionPaused();
 
   return (
     <html
       lang="en"
       data-theme={themePreference}
+      data-motion-paused={motionPaused ? "" : undefined}
       className={`${archivo.variable} ${unbounded.variable} ${onest.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

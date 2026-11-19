@@ -117,7 +117,7 @@ export function Navbar({ isAuthenticated, email, themePreference, locale, dict }
               title={email}
               aria-label={fill(dict.openDashboardFor, { email })}
               className="
-                hidden h-11 w-11 items-center justify-center sm:flex
+                flex h-11 w-11 items-center justify-center
                 border-[3px] border-line bg-chip text-sm font-black text-on-box
                 shadow-brutal-sm transition-transform duration-150
                 hover:-translate-y-0.5 motion-reduce:transition-none
@@ -127,9 +127,15 @@ export function Navbar({ isAuthenticated, email, themePreference, locale, dict }
             </Link>
           )}
 
+          {/* On phones a signed-in visitor gets only the avatar link above:
+              "Dashboard" next to it would not fit a 320px row. */}
           <Link
             href={isAuthenticated ? "/dashboard" : localePath(locale, "login")}
-            className={buttonClasses({ variant: "primary", size: "sm" })}
+            className={buttonClasses({
+              variant: "primary",
+              size: "toolbar",
+              className: isAuthenticated ? "max-sm:hidden" : "",
+            })}
           >
             {isAuthenticated ? dict.dashboard : dict.logIn}
           </Link>

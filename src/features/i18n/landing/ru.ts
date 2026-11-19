@@ -24,6 +24,8 @@ export const ru: LandingDictionary = {
     themeToDark: "Включить тёмную тему",
   },
 
+  pauseMotion: "Остановить анимации",
+
   scroll: {
     toMethod: "Как это работает",
     toReview: "Попробуй сам",

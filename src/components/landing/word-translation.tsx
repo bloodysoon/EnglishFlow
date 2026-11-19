@@ -23,7 +23,7 @@ export function WordTranslation({ word, languages, className = "" }: WordTransla
     <span className={`flex flex-col gap-1 ${className}`}>
       {languages.map((language) => (
         <span key={language} lang={language} className="flex items-baseline gap-2">
-          <span className="text-[max(0.55em,0.5625rem)] font-black tracking-widest uppercase opacity-70">
+          <span className="text-[max(0.55em,0.5625rem)] font-black tracking-widest uppercase">
             {language}
           </span>
           {word.translations[language]}

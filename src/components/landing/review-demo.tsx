@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 import Link from "next/link";
 import { Check, RotateCcw } from "lucide-react";
 
@@ -13,6 +13,7 @@ import type { LandingDictionary } from "@/features/i18n/landing";
 import { DEMO_WORDS } from "@/features/i18n/landing/words";
 
 type Move = { word: string; to: number; remembered: boolean; id: number };
+type DemoWord = (typeof DEMO_WORDS)[number];
 
 type ReviewDemoProps = {
   isAuthenticated: boolean;
@@ -29,6 +30,8 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
   const [revealed, setRevealed] = useState(false);
   const [boxes, setBoxes] = useState<number[]>(() => DEMO_WORDS.map((w) => w.box));
   const [moves, setMoves] = useState<Move[]>([]);
+  // The answered card flying off toward its new box (animation only).
+  const [leaving, setLeaving] = useState<Move & { index: number } | null>(null);
 
   const revealRef = useRef<HTMLButtonElement>(null);
   const gotItRef = useRef<HTMLButtonElement>(null);
@@ -55,9 +58,13 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
 
   function answer(remembered: boolean) {
     const to = nextBox(boxes[index], remembered);
+    const move = { word: DEMO_WORDS[index].word, to, remembered, id: moves.length };
+
+    // Reduced motion: no animation would run to remove the copy, so skip it.
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setLeaving({ ...move, index });
 
     setBoxes((prev) => prev.map((box, i) => (i === index ? to : box)));
-    setMoves((prev) => [...prev, { word: DEMO_WORDS[index].word, to, remembered, id: prev.length }]);
+    setMoves((prev) => [...prev, move]);
     setRevealed(false);
     setIndex((i) => i + 1);
   }
@@ -68,6 +75,7 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
     setRevealed(false);
     setBoxes(DEMO_WORDS.map((w) => w.box));
     setMoves([]);
+    setLeaving(null);
   }
 
   return (
@@ -113,22 +121,12 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
                 <p className="text-sm font-black uppercase">{question}</p>
               </div>
 
-              <div
-                className="flip-face flip-face--back absolute inset-0 flex flex-col justify-center gap-3 border-[3px] border-line bg-box-3 p-6 text-on-box-3 shadow-brutal"
+              <CardBack
+                word={current}
+                languages={translationLanguages}
+                className="flip-face flip-face--back absolute inset-0"
                 aria-hidden={!revealed}
-              >
-                <p lang="en" className="text-xs font-black tracking-widest uppercase">
-                  {current.word}
-                </p>
-                <WordTranslation
-                  word={current}
-                  languages={translationLanguages}
-                  className="font-display text-[clamp(1.6rem,6vw,2.25rem)] leading-tight font-black"
-                />
-                <p lang="en" className="font-semibold italic">
-                  &ldquo;{current.example}&rdquo;
-                </p>
-              </div>
+              />
             </div>
           </div>
         ) : (
@@ -138,6 +136,17 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
               {fill(dict.summary, { up: movedUp, back: moves.length - movedUp })}
             </p>
           </div>
+        )}
+
+        {leaving && (
+          <CardBack
+            key={leaving.id}
+            word={DEMO_WORDS[leaving.index]}
+            languages={translationLanguages}
+            aria-hidden="true"
+            className={`${leaving.remembered ? "card-out--up" : "card-out--back"} pointer-events-none absolute inset-0 z-10`}
+            onAnimationEnd={() => setLeaving(null)}
+          />
         )}
       </div>
 
@@ -227,6 +236,33 @@ export function ReviewDemo({ isAuthenticated, signUpHref, dict, boxLabel, questi
             ? fill(dict.liveMoved, { word: lastMove.word, box: lastMove.to })
             : fill(dict.liveBack, { word: lastMove.word })
           : ""}
+      </p>
+    </div>
+  );
+}
+
+// Answer side of a demo card: in the flip, and as the copy that flies off.
+function CardBack({
+  word,
+  languages,
+  className = "",
+  ...props
+}: { word: DemoWord; languages: TranslationLanguage[] } & ComponentProps<"div">) {
+  return (
+    <div
+      className={`flex flex-col justify-center gap-3 border-[3px] border-line bg-box-3 p-6 text-on-box-3 shadow-brutal ${className}`}
+      {...props}
+    >
+      <p lang="en" className="text-xs font-black tracking-widest uppercase">
+        {word.word}
+      </p>
+      <WordTranslation
+        word={word}
+        languages={languages}
+        className="font-display text-[clamp(1.6rem,6vw,2.25rem)] leading-tight font-black"
+      />
+      <p lang="en" className="font-semibold italic">
+        &ldquo;{word.example}&rdquo;
       </p>
     </div>
   );

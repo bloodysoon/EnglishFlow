@@ -24,6 +24,8 @@ export const ro: LandingDictionary = {
     themeToDark: "Activează tema întunecată",
   },
 
+  pauseMotion: "Oprește animațiile",
+
   scroll: {
     toMethod: "Cum funcționează",
     toReview: "Încearcă singur",

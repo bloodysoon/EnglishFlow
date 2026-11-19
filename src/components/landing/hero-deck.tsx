@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { HeroShelf } from "@/components/landing/hero-shelf";
+import { HeroTilt } from "@/components/landing/hero-tilt";
 import { WordTranslation } from "@/components/landing/word-translation";
 import { fill } from "@/features/i18n/locales";
 import type { LandingDictionary } from "@/features/i18n/landing";
@@ -9,19 +10,20 @@ import { HERO_WORD } from "@/features/i18n/landing/words";
 // The hero's picture of the product: a deck of word cards whose top card
 // flips between the English word and its translation, sitting on the
 // Leitner shelf. Decorative copy of what the page explains in text, so
-// hidden from assistive tech.
+// hidden from assistive tech. The deck is a CSS 3D scene: cards sit at
+// different depths, chips float in front, and the stage leans to the mouse.
 export function HeroDeck({ dict }: { dict: LandingDictionary }) {
   const { card } = dict;
 
   return (
-    <div aria-hidden="true" className="mx-auto flex w-full max-w-[540px] flex-col items-center gap-10">
-      <div className="relative w-full px-3 pt-6 sm:px-6">
+    <div aria-hidden="true" className="mx-auto flex w-full max-w-[540px] flex-col items-center gap-10 [perspective:1400px]">
+      <HeroTilt className="relative w-full px-3 pt-6 sm:px-6">
         {/* Cards waiting underneath */}
-        <div className="absolute inset-x-6 top-10 -bottom-2 rotate-[-7deg] border-[3px] border-line bg-box-4 shadow-brutal sm:inset-x-10" />
-        <div className="absolute inset-x-6 top-8 bottom-0 rotate-[5deg] border-[3px] border-line bg-box-2 shadow-brutal sm:inset-x-10" />
+        <div className="absolute inset-x-6 top-10 -bottom-2 rotate-[-7deg] -translate-z-16 border-[3px] border-line bg-box-4 shadow-brutal sm:inset-x-10" />
+        <div className="absolute inset-x-6 top-8 bottom-0 rotate-[5deg] -translate-z-8 border-[3px] border-line bg-box-2 shadow-brutal sm:inset-x-10" />
 
         {/* The card being reviewed */}
-        <div className="relative [perspective:1400px]">
+        <div className="relative transform-3d">
           <div className="flip-card relative h-[280px] sm:h-[330px]">
             <div className="flip-face absolute inset-0 flex flex-col justify-between border-[3px] border-line bg-raised p-5 text-fg shadow-brutal-lg sm:p-7">
               <div className="flex items-center justify-between gap-3 text-xs font-black tracking-widest uppercase">
@@ -70,19 +72,19 @@ export function HeroDeck({ dict }: { dict: LandingDictionary }) {
 
         {/* Progress chips around the card */}
         <span
-          className="bob absolute -top-1 right-0 z-10 flex items-center gap-1.5 border-[3px] border-line bg-raised px-3 py-1.5 text-xs font-black text-fg uppercase shadow-brutal-sm sm:-right-2 sm:text-sm"
+          className="bob absolute -top-1 right-0 z-10 translate-z-14 flex items-center gap-1.5 border-[3px] border-line bg-raised px-3 py-1.5 text-xs font-black text-fg uppercase shadow-brutal-sm sm:-right-2 sm:text-sm"
           style={{ "--tilt": "4deg" } as CSSProperties}
         >
           <span className="flame">🔥</span> {card.streak}
         </span>
 
         <span
-          className="bob absolute -bottom-4 left-0 z-10 border-[3px] border-line bg-chip px-3 py-1.5 text-xs font-black text-on-box uppercase shadow-brutal-sm sm:-left-2 sm:text-sm"
+          className="bob absolute -bottom-4 left-0 z-10 translate-z-14 border-[3px] border-line bg-chip px-3 py-1.5 text-xs font-black text-on-box uppercase shadow-brutal-sm sm:-left-2 sm:text-sm"
           style={{ "--tilt": "-4deg", "--delay": "1.2s" } as CSSProperties}
         >
           {card.xp} ★
         </span>
-      </div>
+      </HeroTilt>
 
       <HeroShelf />
     </div>

@@ -24,6 +24,9 @@ export type LandingDictionary = {
     themeToDark: string;
   };
 
+  // Button that stops the looping animations (WCAG 2.2.2).
+  pauseMotion: string;
+
   scroll: {
     toMethod: string;
     toReview: string;

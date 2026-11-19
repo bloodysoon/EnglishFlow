@@ -49,7 +49,7 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
         </div>
 
         {/* The shelf: column on phones, row from md up. */}
-        <ol className="grid gap-4 md:grid-cols-5">
+        <ol className="scroll-tilt grid gap-4 md:grid-cols-5">
           {LEITNER_BOXES.map(({ box, intervalDays }, index) => {
             const delay = { animationDelay: `${index * LEITNER_HOP_STEP_SECONDS}s` };
 
@@ -110,7 +110,7 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
         </div>
 
         {/* The one rule that drives the whole method. */}
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <div className="scroll-tilt mt-10 grid gap-4 sm:grid-cols-2">
           <p className="group flex items-center gap-4 border-[3px] border-line bg-raised px-5 py-4 font-semibold shadow-brutal-md transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal motion-reduce:transition-none">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center border-[3px] border-line bg-box-3 text-on-box-3">
               <ArrowUp

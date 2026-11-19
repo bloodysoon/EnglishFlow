@@ -55,14 +55,16 @@ export function ReviewDemoSection({ isAuthenticated, locale, dict }: ReviewDemoS
           </ul>
         </div>
 
-        <ReviewDemo
-          isAuthenticated={isAuthenticated}
-          signUpHref={localePath(locale, "register")}
-          dict={review}
-          boxLabel={dict.card.box}
-          question={dict.card.question}
-          translationLanguages={dict.translationLanguages}
-        />
+        <div className="scroll-tilt min-w-0">
+          <ReviewDemo
+            isAuthenticated={isAuthenticated}
+            signUpHref={localePath(locale, "register")}
+            dict={review}
+            boxLabel={dict.card.box}
+            question={dict.card.question}
+            translationLanguages={dict.translationLanguages}
+          />
+        </div>
       </div>
 
       <SectionScrollLink href="#join-us" label={dict.scroll.toStart} className="mt-14" />

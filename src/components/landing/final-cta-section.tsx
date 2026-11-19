@@ -13,10 +13,10 @@ type FinalCtaSectionProps = {
 };
 
 const STICKER_PLACES = [
-  { className: "left-[4%] top-[12%] bg-box-1", tilt: "-8deg", delay: "0s" },
-  { className: "right-[5%] top-[14%] bg-box-2", tilt: "7deg", delay: "0.8s" },
-  { className: "bottom-[16%] left-[9%] bg-box-4", tilt: "5deg", delay: "1.6s" },
-  { className: "bottom-[18%] right-[8%] bg-raised", tilt: "-5deg", delay: "0.4s" },
+  { className: "left-[4%] top-[12%] bg-box-1 text-on-box", tilt: "-8deg", delay: "0s" },
+  { className: "right-[5%] top-[14%] bg-box-2 text-on-box", tilt: "7deg", delay: "0.8s" },
+  { className: "bottom-[16%] left-[9%] bg-box-4 text-on-box", tilt: "5deg", delay: "1.6s" },
+  { className: "bottom-[18%] right-[8%] bg-raised text-fg", tilt: "-5deg", delay: "0.4s" },
 ];
 
 export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSectionProps) {
@@ -37,7 +37,7 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
         {STICKER_PLACES.map(({ className, tilt, delay }, i) => (
           <span
             key={className}
-            className={`bob absolute border-[3px] border-line px-5 py-3 text-lg font-black text-on-box uppercase shadow-brutal ${className}`}
+            className={`bob absolute border-[3px] border-line px-5 py-3 text-lg font-black uppercase shadow-brutal ${className}`}
             style={{ "--tilt": tilt, "--delay": delay } as CSSProperties}
           >
             {cta.stickers[i]}
@@ -45,7 +45,7 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
         ))}
       </div>
 
-      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-8">
+      <div className="scroll-tilt relative z-10 flex w-full max-w-4xl flex-col items-center gap-8">
         <span className="-rotate-2 border-[3px] border-line bg-raised px-4 py-2 text-xs font-black text-fg uppercase shadow-brutal-sm sm:text-sm">
           {cta.sticker}
         </span>
