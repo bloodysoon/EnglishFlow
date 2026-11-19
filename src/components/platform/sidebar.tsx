@@ -52,6 +52,7 @@ export function PlatformSidebar({
 
   const initial = email.charAt(0).toUpperCase() || "U";
   const settingsActive = pathname === "/settings" || pathname.startsWith("/settings/");
+  const profileActive = pathname === "/profile";
   const adminActive = pathname === "/admin" || pathname.startsWith("/admin/");
   // Phones and tablets: the menu is a drawer behind a burger button. Desktop: always shown.
   const [open, setOpen] = useState(false);
@@ -177,7 +178,12 @@ export function PlatformSidebar({
 
         {/* User profile */}
         <div className="border-t-[3px] border-line p-4 lg:mt-auto">
-          <div className="flex items-center gap-3">
+          <Link
+            href="/profile"
+            title={labels.profile}
+            aria-current={profileActive ? "page" : undefined}
+            className="group -m-1 flex items-center gap-3 p-1"
+          >
             <div className="flex h-11 w-11 shrink-0 items-center justify-center border-[2px] border-line bg-primary text-lg font-black text-on-primary shadow-brutal-sm">
               {initial}
             </div>
@@ -186,11 +192,9 @@ export function PlatformSidebar({
               <p className="truncate text-[10px] font-black tracking-wider text-muted uppercase">
                 {labels.yourAccount}
               </p>
-              <p className="truncate text-sm font-bold" title={email}>
-                {email}
-              </p>
+              <p className="truncate text-sm font-bold underline-offset-2 group-hover:underline">{email}</p>
             </div>
-          </div>
+          </Link>
 
           {/* Log out, with settings beside it, like Notion or Slack. */}
           <div className="mt-4 flex gap-2">

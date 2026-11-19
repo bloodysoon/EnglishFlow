@@ -9,10 +9,13 @@ const PRIVATE_PATHS = [
   "/auth",
   "/dashboard",
   "/learn",
+  "/profile",
   "/settings",
   "/statistics",
   "/subscription",
   "/timeline",
+  // Public profiles: shared by link, not meant to be found by search.
+  "/u",
 ];
 
 export default function robots(): MetadataRoute.Robots {

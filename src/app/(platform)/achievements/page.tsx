@@ -1,88 +1,27 @@
 import type { Metadata } from "next";
-import {
-  Boxes,
-  CalendarCheck,
-  CalendarDays,
-  CheckCircle2,
-  Compass,
-  Crosshair,
-  Crown,
-  Flame,
-  Footprints,
-  GraduationCap,
-  Library,
-  Lock,
-  Medal,
-  PenLine,
-  Hourglass,
-  NotebookPen,
-  SpellCheck,
-  Clock,
-  PartyPopper,
-  Repeat,
-  Rocket,
-  RotateCcw,
-  Sparkles,
-  Swords,
-  TrendingUp,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
+import { Lock } from "lucide-react";
+import { redirect } from "next/navigation";
 
+import { badgeIcons, trackIcons } from "@/components/achievements/icons";
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { riseStyle } from "@/components/ui/rise";
 import {
   ADVANCED_MIN,
-  PERFECT_WEEK,
-  achievements,
   BADGE_IDS,
   COMEBACK_GAP,
   FLAWLESS_MIN,
+  PERFECT_WEEK,
   SHARPSHOOTER,
   type BadgeId,
-  type TrackId,
 } from "@/features/achievements/achievements";
 import { fill } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
-import { getHardWords, getLearningOverview, getStatistics } from "@/features/learning/queries";
-import { activitySummary, longestStreak, reviewsOf } from "@/features/learning/statistics";
-import { getWritingStats } from "@/features/writing/history";
+import { getAchievementsAndPublish } from "@/features/profile/queries";
 import { TENSES } from "@/features/writing/tenses";
 import { createClient } from "@/lib/supabase/server";
 
 const card = "border-[3px] border-line shadow-brutal";
-
-const trackIcons: Record<TrackId, LucideIcon> = {
-  streak: Flame,
-  reviews: Repeat,
-  mastered: Crown,
-  words: Library,
-  known: CheckCircle2,
-  xp: Zap,
-  level: TrendingUp,
-  perfectDays: CalendarCheck,
-  bestDay: Rocket,
-  activeDays: CalendarDays,
-  sentences: NotebookPen,
-  cleanSentences: SpellCheck,
-  tensesUsed: Clock,
-};
-
-const badgeIcons: Record<BadgeId, LucideIcon> = {
-  firstStep: Footprints,
-  comeback: RotateCcw,
-  weekendWarrior: PartyPopper,
-  flawless: Sparkles,
-  sharpshooter: Crosshair,
-  allLevels: Compass,
-  advanced: GraduationCap,
-  fullHouse: Boxes,
-  leechSlayer: Swords,
-  perfectWeek: Medal,
-  firstSentence: PenLine,
-  tenseMaster: Hourglass,
-};
 
 // Numbers the badge descriptions mention, from the rules themselves.
 const badgeValues: Partial<Record<BadgeId, Record<string, number>>> = {
@@ -101,35 +40,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AchievementsPage() {
   const supabase = await createClient();
-  const [stats, overview, hardWords, writing, { locale, t }] = await Promise.all([
-    getStatistics(supabase),
-    getLearningOverview(supabase),
-    getHardWords(supabase, 50),
-    getWritingStats(supabase),
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const [{ result }, { locale, t }] = await Promise.all([
+    getAchievementsAndPublish(supabase, user.id),
     getPlatformI18n(),
   ]);
   const a = t.achievements;
   const number = (n: number) => n.toLocaleString(dateLocale(locale));
-
-  const summary = activitySummary(stats.days);
-  const result = achievements({
-    days: stats.days,
-    levels: stats.levels,
-    perBox: overview.perBox,
-    hardWords,
-    longestStreak: longestStreak(stats.days.map((d) => d.day))?.length ?? 0,
-    reviews: summary.reviews,
-    accuracy: summary.accuracy,
-    mastered: overview.mastered,
-    words: overview.total,
-    known: overview.known,
-    xp: overview.xpTotal,
-    level: overview.level.level,
-    perfectDays: summary.perfectDays,
-    bestDay: summary.bestDay ? reviewsOf(summary.bestDay) : 0,
-    activeDays: summary.activeDays,
-    ...writing,
-  });
 
   // Earned badges first, each group in the defined order.
   const badgeOrder = [...BADGE_IDS].sort((x, y) => Number(result.badges[y]) - Number(result.badges[x]));
