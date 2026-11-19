@@ -212,6 +212,20 @@ html {
 
 @layer components {
 
+/* A hover lift moves the element off a cursor resting on its bottom edge, so it
+   drops back, gets hovered again and shakes. This strip fills the gap it leaves.
+   Only while hovered: a permanent strip would itself start the shake from below. */
+.lift-safe {
+  position: relative;
+}
+.lift-safe:hover::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: 0.5rem;
+}
+
 .brutal-sticker {
   display: inline-flex;
   align-items: center;

@@ -21,7 +21,7 @@ export function AdminTabs() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`inline-flex min-h-11 items-center border-[2px] border-line px-4 text-sm font-black uppercase shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-md motion-reduce:transition-none ${
+            className={`lift-safe inline-flex min-h-11 items-center border-[2px] border-line px-4 text-sm font-black uppercase shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-md motion-reduce:transition-none ${
               active ? "bg-chip text-on-box" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
             }`}
           >

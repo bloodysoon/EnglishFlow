@@ -42,19 +42,24 @@ export default async function MyWordsPage() {
     <div className="space-y-8">
       <BackLink href="/learn" label={t.common.learn} />
       <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
+        <div className="lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
           <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
             {m.title}
             <span className="text-primary">.</span>
           </h1>
-          <p className="mt-2 font-semibold text-muted">
+          <p className="mt-2 font-semibold text-muted lg:mt-0">
             {plural(locale, words.length, t.common.words)}
             {words.length >= MY_WORDS_LIMIT && ` ${fill(m.showingLatest, { n: MY_WORDS_LIMIT })}`}
           </p>
         </div>
-        <Link href="/learn/add" className={buttonClasses()}>
-          {m.addWord}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/learn/known" className={buttonClasses({ variant: "secondary" })}>
+            {t.learn.known}
+          </Link>
+          <Link href="/learn/add" className={buttonClasses()}>
+            {m.addWord}
+          </Link>
+        </div>
       </header>
 
       {words.length === 0 ? (

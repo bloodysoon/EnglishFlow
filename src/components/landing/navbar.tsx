@@ -117,7 +117,7 @@ export function Navbar({ isAuthenticated, email, themePreference, locale, dict }
               title={email}
               aria-label={fill(dict.openDashboardFor, { email })}
               className="
-                flex h-11 w-11 items-center justify-center
+                lift-safe flex h-11 w-11 items-center justify-center
                 border-[3px] border-line bg-chip text-sm font-black text-on-box
                 shadow-brutal-sm transition-transform duration-150
                 hover:-translate-y-0.5 motion-reduce:transition-none

@@ -94,7 +94,7 @@ export default async function StatisticsPage() {
   const { today, days } = stats;
 
   const header = (
-    <header className="rise space-y-3" style={riseStyle(0)}>
+    <header className="rise space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0" style={riseStyle(0)}>
       <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
         {s.title}
         <span className="text-primary">.</span>

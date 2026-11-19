@@ -36,7 +36,7 @@ export default async function HardWordsPage({ searchParams }: PageProps<"/learn/
   return (
     <div className="space-y-8">
       <BackLink href="/dashboard" label={t.nav.dashboard} />
-      <header className="space-y-3">
+      <header className="space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
         <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
           {d.hardWords}
           <span className="text-primary">.</span>

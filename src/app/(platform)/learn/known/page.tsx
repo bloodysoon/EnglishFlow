@@ -32,14 +32,14 @@ export default async function KnownWordsPage() {
   return (
     <div className="space-y-8">
       <BackLink href="/learn" label={t.common.learn} />
-      <header className="space-y-3">
+      <header className="space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
         <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
           {k.title}
           <span className="text-primary">.</span>
         </h1>
         <p className="max-w-xl font-semibold text-muted">{k.lead}</p>
         {words.length > 0 && (
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex flex-wrap gap-3 pt-2 lg:basis-full lg:pt-3">
             {[10, 20].map((n) => (
               <Link
                 key={n}

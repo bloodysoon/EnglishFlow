@@ -16,11 +16,11 @@ export default async function AddWordPage() {
   return (
     <div className="space-y-8">
       <BackLink href="/learn" label={t.common.learn} />
-      <header>
+      <header className="lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
         <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
           {t.addWord.title}<span className="text-primary">.</span>
         </h1>
-        <p className="mt-2 font-semibold text-muted">{t.addWord.lead}</p>
+        <p className="mt-2 font-semibold text-muted lg:mt-0">{t.addWord.lead}</p>
       </header>
       <AddWordForm language={settings.translationLanguage} t={t.addWord} common={t.common} />
     </div>

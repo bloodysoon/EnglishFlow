@@ -6,7 +6,7 @@ type ButtonVariant = "primary" | "secondary";
 type ButtonSize = "toolbar" | "sm" | "md" | "lg";
 
 const base =
-  "font-display inline-flex cursor-pointer items-center justify-center border-[3px] border-line font-black uppercase " +
+  "lift-safe font-display inline-flex cursor-pointer items-center justify-center border-[3px] border-line font-black uppercase " +
   "transition-[transform,box-shadow,background-color] duration-150 motion-reduce:transition-none " +
   "interactive:hover:-translate-y-1 " +
   "interactive:active:translate-x-1 interactive:active:translate-y-1 interactive:active:shadow-none " +

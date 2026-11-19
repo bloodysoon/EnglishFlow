@@ -111,7 +111,7 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
 
         {/* The one rule that drives the whole method. */}
         <div className="scroll-tilt mt-10 grid gap-4 sm:grid-cols-2">
-          <p className="group flex items-center gap-4 border-[3px] border-line bg-raised px-5 py-4 font-semibold shadow-brutal-md transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal motion-reduce:transition-none">
+          <p className="lift-safe group flex items-center gap-4 border-[3px] border-line bg-raised px-5 py-4 font-semibold shadow-brutal-md transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal motion-reduce:transition-none">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center border-[3px] border-line bg-box-3 text-on-box-3">
               <ArrowUp
                 className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1 motion-reduce:transition-none"
@@ -125,7 +125,7 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
             </span>
           </p>
 
-          <p className="group flex items-center gap-4 border-[3px] border-line bg-raised px-5 py-4 font-semibold shadow-brutal-md transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal motion-reduce:transition-none">
+          <p className="lift-safe group flex items-center gap-4 border-[3px] border-line bg-raised px-5 py-4 font-semibold shadow-brutal-md transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal motion-reduce:transition-none">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center border-[3px] border-line bg-box-1 text-on-box">
               <RotateCcw
                 className="h-5 w-5 transition-transform duration-500 group-hover:-rotate-180 motion-reduce:transition-none"

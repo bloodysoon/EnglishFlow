@@ -295,7 +295,7 @@ export default async function DashboardPage() {
               <Link
                 key={key}
                 href={href}
-                className={`group flex min-h-56 flex-col p-6 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal-lg motion-reduce:transition-none ${card} ${tone}`}
+                className={`lift-safe group flex min-h-56 flex-col p-6 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-brutal-lg motion-reduce:transition-none ${card} ${tone}`}
               >
                 {body}
               </Link>

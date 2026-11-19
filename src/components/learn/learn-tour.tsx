@@ -10,7 +10,7 @@ import type { PlatformDictionary } from "@/features/i18n/platform";
 
 // Each step spotlights the element with the matching data-tour attribute.
 // In page order: review in the header, the toolbar, then the new-word card.
-const STEPS = ["today", "add", "words", "known", "filters", "card"] as const;
+const STEPS = ["today", "words", "filters", "card"] as const;
 
 const SEEN_KEY = "ef-learn-tour-seen";
 const PAD = 6;

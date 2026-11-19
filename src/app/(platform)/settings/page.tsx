@@ -45,11 +45,11 @@ export default async function SettingsPage() {
 
   return (
     <div className="max-w-3xl space-y-8">
-      <header className="rise" style={riseStyle(0)}>
+      <header className="rise lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0" style={riseStyle(0)}>
         <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
           {s.title}<span className="text-primary">.</span>
         </h1>
-        <p className="mt-2 font-semibold text-muted">{s.lead}</p>
+        <p className="mt-2 font-semibold text-muted lg:mt-0">{s.lead}</p>
       </header>
 
       <div className="rise" style={riseStyle(1)}>

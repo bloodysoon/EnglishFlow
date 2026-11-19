@@ -48,7 +48,7 @@ export function LanguageSwitcher({ locale, label, paths = LOCALE_PATHS }: Langua
         // Starts with the visible code ("EN") so voice control can target it (WCAG 2.5.3).
         aria-label={`${locale.toUpperCase()} · ${label}: ${LOCALE_NAMES[locale]}`}
         className="
-          flex h-11 min-w-11 cursor-pointer list-none items-center justify-center gap-1 px-2
+          lift-safe flex h-11 min-w-11 cursor-pointer list-none items-center justify-center gap-1 px-2
           border-[3px] border-line bg-raised text-sm font-black text-fg uppercase shadow-brutal-sm
           transition-[transform,box-shadow,background-color] duration-150
           hover:-translate-y-0.5 hover:bg-box-2 hover:text-on-box hover:shadow-brutal-md
