@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { wordTimeline } from "./timeline";
+import { withPractice, wordTimeline } from "./timeline";
 
 const at = (day: number) => `2026-11-${String(day).padStart(2, "0")}T10:00:00Z`;
 
@@ -32,5 +32,13 @@ describe("wordTimeline", () => {
       { reason: "review_remembered", amount: 10, at: at(11) },
     ]);
     expect(steps.map((s) => s.to)).toEqual([2, undefined, 2]);
+  });
+});
+
+describe("withPractice", () => {
+  it("slots practice sentences between the other steps by time", () => {
+    const steps = wordTimeline("2026-11-01T10:00:00Z", [{ reason: "review_remembered", amount: 10, at: "2026-11-03T10:00:00Z" }]);
+    const entry = { id: 1, sentence: "I ran.", tense: null, tenseOk: null, issues: [], at: "2026-11-02T10:00:00Z" };
+    expect(withPractice(steps, [entry]).map((s) => s.kind)).toEqual(["added", "practice", "remembered"]);
   });
 });

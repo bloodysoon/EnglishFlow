@@ -132,6 +132,11 @@ export async function getTimeline(supabase: SupabaseClient): Promise<TimelineDay
         { count: Number(b.count), words: words(b.words) },
       ]),
     ),
+    practice: {
+      count: Number((row.practice as Row | null)?.count ?? 0),
+      clean: Number((row.practice as Row | null)?.clean ?? 0),
+      words: words((row.practice as Row | null)?.words),
+    },
   }));
 }
 

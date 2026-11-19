@@ -1,15 +1,18 @@
 import { FIRST_BOX, LAST_BOX } from "@/features/leitner/boxes";
+import type { PracticeEntry } from "@/features/writing/history";
 
 // One row of the xp_events log for a word.
 export type WordEvent = { reason: string; amount: number; at: string };
 
 export type TimelineStep = {
-  kind: "added" | "known" | "remembered" | "forgot" | "mastered";
+  kind: "added" | "known" | "remembered" | "forgot" | "mastered" | "practice";
   at: string; // ISO timestamp
   xp: number;
   // Box before and after a review.
   from?: number;
   to?: number;
+  // The sentence, for a practice step.
+  practice?: PracticeEntry;
 };
 
 const KINDS: Record<string, TimelineStep["kind"]> = {
@@ -36,4 +39,11 @@ export function wordTimeline(addedAt: string, events: WordEvent[]): TimelineStep
     box = row.kind === "remembered" ? Math.min(box + 1, LAST_BOX) : FIRST_BOX;
     return { ...row, from, to: box };
   });
+}
+
+// Practice sentences slotted into a word's story by time.
+export function withPractice(steps: TimelineStep[], practice: PracticeEntry[]): TimelineStep[] {
+  return [...steps, ...practice.map((p): TimelineStep => ({ kind: "practice", at: p.at, xp: 0, practice: p }))].sort(
+    (a, b) => Date.parse(a.at) - Date.parse(b.at),
+  );
 }

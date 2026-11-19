@@ -14,6 +14,8 @@ export type TimelineDay = DayActivity & {
   words: TimelineWord[]; // a sample of the words added
   // Words that arrived in each Leitner box that day (replayed in SQL).
   boxes: Record<number, { count: number; words: TimelineWord[] }>;
+  // Sentences checked that day; clean = no mistakes and the asked tense.
+  practice: { count: number; clean: number; words: TimelineWord[] };
 };
 
 export type Unlock = { kind: "track"; id: TrackId; target: number } | { kind: "badge"; id: BadgeId };

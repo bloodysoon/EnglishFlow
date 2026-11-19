@@ -9,9 +9,13 @@ import { WordExample, WordHead, WordTranslation } from "@/components/learn/word-
 import { riseStyle } from "@/components/ui/rise";
 import { fill } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
+import { plural } from "@/features/i18n/plural";
 import { getWordHistory } from "@/features/learning/queries";
 import { utcDay } from "@/features/learning/stats";
+import { withPractice } from "@/features/learning/timeline";
 import { getLearningSettings } from "@/features/settings/profile";
+import { getPracticeHistory } from "@/features/writing/history";
+import { TENSE_INFO } from "@/features/writing/tenses";
 import { createClient } from "@/lib/supabase/server";
 
 type Props = { params: Promise<{ id: string }> };
@@ -40,10 +44,12 @@ export default async function WordPage({ params }: Props) {
     getPlatformI18n(),
   ]);
   if (!word) notFound();
+  const history = await getPracticeHistory(await createClient(), word.card.wordId);
 
   const w = t.wordPage;
   const m = t.myWords;
-  const { card, steps } = word;
+  const { card } = word;
+  const steps = withPractice(word.steps, history);
   const language = settings.translationLanguage;
   const definition = card.definitions[language] ?? card.definition;
   const day = new Intl.DateTimeFormat(dateLocale(locale), { day: "numeric", month: "short", timeZone: "UTC" });
@@ -72,6 +78,7 @@ export default async function WordPage({ params }: Props) {
     remembered: "bg-primary",
     forgot: "bg-box-1",
     mastered: "bg-box-5",
+    practice: "bg-box-3",
   };
 
   return (
@@ -123,7 +130,15 @@ export default async function WordPage({ params }: Props) {
       </section>
 
       <div className="rise" style={riseStyle(1)}>
-        <SentenceCheck lemma={card.lemma} t={t.sentenceCheck} common={t.common} />
+        <SentenceCheck
+          wordId={card.wordId}
+          lemma={card.lemma}
+          history={history}
+          locale={locale}
+          dateTag={dateLocale(locale)}
+          t={t.sentenceCheck}
+          common={t.common}
+        />
       </div>
 
       <section aria-labelledby="timeline-title" className="rise" style={riseStyle(2)}>
@@ -142,6 +157,23 @@ export default async function WordPage({ params }: Props) {
                 {w[step.kind]}
                 {step.xp > 0 && <span className="ml-2 font-display text-sm text-muted">+{step.xp} XP</span>}
               </p>
+              {step.practice && (
+                <>
+                  <p lang="en" className="mt-1 font-semibold break-words">
+                    {step.practice.sentence}
+                  </p>
+                  <p className="text-sm font-semibold">
+                    {step.practice.tense && (
+                      <span lang="en">
+                        {step.practice.tenseOk ? "✓" : "✗"} {TENSE_INFO[step.practice.tense].name} ·{" "}
+                      </span>
+                    )}
+                    {step.practice.issues.length === 0
+                      ? t.sentenceCheck.clean
+                      : plural(locale, step.practice.issues.length, t.sentenceCheck.mistakes)}
+                  </p>
+                </>
+              )}
               {step.from !== undefined && step.to !== undefined && (
                 <p className="text-sm font-semibold">{fill(w.boxMove, { from: step.from, to: step.to })}</p>
               )}

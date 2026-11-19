@@ -155,6 +155,19 @@ export default async function TimelinePage() {
                       day.added,
                     )}
 
+                  {day.practice.count > 0 &&
+                    wordGroup(
+                      <span>
+                        {plural(locale, day.practice.count, h.practised)}
+                        <span className="font-semibold text-muted">
+                          {" "}
+                          · {fill(h.clean, { n: day.practice.clean })}
+                        </span>
+                      </span>,
+                      day.practice.words,
+                      day.practice.words.length,
+                    )}
+
                   {/* Highest box first: box 5 is mastered, box 1 is forgotten again. */}
                   {[5, 4, 3, 2, 1].map((box) => {
                     const moved = day.boxes[box];

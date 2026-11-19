@@ -13,6 +13,7 @@ const day = (d: Partial<TimelineDay> & { day: string }): TimelineDay => ({
   known: 0,
   words: [],
   boxes: {},
+  practice: { count: 0, clean: 0, words: [] },
   ...d,
 });
 
