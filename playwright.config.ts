@@ -1,4 +1,10 @@
+import { loadEnvConfig } from "@next/env";
 import { defineConfig, devices } from "@playwright/test";
+
+import { AUTH_FILE } from "./e2e/test-account";
+
+// Same env files as Next (.env.local), for the optional test account.
+loadEnvConfig(process.cwd());
 
 const PORT = 3100;
 
@@ -15,6 +21,14 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
+    // Signed-in specs run in Chromium only; they need a test account.
+    { name: "setup", testMatch: /auth\.setup\.ts/ },
+    {
+      name: "signed-in",
+      testMatch: /platform\.spec\.ts/,
+      dependencies: ["setup"],
+      use: { ...devices["Desktop Chrome"], storageState: AUTH_FILE },
+    },
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     // Safari's engine, for behaviour. Not for 3D looks: headless WebKit
     // ignores backface-visibility (even on a bare test page), so flip
@@ -22,7 +36,9 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
     // Firefox has no scroll-driven animations: checks the static fallback.
     { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-  ],
+  ].map((project) =>
+    project.testMatch ? project : { ...project, testIgnore: [/auth\.setup\.ts/, /platform\.spec\.ts/] },
+  ),
   webServer: {
     command: `npm run start -- -p ${PORT}`,
     url: `http://localhost:${PORT}`,
