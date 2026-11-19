@@ -54,3 +54,9 @@ next-env.d.ts
 
 # local caches (dictionary downloads)
 /.cache/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
