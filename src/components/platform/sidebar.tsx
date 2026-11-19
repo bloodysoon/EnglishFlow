@@ -15,7 +15,6 @@ import {
   X,
   ShieldCheck,
   Trophy,
-  UserRound,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -184,17 +183,27 @@ export function PlatformSidebar({
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="flex items-center gap-1 text-xs font-black text-muted uppercase">
-                <UserRound className="h-3 w-3" aria-hidden="true" />
+              <p className="truncate text-[10px] font-black tracking-wider text-muted uppercase">
                 {labels.yourAccount}
               </p>
-
-              <p className="mt-1 truncate text-sm font-bold" title={email}>
+              <p className="truncate text-sm font-bold" title={email}>
                 {email}
               </p>
             </div>
+          </div>
 
-            {/* Settings sit with the account, like Notion or Slack. */}
+          {/* Log out, with settings beside it, like Notion or Slack. */}
+          <div className="mt-4 flex gap-2">
+            <form action={logoutAction} className="flex-1">
+              <button
+                type="submit"
+                className="lift-safe flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 border-[2px] border-line bg-raised px-4 py-2 text-sm font-black text-fg uppercase shadow-brutal-sm transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-box-1 hover:text-on-box hover:shadow-brutal-md active:translate-y-0 active:shadow-none motion-reduce:transition-none"
+              >
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                {labels.logOut}
+              </button>
+            </form>
+
             <Link
               href="/settings"
               aria-label={labels.settings}
@@ -211,17 +220,6 @@ export function PlatformSidebar({
               />
             </Link>
           </div>
-
-          {/* Logout */}
-          <form action={logoutAction} className="mt-4">
-            <button
-              type="submit"
-              className="lift-safe flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 border-[2px] border-line bg-raised px-4 py-3 text-sm font-black text-fg uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:bg-box-1 hover:text-on-box hover:shadow-brutal-sm active:translate-y-0 active:shadow-none motion-reduce:transition-none"
-            >
-              <LogOut className="h-4 w-4" />
-              {labels.logOut}
-            </button>
-          </form>
         </div>
       </div>
     </aside>
