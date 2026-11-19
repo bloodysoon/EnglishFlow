@@ -129,7 +129,8 @@ export function LearnPanels({ today, labels }: { today: Today; labels: Labels })
               {learn.today}
             </h2>
             <div className="flex items-center gap-3">
-              <p className="font-display text-xl font-black">
+              {/* The heading may wrap; the counter must not split into "1 /" and "100". */}
+              <p className="font-display text-xl font-black whitespace-nowrap">
                 {today.done} / {today.goal}
               </p>
               <HideButton label={fill(learn.hidePanel, { panel: learn.today })} onClick={() => toggle("today")} />

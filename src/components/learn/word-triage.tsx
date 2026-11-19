@@ -244,7 +244,8 @@ export function WordTriage({
             aria-keyshortcuts="ArrowLeft"
             className="w-full flex-col gap-1! px-3!"
           >
-            <span className="flex items-center gap-2">
+            {/* Phones: icon above the label, which then fits one line. */}
+            <span className="flex flex-col items-center gap-1 whitespace-nowrap sm:flex-row sm:gap-2">
               <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
               {t.know}
             </span>
@@ -257,7 +258,7 @@ export function WordTriage({
             aria-keyshortcuts="ArrowRight"
             className="w-full flex-col gap-1! px-3!"
           >
-            <span className="flex items-center gap-2">
+            <span className="flex flex-col items-center gap-1 whitespace-nowrap sm:flex-row sm:gap-2">
               <Plus className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
               {t.learn}
             </span>

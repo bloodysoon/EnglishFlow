@@ -71,3 +71,48 @@ test("settings does not steal focus on load", async ({ page }) => {
   const focused = await page.evaluate(() => document.activeElement?.tagName);
   expect(focused).not.toBe("INPUT");
 });
+
+// A long word on a 320px phone must wrap inside the card, never under the
+// level badge or the RU/RO switch beside it.
+test("a long word fits the learn card at 320px", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.addInitScript(() => localStorage.setItem("ef-learn-tour-seen", "1"));
+  await page.goto("/learn");
+
+  const word = page.locator('.card-in p[lang="en"]').first();
+  await expect(word).toBeVisible();
+  await word.evaluate((el) => (el.textContent = "responsibilities"));
+
+  const overlaps = await page.evaluate(() => {
+    const card = document.querySelector(".card-in")!.getBoundingClientRect();
+    const wordBox = document.querySelector('.card-in p[lang="en"]')!.getBoundingClientRect();
+    const badges = document.querySelector('.card-in [role="group"]')!.getBoundingClientRect();
+    const hit = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    return { underBadges: hit(wordBox, badges), outsideCard: wordBox.right > card.right };
+  });
+  expect(overlaps).toEqual({ underBadges: false, outsideCard: false });
+});
+
+// "I know it" / "Learn it" must stay one line on a 320px phone; they used
+// to break into "I / KNOW / IT".
+test("the learn answer buttons keep one-line labels at 320px", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.addInitScript(() => localStorage.setItem("ef-learn-tour-seen", "1"));
+  await page.goto("/learn");
+
+  for (const name of [/i know it/i, /learn it/i]) {
+    const button = page.getByRole("button", { name });
+    await expect(button).toBeVisible();
+    const lines = await button.evaluate((el) => {
+      // Measure the label's text node only, not the icon beside it.
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let text = walker.nextNode();
+      while (text && !text.textContent?.trim()) text = walker.nextNode();
+      const range = document.createRange();
+      range.selectNodeContents(text!);
+      return new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;
+    });
+    expect(lines, String(name)).toBe(1);
+  }
+});

@@ -39,12 +39,14 @@ export function WordHead({
   children?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3">
+    // Phones: badges get their own row above the word, so the word has the
+    // card's full width (beside them it had ~100px and ran under them).
+    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
           <p
             lang="en"
-            className="font-display text-[clamp(2rem,9vw,3.25rem)] leading-none font-black tracking-tight break-words"
+            className="font-display min-w-0 text-[clamp(2rem,9vw,3.25rem)] leading-none font-black tracking-tight hyphens-auto wrap-anywhere"
           >
             {lemma}
           </p>
