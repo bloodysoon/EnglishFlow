@@ -325,10 +325,12 @@ html {
    duplicate media blocks, so opt-out overrides could end up above.)
 ======================================== */
 
-/* Hero entrance: each piece rises once on load, staggered by --i. */
+/* Hero entrance: each piece rises once on load, staggered by --i.
+   Starts at 0.01, not 0: Chrome treats opacity 0 as unpainted, which
+   delayed Largest Contentful Paint until the heading finished rising. */
 @keyframes rise {
   from {
-    opacity: 0;
+    opacity: 0.01;
     transform: translateY(28px);
   }
 
