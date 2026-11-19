@@ -28,6 +28,10 @@ const empty: AchievementInput = {
   perfectDays: 0,
   bestDay: 0,
   activeDays: 0,
+  sentences: 0,
+  cleanSentences: 0,
+  tensesUsed: 0,
+  wordTenses: 0,
 };
 
 describe("trackProgress", () => {
@@ -75,6 +79,8 @@ describe("badges", () => {
       hardWords: [{ box: 5 }],
       reviews: 100,
       accuracy: 0.9,
+      sentences: 1,
+      wordTenses: 12,
     });
     expect(earned).toEqual({
       firstStep: true,
@@ -86,7 +92,22 @@ describe("badges", () => {
       advanced: true,
       fullHouse: true,
       leechSlayer: true,
+      perfectWeek: false,
+      firstSentence: true,
+      tenseMaster: true,
     });
+  });
+
+  it("needs seven perfect days in a row for a perfect week", () => {
+    const week = Array.from({ length: 7 }, (_, i) => day(`2026-11-0${i + 1}`, 5));
+    expect(badges({ ...empty, days: week }).perfectWeek).toBe(true);
+    // A forgotten word on day 4 breaks the run.
+    week[3] = day("2026-11-04", 5, 1);
+    expect(badges({ ...empty, days: week }).perfectWeek).toBe(false);
+  });
+
+  it("needs all twelve tenses on one word for tense master", () => {
+    expect(badges({ ...empty, wordTenses: 11, tensesUsed: 12 }).tenseMaster).toBe(false);
   });
 
   it("does not count a day with mistakes as flawless", () => {
@@ -99,6 +120,10 @@ describe("achievements", () => {
     const result = achievements({ ...empty, longestStreak: 7, reviews: 10 });
     // streak: 3 and 7; reviews: 10; badge firstStep.
     expect(result.unlocked).toBe(4);
+    expect(achievements({ ...empty, sentences: 10, cleanSentences: 10, tensesUsed: 3 }).unlocked).toBe(
+      // sentences 10, clean 10, tenses 3, badge firstSentence.
+      4,
+    );
     expect(result.total).toBeGreaterThan(result.unlocked);
   });
 });

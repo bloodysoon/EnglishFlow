@@ -542,6 +542,9 @@ export const ru: PlatformDictionary = {
       perfectDays: { name: "Перфекционист", goal: "Идеальных дней" },
       bestDay: { name: "Марафон", goal: "Повторений за один день" },
       activeDays: { name: "Постоянство", goal: "Дней с занятиями" },
+      sentences: { name: "Писатель", goal: "Написано предложений" },
+      cleanSentences: { name: "Чистовик", goal: "Предложений без ошибок" },
+      tensesUsed: { name: "Путешественник во времени", goal: "Времён использовано верно" },
     },
     badgeList: {
       firstStep: { name: "Первый шаг", description: "Сделайте первое повторение." },
@@ -553,6 +556,9 @@ export const ru: PlatformDictionary = {
       advanced: { name: "Продвинутый", description: "Сделайте {n} повторений слов уровней C1 и C2." },
       fullHouse: { name: "Полный дом", description: "Пусть слова будут во всех пяти коробках одновременно." },
       leechSlayer: { name: "Укротитель слов", description: "Доведите одно из самых трудных слов до коробки 5." },
+      perfectWeek: { name: "Идеальная неделя", description: "{n} идеальных дней подряд: ни одного забытого слова." },
+      firstSentence: { name: "Первое предложение", description: "Напишите первое предложение со словом." },
+      tenseMaster: { name: "Мастер времён", description: "Верно используйте одно слово во всех {n} временах." },
     },
   },
 

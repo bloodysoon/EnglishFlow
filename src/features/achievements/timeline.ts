@@ -22,8 +22,8 @@ export type Unlock = { kind: "track"; id: TrackId; target: number } | { kind: "b
 
 // When each achievement was first unlocked: the days are replayed one by
 // one through the same rules as the achievements page.
-// shortcut: box history is not replayed, so fullHouse and leechSlayer never
-// get a date here, and "mastered" counts box-5 arrivals; store unlocks in a
+// shortcut: box history and tenses are not replayed, so fullHouse,
+// leechSlayer, tenseMaster and tensesUsed never get a date here, and "mastered" counts box-5 arrivals; store unlocks in a
 // table if exact dates for those are wanted.
 export function unlocksByDay(days: TimelineDay[]): Map<string, Unlock[]> {
   const activity: DayActivity[] = [];
@@ -35,12 +35,16 @@ export function unlocksByDay(days: TimelineDay[]): Map<string, Unlock[]> {
   let known = 0;
   let mastered = 0;
   let xp = 0;
+  let sentences = 0;
+  let cleanSentences = 0;
 
   for (const d of [...days].sort((a, b) => (a.day < b.day ? -1 : 1))) {
     words += d.added;
     known += d.known;
     mastered += d.mastered;
     xp += d.xp;
+    sentences += d.practice.count;
+    cleanSentences += d.practice.clean;
     if (d.active) activity.push(d);
     for (const [level, n] of Object.entries(d.levels)) levels.set(level, (levels.get(level) ?? 0) + n);
 
@@ -61,6 +65,10 @@ export function unlocksByDay(days: TimelineDay[]): Map<string, Unlock[]> {
       perfectDays: summary.perfectDays,
       bestDay: summary.bestDay ? reviewsOf(summary.bestDay) : 0,
       activeDays: summary.activeDays,
+      sentences,
+      cleanSentences,
+      tensesUsed: 0,
+      wordTenses: 0,
     });
 
     const unlocks: Unlock[] = [];

@@ -38,6 +38,16 @@ describe("unlocksByDay", () => {
     );
   });
 
+  it("dates writing milestones from the sentences practised each day", () => {
+    const result = unlocksByDay([
+      day({ day: "2026-11-01", practice: { count: 4, clean: 4, words: [] } }),
+      day({ day: "2026-11-02", practice: { count: 6, clean: 5, words: [] } }),
+    ]);
+
+    expect(result.get("2026-11-01")).toEqual([{ kind: "badge", id: "firstSentence" }]);
+    expect(result.get("2026-11-02")).toEqual([{ kind: "track", id: "sentences", target: 10 }]);
+  });
+
   it("returns nothing for an empty history", () => {
     expect(unlocksByDay([]).size).toBe(0);
   });

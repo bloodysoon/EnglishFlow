@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { masteredTenses, type PracticeEntry } from "./history";
+import { masteredTenses, tenseCoverage, type PracticeEntry } from "./history";
 
 const entry = (over: Partial<PracticeEntry>): PracticeEntry => ({
   id: 1,
@@ -24,5 +24,23 @@ describe("masteredTenses", () => {
         entry({}),
       ]),
     ).toEqual(new Set(["past-simple"]));
+  });
+});
+
+describe("tenseCoverage", () => {
+  it("counts distinct tenses overall and the most on one word", () => {
+    expect(
+      tenseCoverage([
+        { word_id: "a", tense: "past-simple" },
+        { word_id: "a", tense: "past-simple" },
+        { word_id: "a", tense: "future-simple" },
+        { word_id: "b", tense: "present-simple" },
+        { word_id: "b", tense: null },
+      ]),
+    ).toEqual({ tensesUsed: 3, wordTenses: 2 });
+  });
+
+  it("is zero without sentences", () => {
+    expect(tenseCoverage([])).toEqual({ tensesUsed: 0, wordTenses: 0 });
   });
 });

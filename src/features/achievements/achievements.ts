@@ -1,4 +1,12 @@
-import { daysBetween, reviewsOf, type DayActivity, type LevelAccuracy } from "@/features/learning/statistics";
+import {
+  daysBetween,
+  longestStreak,
+  PERFECT_DAY_MIN,
+  reviewsOf,
+  type DayActivity,
+  type LevelAccuracy,
+} from "@/features/learning/statistics";
+import { TENSES } from "@/features/writing/tenses";
 
 // Achievements are derived from data we already keep (review log, boxes,
 // XP); nothing is stored. shortcut: no unlock dates; store unlocks in a
@@ -16,6 +24,10 @@ export const TRACKS = {
   perfectDays: [1, 5, 10, 30, 100],
   bestDay: [20, 50, 100, 200],
   activeDays: [7, 30, 100, 365],
+  // Writing practice on word pages.
+  sentences: [10, 50, 100, 500, 1_000],
+  cleanSentences: [10, 50, 100, 500],
+  tensesUsed: [3, 6, 9, TENSES.length],
 } as const satisfies Record<string, readonly number[]>;
 
 export type TrackId = keyof typeof TRACKS;
@@ -50,6 +62,9 @@ export const BADGE_IDS = [
   "advanced",
   "fullHouse",
   "leechSlayer",
+  "perfectWeek",
+  "firstSentence",
+  "tenseMaster",
 ] as const;
 
 export type BadgeId = (typeof BADGE_IDS)[number];
@@ -58,6 +73,7 @@ export const FLAWLESS_MIN = 20;
 export const SHARPSHOOTER = { accuracy: 0.9, minReviews: 100 };
 export const ADVANCED_MIN = 100;
 export const COMEBACK_GAP = 7;
+export const PERFECT_WEEK = 7;
 const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
 export type AchievementInput = {
@@ -77,6 +93,12 @@ export type AchievementInput = {
   perfectDays: number;
   bestDay: number;
   activeDays: number;
+  // Writing practice. Clean = no mistakes and, when asked, the right tense.
+  sentences: number;
+  cleanSentences: number;
+  // Tenses with a clean sentence, overall and the most on any one word.
+  tensesUsed: number;
+  wordTenses: number;
 };
 
 // Practised again after at least COMEBACK_GAP days away.
@@ -113,6 +135,11 @@ export function badges(input: AchievementInput): Record<BadgeId, boolean> {
     advanced: advancedReviews >= ADVANCED_MIN,
     fullHouse: [1, 2, 3, 4, 5].every((box) => (input.perBox[box] ?? 0) > 0),
     leechSlayer: input.hardWords.some((w) => w.box === 5),
+    perfectWeek:
+      (longestStreak(input.days.filter((d) => reviewsOf(d) >= PERFECT_DAY_MIN && d.forgot === 0).map((d) => d.day))
+        ?.length ?? 0) >= PERFECT_WEEK,
+    firstSentence: input.sentences > 0,
+    tenseMaster: input.wordTenses >= TENSES.length,
   };
 }
 

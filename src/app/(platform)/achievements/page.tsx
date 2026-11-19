@@ -12,6 +12,12 @@ import {
   GraduationCap,
   Library,
   Lock,
+  Medal,
+  PenLine,
+  Hourglass,
+  NotebookPen,
+  SpellCheck,
+  Clock,
   PartyPopper,
   Repeat,
   Rocket,
@@ -28,6 +34,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { riseStyle } from "@/components/ui/rise";
 import {
   ADVANCED_MIN,
+  PERFECT_WEEK,
   achievements,
   BADGE_IDS,
   COMEBACK_GAP,
@@ -40,6 +47,8 @@ import { fill } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
 import { getHardWords, getLearningOverview, getStatistics } from "@/features/learning/queries";
 import { activitySummary, longestStreak, reviewsOf } from "@/features/learning/statistics";
+import { getWritingStats } from "@/features/writing/history";
+import { TENSES } from "@/features/writing/tenses";
 import { createClient } from "@/lib/supabase/server";
 
 const card = "border-[3px] border-line shadow-brutal";
@@ -55,6 +64,9 @@ const trackIcons: Record<TrackId, LucideIcon> = {
   perfectDays: CalendarCheck,
   bestDay: Rocket,
   activeDays: CalendarDays,
+  sentences: NotebookPen,
+  cleanSentences: SpellCheck,
+  tensesUsed: Clock,
 };
 
 const badgeIcons: Record<BadgeId, LucideIcon> = {
@@ -67,6 +79,9 @@ const badgeIcons: Record<BadgeId, LucideIcon> = {
   advanced: GraduationCap,
   fullHouse: Boxes,
   leechSlayer: Swords,
+  perfectWeek: Medal,
+  firstSentence: PenLine,
+  tenseMaster: Hourglass,
 };
 
 // Numbers the badge descriptions mention, from the rules themselves.
@@ -75,6 +90,8 @@ const badgeValues: Partial<Record<BadgeId, Record<string, number>>> = {
   flawless: { n: FLAWLESS_MIN },
   sharpshooter: { pct: SHARPSHOOTER.accuracy * 100, n: SHARPSHOOTER.minReviews },
   advanced: { n: ADVANCED_MIN },
+  perfectWeek: { n: PERFECT_WEEK },
+  tenseMaster: { n: TENSES.length },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -84,10 +101,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AchievementsPage() {
   const supabase = await createClient();
-  const [stats, overview, hardWords, { locale, t }] = await Promise.all([
+  const [stats, overview, hardWords, writing, { locale, t }] = await Promise.all([
     getStatistics(supabase),
     getLearningOverview(supabase),
     getHardWords(supabase, 50),
+    getWritingStats(supabase),
     getPlatformI18n(),
   ]);
   const a = t.achievements;
@@ -110,6 +128,7 @@ export default async function AchievementsPage() {
     perfectDays: summary.perfectDays,
     bestDay: summary.bestDay ? reviewsOf(summary.bestDay) : 0,
     activeDays: summary.activeDays,
+    ...writing,
   });
 
   // Earned badges first, each group in the defined order.

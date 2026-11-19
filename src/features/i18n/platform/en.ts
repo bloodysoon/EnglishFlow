@@ -514,6 +514,9 @@ export const en = {
       perfectDays: { name: "Perfectionist", goal: "Perfect days" },
       bestDay: { name: "Marathon", goal: "Reviews in a single day" },
       activeDays: { name: "Regular", goal: "Days with practice" },
+      sentences: { name: "Writer", goal: "Sentences written" },
+      cleanSentences: { name: "Clean copy", goal: "Sentences without mistakes" },
+      tensesUsed: { name: "Time traveller", goal: "Tenses used correctly" },
     },
     badgeList: {
       firstStep: { name: "First step", description: "Do your first review." },
@@ -525,6 +528,9 @@ export const en = {
       advanced: { name: "Advanced", description: "Do {n} reviews of C1 and C2 words." },
       fullHouse: { name: "Full house", description: "Have words in all five boxes at the same time." },
       leechSlayer: { name: "Word tamer", description: "Get one of your hardest words into box 5." },
+      perfectWeek: { name: "Perfect week", description: "Have {n} perfect days in a row: no word forgotten." },
+      firstSentence: { name: "First sentence", description: "Write your first sentence with a word." },
+      tenseMaster: { name: "Tense master", description: "Use one word correctly in all {n} tenses." },
     },
   },
 

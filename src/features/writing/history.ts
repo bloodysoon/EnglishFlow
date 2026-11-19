@@ -45,3 +45,33 @@ export function masteredTenses(history: PracticeEntry[]): Set<Tense> {
     history.flatMap((e) => (e.tense && e.tenseOk && e.issues.length === 0 ? [e.tense] : [])),
   );
 }
+
+export type WritingStats = { sentences: number; cleanSentences: number; tensesUsed: number; wordTenses: number };
+
+// My writing totals for achievements. RLS keeps other learners' rows out.
+export async function getWritingStats(supabase: SupabaseClient): Promise<WritingStats> {
+  const table = () => supabase.from("practice_sentences");
+  const [all, clean, tensed] = await Promise.all([
+    table().select("id", { count: "exact", head: true }),
+    table().select("id", { count: "exact", head: true }).eq("issues", "[]").or("tense_ok.is.null,tense_ok.is.true"),
+    // shortcut: reads at most the API row cap (1000) clean tense sentences;
+    // count in SQL if learners get past that.
+    table().select("word_id, tense").eq("issues", "[]").eq("tense_ok", true),
+  ]);
+  if (all.error) throw all.error;
+  if (clean.error) throw clean.error;
+  if (tensed.error) throw tensed.error;
+  return { sentences: all.count ?? 0, cleanSentences: clean.count ?? 0, ...tenseCoverage(tensed.data ?? []) };
+}
+
+// Distinct tenses overall, and the most tenses on a single word.
+export function tenseCoverage(rows: { word_id: string; tense: string | null }[]) {
+  const overall = new Set<string>();
+  const perWord = new Map<string, Set<string>>();
+  for (const { word_id, tense } of rows) {
+    if (!tense) continue;
+    overall.add(tense);
+    perWord.set(word_id, (perWord.get(word_id) ?? new Set()).add(tense));
+  }
+  return { tensesUsed: overall.size, wordTenses: Math.max(0, ...[...perWord.values()].map((set) => set.size)) };
+}

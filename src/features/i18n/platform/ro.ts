@@ -528,6 +528,9 @@ export const ro: PlatformDictionary = {
       perfectDays: { name: "Perfecționist", goal: "Zile perfecte" },
       bestDay: { name: "Maraton", goal: "Recapitulări într-o singură zi" },
       activeDays: { name: "Constant", goal: "Zile cu exerciții" },
+      sentences: { name: "Scriitor", goal: "Propoziții scrise" },
+      cleanSentences: { name: "Fără greșeli", goal: "Propoziții fără greșeli" },
+      tensesUsed: { name: "Călător în timp", goal: "Timpuri folosite corect" },
     },
     badgeList: {
       firstStep: { name: "Primul pas", description: "Fă prima recapitulare." },
@@ -539,6 +542,9 @@ export const ro: PlatformDictionary = {
       advanced: { name: "Avansat", description: "Fă {n} recapitulări de cuvinte C1 și C2." },
       fullHouse: { name: "Casa plină", description: "Ai cuvinte în toate cele cinci cutii în același timp." },
       leechSlayer: { name: "Îmblânzitor de cuvinte", description: "Du unul dintre cele mai grele cuvinte în cutia 5." },
+      perfectWeek: { name: "Săptămână perfectă", description: "Ai {n} zile perfecte la rând, fără niciun cuvânt uitat." },
+      firstSentence: { name: "Prima propoziție", description: "Scrie prima ta propoziție cu un cuvânt." },
+      tenseMaster: { name: "Stăpânul timpurilor", description: "Folosește corect un cuvânt în toate cele {n} timpuri." },
     },
   },
 
