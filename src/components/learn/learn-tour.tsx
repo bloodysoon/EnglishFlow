@@ -62,11 +62,14 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     window.addEventListener("scroll", measure, true);
     window.addEventListener("resize", measure);
+    // The page's `rise` entrance still moves the target on the first frame.
+    window.addEventListener("animationend", measure, true);
     window.addEventListener("keydown", onKey);
     return () => {
       cancelAnimationFrame(id);
       window.removeEventListener("scroll", measure, true);
       window.removeEventListener("resize", measure);
+      window.removeEventListener("animationend", measure, true);
       window.removeEventListener("keydown", onKey);
     };
   }, [step, close]);
@@ -98,6 +101,7 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
             {rect && (
               <div
                 aria-hidden="true"
+                data-tour-spotlight=""
                 className="pointer-events-none absolute border-[3px] border-primary shadow-[0_0_0_9999px_color-mix(in_srgb,var(--line)_65%,transparent)] transition-all duration-300 motion-reduce:transition-none"
                 style={{
                   top: rect.top - PAD,

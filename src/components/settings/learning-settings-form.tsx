@@ -36,6 +36,10 @@ export function LearningSettingsForm({
   const [dailyGoal, setDailyGoal] = useState(initial.dailyGoal);
   // A saved goal that isn't one of the options was typed by the learner.
   const [custom, setCustom] = useState(!goalOptions.includes(initial.dailyGoal));
+  // Focus the number field only when the visitor picks "Custom" here, not
+  // when a saved custom goal shows it on load (that would steal focus and
+  // pop up the phone keyboard).
+  const [focusCustom, setFocusCustom] = useState(false);
   const [customText, setCustomText] = useState(custom ? String(initial.dailyGoal) : "");
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState<{ kind: "saved" } | { kind: "error"; message: string } | null>(null);
@@ -96,6 +100,7 @@ export function LearningSettingsForm({
           value={custom ? "custom" : dailyGoal}
           onChange={(value) => {
             setCustom(value === "custom");
+            setFocusCustom(value === "custom");
             if (value !== "custom") setDailyGoal(value);
             setStatus(null);
           }}
@@ -121,7 +126,7 @@ export function LearningSettingsForm({
               min={1}
               max={maxGoal}
               step={1}
-              autoFocus
+              autoFocus={focusCustom}
               value={customText}
               onChange={(event) => {
                 setCustomText(event.target.value);
