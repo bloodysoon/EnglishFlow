@@ -35,7 +35,7 @@ export const lemmaSchema = z
 export const customWordSchema = z.object({
   lemma: lemmaSchema,
   partOfSpeech: z.enum(CUSTOM_WORD_PARTS_OF_SPEECH),
-  language: z.enum(["ru", "ro"]),
+  language: z.enum(["ru", "ro", "id"]),
   translation: z.string().trim().min(1).max(200),
   alternatives: z.array(z.string().trim().min(1).max(200)).max(5),
   example: z.string().trim().max(300).optional(),

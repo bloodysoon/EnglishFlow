@@ -89,6 +89,7 @@ export function LearningSettingsForm({
         choices={[
           { value: "ru", label: "Русский", hint: "borrow → брать взаймы", lang: "ru" },
           { value: "ro", label: "Română", hint: "borrow → a împrumuta", lang: "ro" },
+          { value: "id", label: "Bahasa Indonesia", hint: "borrow → meminjam", lang: "id" },
         ]}
       />
 

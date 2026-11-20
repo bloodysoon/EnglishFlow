@@ -8,7 +8,7 @@ import type { CefrLevel, LevelSource } from "./cefr.ts";
 // Kaikki data is untrusted input, so it goes through Zod. The schemas
 // only describe the fields we read; everything else is ignored.
 
-export const DICTIONARY_LANGUAGES = ["ru", "ro"] as const;
+export const DICTIONARY_LANGUAGES = ["ru", "ro", "id"] as const;
 export type DictionaryLanguage = (typeof DICTIONARY_LANGUAGES)[number];
 
 const MAX_ALTERNATIVES = 3;
@@ -167,7 +167,7 @@ export function emptyWordDraft(lemma: string, pos = ""): WordDraft {
     ipa: null,
     definition: null,
     example: null,
-    translations: { ru: null, ro: null },
+    translations: { ru: null, ro: null, id: null },
   };
 }
 
@@ -187,6 +187,7 @@ export function extractWord(entries: KaikkiEntry[], lemma: string, pos?: string)
     translations: {
       ru: pickTranslation(entry, "ru"),
       ro: pickTranslation(entry, "ro"),
+      id: pickTranslation(entry, "id"),
     },
   };
 }

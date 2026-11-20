@@ -34,6 +34,8 @@ describe("dictionaryEntries", () => {
       ro: "",
       definitionRu: "",
       definitionRo: "",
+      id: "",
+      definitionId: "",
     });
     expect(byLemma.get("advisor")?.level).toBe("B2");
     expect(byLemma.get("run")?.pos).toBe("verb");
@@ -49,14 +51,16 @@ describe("dictionaryEntries", () => {
   it("writes translations from the CSV, null when missing", () => {
     const index: CefrIndex = addCefrList(new Map(), csv, "cefr-j");
     const sql = buildDictionarySeedSql(
-      dictionaryEntries(index, new Map(), new Map([["book", { ru: "книга", ro: "" }]])),
+      dictionaryEntries(index, new Map(), new Map([["book", { ru: "книга", ro: "", id: "buku", definitionId: "Kumpulan halaman." }]])),
     );
-    expect(sql).toContain("('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', 'книга', null, null, null, '{}')");
+    expect(sql).toContain(
+      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', 'книга', null, null, null, 'buku', 'Kumpulan halaman.', '{}')",
+    );
   });
 
   it("writes idempotent, escaped SQL", () => {
     const sql = buildDictionarySeedSql(entries, 2);
-    expect(sql).toContain("('o''clock', 'adv', 'A1', 'cefr-j', '{adv}', null, null, null, null, '{}')");
+    expect(sql).toContain("('o''clock', 'adv', 'A1', 'cefr-j', '{adv}', null, null, null, null, null, null, '{}')");
     expect(sql.match(/on conflict \(lemma\) do update/g)?.length).toBe(Math.ceil(entries.length / 2));
     // Saved words get the new translations in the same run, after the entries.
     expect(sql.indexOf("insert into public.word_translations")).toBeGreaterThan(sql.lastIndexOf("dictionary_entries"));
@@ -68,13 +72,13 @@ describe("topics", () => {
   it("survive a regenerated seed file", () => {
     const index: CefrIndex = addCefrList(new Map(), csv, "cefr-j");
     const edited = buildDictionarySeedSql(dictionaryEntries(index)).replace(
-      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', null, null, null, null, '{}')",
-      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', null, null, null, null, '{education, work}')",
+      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', null, null, null, null, null, null, '{}')",
+      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', null, null, null, null, null, null, '{education, work}')",
     );
     const kept = topicsFromSeed(edited);
     expect(kept.get("book")).toEqual(["education", "work"]);
     expect(buildDictionarySeedSql(dictionaryEntries(index, kept))).toContain(
-      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', null, null, null, null, '{education,work}')",
+      "('book', 'noun', 'A1', 'cefr-j', '{noun,verb}', null, null, null, null, null, null, '{education,work}')",
     );
     // Older, shorter rows still give their topics.
     expect(topicsFromSeed("  ('goal', 'noun', 'A1', 'cefr-j', '{sport}'),").get("goal")).toEqual(["sport"]);

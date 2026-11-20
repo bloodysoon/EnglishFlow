@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { PASSWORD_MAX_LENGTH } from "@/features/auth/constants";
 
-export const TRANSLATION_LANGUAGES = ["ru", "ro"] as const;
+export const TRANSLATION_LANGUAGES = ["ru", "ro", "id"] as const;
 export type TranslationLanguageSetting = (typeof TRANSLATION_LANGUAGES)[number];
 
 // Mirrors the check constraints on public.profiles. Which goals are on

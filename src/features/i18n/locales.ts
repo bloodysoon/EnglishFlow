@@ -36,9 +36,9 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   id: "Bahasa Indonesia",
 };
 
-// The languages we translate English words into. Not every interface
-// language has word translations yet (Indonesian does not).
-export type TranslationLanguage = "ru" | "ro";
+// The languages we translate English words into: every interface
+// language except English itself.
+export type TranslationLanguage = "ru" | "ro" | "id";
 
 // Fills "{name}" placeholders. Dictionaries hold plain strings (not
 // functions) so they can be passed to Client Components.

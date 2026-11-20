@@ -39,7 +39,7 @@ export function WordTriage({
 }: {
   initialCards: TriageCard[];
   filters: CardFilters;
-  language: "ru" | "ro";
+  language: "ru" | "ro" | "id";
   learnedToday: number;
   limit: number | null; // null = unlimited
   t: PlatformDictionary["triage"];

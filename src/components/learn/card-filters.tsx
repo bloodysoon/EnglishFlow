@@ -11,7 +11,7 @@ import type { PlatformDictionary } from "@/features/i18n/platform";
 import type { CardFilters } from "@/features/learning/queries";
 
 const chip =
-  "inline-flex min-h-10 shrink-0 items-center gap-1 border-[2px] border-line px-2.5 text-xs font-black uppercase";
+  "inline-flex min-h-11 shrink-0 items-center gap-1 border-[2px] border-line px-2.5 text-xs font-black uppercase";
 
 type Names = { topicNames: Record<string, string>; posNames: Record<string, string> };
 
@@ -153,7 +153,7 @@ export function ActiveFilterChips({
       {active.length > 1 && (
         <Link
           href="/learn"
-          className="inline-flex min-h-10 items-center px-1 text-xs font-black uppercase underline decoration-2 underline-offset-4 hover:decoration-mark"
+          className="inline-flex min-h-11 items-center px-1 text-xs font-black uppercase underline decoration-2 underline-offset-4 hover:decoration-mark"
         >
           {t.clearFilters}
         </Link>

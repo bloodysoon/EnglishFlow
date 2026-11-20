@@ -50,17 +50,17 @@ describe("content schemas", () => {
       wordEditSchema.safeParse({
         wordId,
         level: "B1",
-        translations: { ru: { translation: "стойкий", alternatives: ["упругий"], reviewed: true }, ro: null },
+        translations: { ru: { translation: "стойкий", alternatives: ["упругий"], reviewed: true }, ro: null, id: null },
       }).success,
     ).toBe(true);
   });
 
   it("rejects empty translations, bad ids and unknown levels", () => {
-    const base = { wordId, level: null, translations: { ru: null, ro: null } };
+    const base = { wordId, level: null, translations: { ru: null, ro: null, id: null } };
     expect(wordEditSchema.safeParse({ ...base, wordId: "1; drop table" }).success).toBe(false);
     expect(wordEditSchema.safeParse({ ...base, level: "D1" }).success).toBe(false);
     expect(
-      wordEditSchema.safeParse({ ...base, translations: { ru: { translation: "  ", alternatives: [], reviewed: true }, ro: null } })
+      wordEditSchema.safeParse({ ...base, translations: { ru: { translation: "  ", alternatives: [], reviewed: true }, ro: null, id: null } })
         .success,
     ).toBe(false);
   });

@@ -23,6 +23,7 @@ const borrow: WordDraft = {
   translations: {
     ru: { translation: "занимать", alternatives: ["одолжить"], source: "wiktionary", reviewed: true },
     ro: null,
+    id: null,
   },
 };
 
@@ -83,7 +84,10 @@ describe("buildSeedSql", () => {
   });
 
   it("warns about missing and unreviewed translations", () => {
-    expect(warnings).toEqual(["borrow: no RO translation, fill it in before publishing"]);
+    expect(warnings).toEqual([
+      "borrow: no RO translation, fill it in before publishing",
+      "borrow: no ID translation, fill it in before publishing",
+    ]);
 
     const unreviewed = buildSeedSql(definition, [
       { ...borrow, translations: { ...borrow.translations, ru: { ...borrow.translations.ru!, reviewed: false } } },
@@ -99,6 +103,7 @@ describe("mergeWordDraft", () => {
     translations: {
       ru: { translation: "брать", alternatives: [], source: "wiktionary", reviewed: false },
       ro: { translation: "a împrumuta", alternatives: [], source: "wiktionary", reviewed: false },
+      id: null,
     },
   };
 
@@ -140,7 +145,7 @@ describe("validation", () => {
   });
 
   it("rejects a translation longer than the database allows", () => {
-    const tooLong = { ...borrow, translations: { ru: { ...borrow.translations.ru!, translation: "x".repeat(201) }, ro: null } };
+    const tooLong = { ...borrow, translations: { ru: { ...borrow.translations.ru!, translation: "x".repeat(201) }, ro: null, id: null } };
     expect(wordsFileSchema.safeParse([tooLong]).success).toBe(false);
   });
 });

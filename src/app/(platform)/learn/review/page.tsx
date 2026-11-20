@@ -52,10 +52,13 @@ export default async function ReviewPage() {
           {r.title}
           <span className="text-primary">.</span>
         </h1>
-        <Link href="/learn" className={buttonClasses({ size: "toolbar", variant: "secondary" })}>
-          <ArrowLeft className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-          {t.common.learn}
-        </Link>
+        {/* The empty state has its own "Back to Learn", so only one way back shows. */}
+        {cards.length > 0 && (
+          <Link href="/learn" className={buttonClasses({ size: "toolbar", variant: "secondary" })}>
+            <ArrowLeft className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+            {t.common.learn}
+          </Link>
+        )}
       </header>
 
       {cards.length > 0 ? (
@@ -72,7 +75,7 @@ export default async function ReviewPage() {
       ) : (
         <section className="max-w-xl border-[3px] border-line bg-raised p-6 shadow-brutal sm:p-8">
           <h2 className="font-display text-2xl font-black uppercase">{r.nothing}</h2>
-          <p className="mt-3 font-semibold text-muted">
+          <p className="mt-3 font-semibold text-pretty text-muted">
             {overview.total === 0
               ? r.startSet
               : overview.nextDueOn

@@ -34,7 +34,7 @@ async function findInDictionary(
   supabase: SupabaseClient,
   userId: string,
   lemma: string,
-  language: "ru" | "ro",
+  language: "ru" | "ro" | "id",
 ): Promise<DictionaryMatch[]> {
   // RLS only returns shared words that sit in a published set.
   const { data, error } = await supabase
@@ -91,7 +91,7 @@ export async function fetchWiktionaryDraft(lemma: string, pos?: string): Promise
   }
 }
 
-async function suggestFromWiktionary(lemma: string, language: "ru" | "ro"): Promise<WordLookup> {
+async function suggestFromWiktionary(lemma: string, language: "ru" | "ro" | "id"): Promise<WordLookup> {
   const draft = await fetchWiktionaryDraft(lemma);
   if (!draft) return { kind: "not_found", lemma };
 
@@ -111,7 +111,7 @@ export async function lookupWord(
   supabase: SupabaseClient,
   userId: string,
   lemma: string,
-  language: "ru" | "ro",
+  language: "ru" | "ro" | "id",
 ): Promise<WordLookup> {
   const matches = await findInDictionary(supabase, userId, lemma, language);
   if (matches.length > 0) return { kind: "dictionary", lemma, matches };

@@ -116,7 +116,7 @@ describe("extractWord", () => {
 
   it("leaves a language empty when Wiktionary has no translation", () => {
     const nounOnly = extractWord(parseKaikkiJsonl(JSON.stringify(noun)), "borrow");
-    expect(nounOnly?.translations).toEqual({ ru: null, ro: null });
+    expect(nounOnly?.translations).toEqual({ ru: null, ro: null, id: null });
     expect(nounOnly?.example).toBeNull();
   });
 
@@ -136,7 +136,7 @@ describe("emptyWordDraft", () => {
       ipa: null,
       definition: null,
       example: null,
-      translations: { ru: null, ro: null },
+      translations: { ru: null, ro: null, id: null },
     });
   });
 });

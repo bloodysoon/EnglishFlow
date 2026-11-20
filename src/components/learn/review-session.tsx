@@ -31,7 +31,7 @@ export function ReviewSession({
   rewards,
 }: {
   cards: ReviewCard[];
-  language: "ru" | "ro";
+  language: "ru" | "ro" | "id";
   locale: Locale;
   t: PlatformDictionary["review"];
   c: PlatformDictionary["triage"]; // labels shared with the Learn card
@@ -150,7 +150,7 @@ export function ReviewSession({
     setIndex((i) => i + 1);
   }, [pending]);
 
-  // Space shows the translation; 1/← forgot, 2/→ got it; S skips, P pronounces.
+  // Space shows the translation; 1/← got it, 2/→ forgot (same sides as Learn); S skips, P pronounces.
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if (done || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -169,10 +169,10 @@ export function ReviewSession({
         reveal();
       } else if (revealed && (event.key === "1" || event.key === "ArrowLeft")) {
         event.preventDefault();
-        void answer(false);
+        void answer(true);
       } else if (revealed && (event.key === "2" || event.key === "ArrowRight")) {
         event.preventDefault();
-        void answer(true);
+        void answer(false);
       }
     }
     window.addEventListener("keydown", onKey);
@@ -186,8 +186,10 @@ export function ReviewSession({
     return (
       <section className="card-in max-w-xl border-[3px] border-line bg-raised p-6 text-fg shadow-brutal sm:p-8">
         <h2 ref={doneRef} tabIndex={-1} className="font-display text-3xl font-black uppercase focus:outline-none">
-          {t.done}
+          {answers.length === 0 ? t.allSkipped : t.done}
         </h2>
+        {/* All skipped: no zero stats and no "see you tomorrow" — those words are still due. */}
+        {answers.length > 0 && (
         <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             [t.statWords, answers.length],
@@ -201,9 +203,10 @@ export function ReviewSession({
             </div>
           ))}
         </dl>
+        )}
         {levelUp}
         {skipped > 0 && <p className="mt-4 text-sm font-semibold text-muted">{plural(locale, skipped, t.skipped)}</p>}
-        <p className="mt-4 font-semibold text-muted">{t.comeBack}</p>
+        {answers.length > 0 && <p className="mt-4 font-semibold text-muted">{t.comeBack}</p>}
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href="/dashboard" className={buttonClasses()}>
             {t.goDashboard}
@@ -218,6 +221,17 @@ export function ReviewSession({
 
   if (!card) return null;
 
+  const lastText =
+    last &&
+    (last.mastered
+      ? fill(t.lastMastered, { word: last.lemma, xp: last.xp })
+      : last.remembered
+        ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, {
+            word: last.lemma,
+            box: last.newBox,
+            xp: last.xp,
+          })
+        : fill(t.lastBack, { word: last.lemma, xp: last.xp }));
   const translation = card.translations[shownLanguage];
   const translatedDefinition = card.definitions[shownLanguage];
 
@@ -260,7 +274,9 @@ export function ReviewSession({
           {card.level && <span className="border-2 border-line px-2 py-0.5 text-xs font-black">{card.level}</span>}
         </WordHead>
 
-        {revealed && (
+        {/* Live region exists before the reveal, so screen readers announce the answer while focus moves to the buttons. */}
+        <div aria-live="polite">
+          {revealed && (
           <div className="mt-4">
             {translation ? (
               <WordTranslation translation={translation} language={shownLanguage} autoLabel={t.auto} />
@@ -274,38 +290,40 @@ export function ReviewSession({
             )}
             {card.example && <WordExample example={card.example} lemma={card.lemma} label={c.example} />}
           </div>
-        )}
+          )}
+        </div>
 
         <p className="mt-4 border-t-[2px] border-line pt-4 text-sm font-black uppercase">{t.question}</p>
         <div className="mt-3 grid min-h-[60px] grid-cols-2 gap-3">
           {revealed ? (
             <>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => void answer(false)}
-                aria-disabled={pending}
-                aria-keyshortcuts="ArrowLeft 1"
-                className="w-full flex-col gap-1! px-3!"
-              >
-                <span className="flex items-center gap-2">
-                  <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
-                  {t.forgot}
-                </span>
-                {/* Key hint, for pointer-and-keyboard screens only. */}
-                <ArrowLeft className="hidden h-4 w-4 opacity-70 lg:block" strokeWidth={2.5} aria-hidden="true" />
-              </Button>
+              {/* "Got it" on the left, as "I know it" is on Learn, so ← means the same on both screens. */}
               <Button
                 ref={gotItRef}
                 type="button"
                 onClick={() => void answer(true)}
                 aria-disabled={pending}
-                aria-keyshortcuts="ArrowRight 2"
+                aria-keyshortcuts="ArrowLeft 1"
                 className="w-full flex-col gap-1! px-3!"
               >
                 <span className="flex items-center gap-2">
                   <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
                   {t.gotIt}
+                </span>
+                {/* Key hint, for pointer-and-keyboard screens only. */}
+                <ArrowLeft className="hidden h-4 w-4 opacity-70 lg:block" strokeWidth={2.5} aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => void answer(false)}
+                aria-disabled={pending}
+                aria-keyshortcuts="ArrowRight 2"
+                className="w-full flex-col gap-1! px-3!"
+              >
+                <span className="flex items-center gap-2">
+                  <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden="true" />
+                  {t.forgot}
                 </span>
                 <ArrowRight className="hidden h-4 w-4 opacity-70 lg:block" strokeWidth={2.5} aria-hidden="true" />
               </Button>
@@ -347,16 +365,13 @@ export function ReviewSession({
 
       {/* Result of the last answer, announced to screen readers. */}
       <p aria-live="polite" className="mt-4 min-h-6 font-black">
-        {last &&
-          (last.mastered
-            ? fill(t.lastMastered, { word: last.lemma, xp: last.xp })
-            : last.remembered
-              ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, {
-                  word: last.lemma,
-                  box: last.newBox,
-                  xp: last.xp,
-                })
-              : fill(t.lastBack, { word: last.lemma, xp: last.xp }))}
+        {lastText && (
+          <>
+            <span aria-hidden="true">{lastText}</span>
+            {/* Same text without "→" and "·", which screen readers read out as symbols. */}
+            <span className="sr-only">{lastText.replace(/\s*[→·]\s*/g, ", ")}</span>
+          </>
+        )}
       </p>
     </div>
   );

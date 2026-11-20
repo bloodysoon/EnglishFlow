@@ -14,7 +14,7 @@ const word = (overrides: Partial<AdminWord>): AdminWord => ({
   ...overrides,
 });
 
-const t = (language: "ru" | "ro", reviewed: boolean) => ({
+const t = (language: "ru" | "ro" | "id", reviewed: boolean) => ({
   language,
   translation: "x",
   alternatives: [],
@@ -30,10 +30,10 @@ describe("summarizeWordSet", () => {
         word({ level: null, translations: { ru: t("ru", true) } }),
         word({ translations: {} }),
       ]),
-    ).toEqual({ words: 3, reviewed: { ru: 2, ro: 0 }, missingTranslations: 3, missingLevels: 1 });
+    ).toEqual({ words: 3, reviewed: { ru: 2, ro: 0, id: 0 }, missingTranslations: 6, missingLevels: 1 });
   });
 
   it("handles an empty set", () => {
-    expect(summarizeWordSet([])).toEqual({ words: 0, reviewed: { ru: 0, ro: 0 }, missingTranslations: 0, missingLevels: 0 });
+    expect(summarizeWordSet([])).toEqual({ words: 0, reviewed: { ru: 0, ro: 0, id: 0 }, missingTranslations: 0, missingLevels: 0 });
   });
 });

@@ -32,8 +32,8 @@ export function WordHead({
   lemma: string;
   ipa: string | null;
   partOfSpeech: string;
-  language: "ru" | "ro";
-  onLanguage?: (language: "ru" | "ro") => void; // no switch when missing
+  language: "ru" | "ro" | "id";
+  onLanguage?: (language: "ru" | "ro" | "id") => void; // no switch when missing
   listenLabel: string;
   translateLabel: string;
   children?: ReactNode;
@@ -70,13 +70,13 @@ export function WordHead({
         {children}
         {onLanguage && (
           <div role="group" aria-label={translateLabel} className="flex border-[2px] border-line">
-            {(["ru", "ro"] as const).map((code) => (
+            {(["ru", "ro", "id"] as const).map((code) => (
               <button
                 key={code}
                 type="button"
                 aria-pressed={language === code}
                 onClick={() => onLanguage(code)}
-                className={`min-h-10 min-w-11 cursor-pointer px-2 text-xs font-black uppercase sm:min-h-0 sm:min-w-0 sm:py-0.5 ${
+                className={`min-h-11 min-w-11 cursor-pointer px-2 text-xs font-black uppercase sm:min-h-0 sm:min-w-0 sm:py-0.5 ${
                   language === code ? "bg-chip text-on-box" : "bg-raised text-fg hover:bg-surface"
                 }`}
               >
@@ -107,7 +107,7 @@ export function WordTranslation({
   autoLabel,
 }: {
   translation: CardTranslation | null;
-  language: "ru" | "ro";
+  language: "ru" | "ro" | "id";
   autoLabel: string;
 }) {
   return (

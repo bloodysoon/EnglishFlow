@@ -353,19 +353,20 @@ async function fillFromDictionary<T extends Pick<TriageCard, "lemma" | "translat
   cards: T[],
 ): Promise<T[]> {
   const lemmas = cards.map((card) => card.lemma);
-  const [ru, ro, definitions] = await Promise.all([
+  const [ru, ro, id, definitions] = await Promise.all([
     filledTranslations(supabase, lemmas, "ru"),
     filledTranslations(supabase, lemmas, "ro"),
+    filledTranslations(supabase, lemmas, "id"),
     filledDefinitions(supabase, lemmas),
   ]);
-  const filled = { ru, ro };
-  const pick = (card: T, language: "ru" | "ro"): CardTranslation | null => {
+  const filled = { ru, ro, id };
+  const pick = (card: T, language: "ru" | "ro" | "id"): CardTranslation | null => {
     const t = filled[language].get(card.lemma);
     return card.translations[language] ?? (t ? { ...t, auto: true } : null);
   };
   return cards.map((card) => ({
     ...card,
-    translations: { ru: pick(card, "ru"), ro: pick(card, "ro") },
+    translations: { ru: pick(card, "ru"), ro: pick(card, "ro"), id: pick(card, "id") },
     definitions: definitions.get(card.lemma) ?? card.definitions,
   }));
 }
@@ -426,7 +427,7 @@ export async function getWordHistory(
 // ---------------------------------------------------------------------
 
 // Cards for word ids from pick_known_words, in the order given.
-async function cardsFor(supabase: SupabaseClient, rpc: string, count: number, language: "ru" | "ro") {
+async function cardsFor(supabase: SupabaseClient, rpc: string, count: number, language: "ru" | "ro" | "id") {
   const picked = await supabase.rpc(rpc, { p_count: count });
   if (picked.error) throw picked.error;
   const ids = ((picked.data as string[] | null) ?? []).map(String);
@@ -456,28 +457,32 @@ export async function getTopicsInUse(supabase: SupabaseClient): Promise<string[]
 export type CardTranslation = { translation: string; alternatives: string[]; auto: boolean };
 export type TriageCard = Omit<WordCard, "wordId" | "translation" | "alternatives" | "autoTranslation"> & {
   wordId: string | null;
-  translations: Record<"ru" | "ro", CardTranslation | null>;
+  translations: Record<"ru" | "ro" | "id", CardTranslation | null>;
   // Hand-filled definitions from translations.csv; the English one is shown when missing.
-  definitions: Record<"ru" | "ro", string | null>;
+  definitions: Record<"ru" | "ro" | "id", string | null>;
 };
 
-// Definitions in Russian and Romanian, by lemma. Empty if the columns are missing (migration not applied).
+// Definitions in Russian, Romanian and Indonesian, by lemma. Empty if the columns are missing (migration not applied).
 async function filledDefinitions(supabase: SupabaseClient, lemmas: string[]) {
   const { data } = await supabase
     .from("dictionary_entries")
-    .select("lemma, definition_ru, definition_ro")
+    .select("lemma, definition_ru, definition_ro, definition_id")
     .in("lemma", lemmas);
   return new Map(
     ((data as Row[] | null) ?? []).map((row) => [
       String(row.lemma),
-      { ru: (row.definition_ru as string | null) || null, ro: (row.definition_ro as string | null) || null },
+      {
+        ru: (row.definition_ru as string | null) || null,
+        ro: (row.definition_ro as string | null) || null,
+        id: (row.definition_id as string | null) || null,
+      },
     ]),
   );
 }
 
 function sharedTriageCard(word: Row): TriageCard {
   const rows = (word.word_translations as Row[] | null) ?? [];
-  const pick = (language: "ru" | "ro"): CardTranslation | null => {
+  const pick = (language: "ru" | "ro" | "id"): CardTranslation | null => {
     const row = rows.find((r) => r.language === language);
     return row
       ? {
@@ -495,15 +500,15 @@ function sharedTriageCard(word: Row): TriageCard {
     example: (word.example as string | null) ?? null,
     level: (word.cefr_level as CefrLevel | null) ?? null,
     definition: (word.definition as string | null) ?? null,
-    translations: { ru: pick("ru"), ro: pick("ro") },
-    definitions: { ru: null, ro: null },
+    translations: { ru: pick("ru"), ro: pick("ro"), id: pick("id") },
+    definitions: { ru: null, ro: null, id: null },
   };
 }
 
 // Hand-filled translations (content/dictionary/translations.csv) for these
 // words, by lemma. Empty if the column is missing (migration not applied).
-export async function filledTranslations(supabase: SupabaseClient, lemmas: string[], language: "ru" | "ro") {
-  const column = language === "ru" ? "translation_ru" : "translation_ro";
+export async function filledTranslations(supabase: SupabaseClient, lemmas: string[], language: "ru" | "ro" | "id") {
+  const column = `translation_${language}` as const;
   const { data } = await supabase.from("dictionary_entries").select(`lemma, ${column}`).in("lemma", lemmas);
   return new Map(
     ((data as Row[] | null) ?? []).flatMap((row) => {
@@ -532,19 +537,20 @@ export async function pickDictionaryCards(
   if (entries.length === 0) return [];
 
   const lemmas = entries.map((e) => e.lemma);
-  // All four lookups need only the lemmas, so they run together (one round
-  // trip instead of four in a row).
-  const [{ data: shared, error }, ru, ro, definitions] = await Promise.all([
+  // All five lookups need only the lemmas, so they run together (one round
+  // trip instead of five in a row).
+  const [{ data: shared, error }, ru, ro, id, definitions] = await Promise.all([
     // RLS returns shared words only when they sit in a published set.
     supabase.from("words").select(CARD_COLUMNS).in("lemma", lemmas).is("owner_id", null),
     filledTranslations(supabase, lemmas, "ru"),
     filledTranslations(supabase, lemmas, "ro"),
+    filledTranslations(supabase, lemmas, "id"),
     filledDefinitions(supabase, lemmas),
   ]);
   if (error) throw error;
   const checked = new Map(((shared as Row[] | null) ?? []).map((w) => [String(w.lemma), sharedTriageCard(w)]));
-  const filled = { ru, ro };
-  const noDefinitions = { ru: null, ro: null };
+  const filled = { ru, ro, id };
+  const noDefinitions = { ru: null, ro: null, id: null };
 
   return Promise.all(
     entries.map(async (entry): Promise<TriageCard> => {
@@ -553,7 +559,7 @@ export async function pickDictionaryCards(
 
       const draft = await fetchWiktionaryDraft(entry.lemma, entry.part_of_speech);
       // The hand-filled translation wins; Wiktionary fills the gaps.
-      const pick = (language: "ru" | "ro"): CardTranslation | null => {
+      const pick = (language: "ru" | "ro" | "id"): CardTranslation | null => {
         const t = filled[language].get(entry.lemma) ?? draft?.translations[language] ?? null;
         return t ? { translation: t.translation, alternatives: t.alternatives, auto: true } : null;
       };
@@ -565,7 +571,7 @@ export async function pickDictionaryCards(
         example: draft?.example ?? null,
         level: entry.cefr_level,
         definition: draft?.definition ?? null,
-        translations: { ru: pick("ru"), ro: pick("ro") },
+        translations: { ru: pick("ru"), ro: pick("ro"), id: pick("id") },
         definitions: definitions.get(entry.lemma) ?? noDefinitions,
       };
     }),
@@ -573,6 +579,6 @@ export async function pickDictionaryCards(
 }
 
 // Random words I marked as known, for a quiz.
-export function pickKnownWords(supabase: SupabaseClient, language: "ru" | "ro", count = 10) {
+export function pickKnownWords(supabase: SupabaseClient, language: "ru" | "ro" | "id", count = 10) {
   return cardsFor(supabase, "pick_known_words", count, language);
 }

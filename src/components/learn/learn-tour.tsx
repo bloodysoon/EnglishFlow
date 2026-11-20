@@ -24,6 +24,8 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
   const [rect, setRect] = useState<Rect | null>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const helpRef = useRef<HTMLButtonElement>(null);
+  const open = useRef(false);
 
   // Show once to new viewers; storage may be blocked, then it simply shows again.
   useEffect(() => {
@@ -44,6 +46,15 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
     } catch {}
   }, []);
 
+  // Back to the "?" button when the tour closes, so keyboard users keep their place.
+  useEffect(() => {
+    if (step !== null) open.current = true;
+    else if (open.current) {
+      open.current = false;
+      helpRef.current?.focus();
+    }
+  }, [step]);
+
   useEffect(() => {
     if (step === null) return;
     const el = document.querySelector<HTMLElement>(`[data-tour="${STEPS[step]}"]`);
@@ -59,7 +70,22 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
     const id = requestAnimationFrame(measure);
     nextRef.current?.focus();
 
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return close();
+      if (e.key !== "Tab" || !cardRef.current) return;
+      // aria-modal: keep Tab inside the card.
+      const items = [...cardRef.current.querySelectorAll<HTMLElement>("button:not([disabled])")];
+      const first = items[0];
+      const lastItem = items.at(-1);
+      const inside = cardRef.current.contains(document.activeElement);
+      if (!inside || (e.shiftKey && document.activeElement === first)) {
+        e.preventDefault();
+        (e.shiftKey ? lastItem : first)?.focus();
+      } else if (!e.shiftKey && document.activeElement === lastItem) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
     window.addEventListener("scroll", measure, true);
     window.addEventListener("resize", measure);
     // The page's `rise` entrance still moves the target on the first frame.
@@ -88,7 +114,7 @@ export function LearnTour({ labels }: { labels: PlatformDictionary["tour"] }) {
 
   return (
     <>
-      <Button size="toolbar" variant="secondary" onClick={() => setStep(0)} aria-label={labels.show}>
+      <Button ref={helpRef} size="toolbar" variant="secondary" onClick={() => setStep(0)} aria-label={labels.show}>
         <HelpCircle className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
       </Button>
 

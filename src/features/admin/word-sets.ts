@@ -41,13 +41,13 @@ export type WordSetSummary = {
 
 // What still needs work before a set is ready to publish.
 export function summarizeWordSet(words: AdminWord[]): WordSetSummary {
-  const reviewed = { ru: 0, ro: 0 };
+  const reviewed = { ru: 0, ro: 0, id: 0 };
   let missingTranslations = 0;
   let missingLevels = 0;
 
   for (const word of words) {
     if (!word.level) missingLevels++;
-    for (const language of ["ru", "ro"] as const) {
+    for (const language of ["ru", "ro", "id"] as const) {
       const t = word.translations[language];
       if (!t) missingTranslations++;
       else if (t.reviewed) reviewed[language]++;

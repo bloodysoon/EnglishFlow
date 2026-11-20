@@ -33,7 +33,7 @@ export const MY_WORDS_LIMIT = 500;
 export async function getMyWords(
   supabase: SupabaseClient,
   userId: string,
-  language: "ru" | "ro",
+  language: "ru" | "ro" | "id",
   known = false,
 ): Promise<MyWord[]> {
   const { data, error } = await supabase

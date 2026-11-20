@@ -14,6 +14,7 @@ const localizedSchema = z.object({
   en: z.string().min(1).max(120),
   ru: z.string().min(1).max(120).optional(),
   ro: z.string().min(1).max(120).optional(),
+  id: z.string().min(1).max(120).optional(),
 });
 
 export const wordSetDefinitionSchema = z.object({
@@ -58,9 +59,10 @@ export const wordDraftSchema = z.object({
   definition: z.string().max(500).nullable(),
   example: z.string().max(300).nullable(),
   translations: z.object(
-    Object.fromEntries(DICTIONARY_LANGUAGES.map((l) => [l, translationDraftSchema.nullable()])) as Record<
+    // A missing language (e.g. "id" in files from before it existed) reads as null.
+    Object.fromEntries(DICTIONARY_LANGUAGES.map((l) => [l, translationDraftSchema.nullable().default(null)])) as Record<
       (typeof DICTIONARY_LANGUAGES)[number],
-      z.ZodNullable<typeof translationDraftSchema>
+      z.ZodDefault<z.ZodNullable<typeof translationDraftSchema>>
     >,
   ),
 });

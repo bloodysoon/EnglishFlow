@@ -22,7 +22,7 @@ export function KnownQuiz({
   sessionEnded,
 }: {
   cards: WordCard[];
-  language: "ru" | "ro";
+  language: "ru" | "ro" | "id";
   locale: Locale;
   nextRoundHref: string;
   t: PlatformDictionary["quiz"];

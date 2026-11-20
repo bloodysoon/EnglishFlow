@@ -15,14 +15,18 @@ type TranslationFields = { translation: string; alternatives: string; reviewed: 
 const LANGUAGES = [
   { code: "ru", name: "Русский" },
   { code: "ro", name: "Română" },
+  { code: "id", name: "Bahasa Indonesia" },
 ] as const;
 
-const toFields = (word: AdminWord): Record<"ru" | "ro", TranslationFields> => ({
+const toFields = (word: AdminWord): Record<"ru" | "ro" | "id", TranslationFields> => ({
   ru: word.translations.ru
     ? { translation: word.translations.ru.translation, alternatives: word.translations.ru.alternatives.join(", "), reviewed: word.translations.ru.reviewed }
     : null,
   ro: word.translations.ro
     ? { translation: word.translations.ro.translation, alternatives: word.translations.ro.alternatives.join(", "), reviewed: word.translations.ro.reviewed }
+    : null,
+  id: word.translations.id
+    ? { translation: word.translations.id.translation, alternatives: word.translations.id.alternatives.join(", "), reviewed: word.translations.id.reviewed }
     : null,
 });
 
@@ -40,7 +44,7 @@ export function WordEditor({ word }: { word: AdminWord }) {
 
   const id = (suffix: string) => `word-${word.id}-${suffix}`;
 
-  function update(language: "ru" | "ro", patch: Partial<NonNullable<TranslationFields>> | null) {
+  function update(language: "ru" | "ro" | "id", patch: Partial<NonNullable<TranslationFields>> | null) {
     setTranslations((prev) => ({
       ...prev,
       [language]: patch === null ? null : { ...(prev[language] ?? { translation: "", alternatives: "", reviewed: false }), ...patch },

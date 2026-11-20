@@ -71,7 +71,8 @@ export default async function MyWordsPage() {
               <span className={`border-2 border-line px-2 py-0.5 text-xs font-black ${leitnerBoxStyles[word.box]}`}>
                 {word.dueOn === null ? m.queue : fill(m.box, { box: word.box })}
               </span>
-              <div className="min-w-0 flex-1">
+              {/* min-w-36: on phones the date and Remove wrap below instead of crushing the word. */}
+              <div className="min-w-36 flex-1">
                 <p className="font-black break-words">
                   <Link
                     href={`/learn/words/${word.id}`}
@@ -81,7 +82,7 @@ export default async function MyWordsPage() {
                     {word.lemma}
                   </Link>
                   {word.custom && (
-                    <span className="ml-2 border-[2px] border-line bg-box-4 px-1.5 text-[10px] font-black text-on-box uppercase">
+                    <span className="ml-2 border-[2px] border-line bg-box-4 px-1.5 text-xs font-black text-on-box uppercase">
                       {m.mine}
                     </span>
                   )}

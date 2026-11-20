@@ -6,7 +6,7 @@ const goal = z.number().int().min(1).max(100);
 
 export const appSettingsSchema = z
   .object({
-    defaultTranslationLanguage: z.enum(["ru", "ro"]),
+    defaultTranslationLanguage: z.enum(["ru", "ro", "id"]),
     defaultDailyGoal: goal,
     dailyGoalOptions: z
       .array(goal)
@@ -58,6 +58,7 @@ export const wordEditSchema = z.object({
   translations: z.object({
     ru: translationEditSchema.nullable(),
     ro: translationEditSchema.nullable(),
+    id: translationEditSchema.nullable(),
   }),
 });
 

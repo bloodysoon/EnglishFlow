@@ -15,7 +15,7 @@ describe("translations.csv", () => {
     expect(filled.get("pool")).toEqual({ ru: "бассейн; пруд", ro: "piscină, bazin" });
     const csv = buildTranslationsCsv(entries, filled);
     expect(csv).toBe(
-      'lemma,parts_of_speech,level,ru,ro,definition_ru,definition_ro\npool,noun|verb,A2,бассейн; пруд,"piscină, bazin",,\no\'clock,adv,A1,,,,\n',
+      'lemma,parts_of_speech,level,ru,ro,definition_ru,definition_ro,id,definition_id\npool,noun|verb,A2,бассейн; пруд,"piscină, bazin",,,,\no\'clock,adv,A1,,,,,,\n',
     );
     expect(parseTranslationsCsv(csv)).toEqual(filled);
   });
@@ -25,6 +25,14 @@ describe("translations.csv", () => {
       'lemma,parts_of_speech,level,ru,ro,definition_ru,definition_ro\npool,noun,A2,,,"Место, где плавают.",\n',
     );
     expect(filled.get("pool")).toEqual({ ru: "", ro: "", definitionRu: "Место, где плавают." });
+    expect(parseTranslationsCsv(buildTranslationsCsv(entries, filled))).toEqual(filled);
+  });
+
+  it("reads and keeps the Indonesian columns", () => {
+    const filled = parseTranslationsCsv(
+      "lemma,parts_of_speech,level,ru,ro,definition_ru,definition_ro,id,definition_id\npool,noun,A2,,,,,kolam; kolam renang,Tempat untuk berenang.\n",
+    );
+    expect(filled.get("pool")).toEqual({ ru: "", ro: "", id: "kolam; kolam renang", definitionId: "Tempat untuk berenang." });
     expect(parseTranslationsCsv(buildTranslationsCsv(entries, filled))).toEqual(filled);
   });
 

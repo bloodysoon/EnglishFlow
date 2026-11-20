@@ -17,7 +17,7 @@ import type { PlatformDictionary } from "@/features/i18n/platform";
 import type { WordLookup } from "@/features/learning/lookup";
 
 type PartOfSpeech = (typeof CUSTOM_WORD_PARTS_OF_SPEECH)[number];
-const LANGUAGE_NAMES = { ru: "Русский", ro: "Română" } as const;
+const LANGUAGE_NAMES = { ru: "Русский", ro: "Română", id: "Bahasa Indonesia" } as const;
 
 const asPartOfSpeech = (value: string): PartOfSpeech =>
   (CUSTOM_WORD_PARTS_OF_SPEECH as readonly string[]).includes(value) ? (value as PartOfSpeech) : "";
@@ -31,7 +31,7 @@ const splitList = (text: string) =>
     .map((part) => part.trim())
     .filter(Boolean);
 
-export function AddWordForm({ language, t, common }: { language: "ru" | "ro"; t: T; common: Common }) {
+export function AddWordForm({ language, t, common }: { language: "ru" | "ro" | "id"; t: T; common: Common }) {
   const [query, setQuery] = useState("");
   const [queryError, setQueryError] = useState<string | null>(null);
   const [isLooking, setIsLooking] = useState(false);
@@ -172,7 +172,7 @@ function DictionaryResult({
   onOwnVersion,
 }: {
   lookup: Extract<WordLookup, { kind: "dictionary" }>;
-  language: "ru" | "ro";
+  language: "ru" | "ro" | "id";
   t: T;
   common: Common;
   onAdded: (lemma: string) => void;
@@ -249,7 +249,7 @@ function CustomWordForm({
   onAdded,
 }: {
   lookup: WordLookup;
-  language: "ru" | "ro";
+  language: "ru" | "ro" | "id";
   t: T;
   common: Common;
   onAdded: (lemma: string) => void;

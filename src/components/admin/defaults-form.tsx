@@ -69,7 +69,7 @@ export function DefaultsForm({ initial }: { initial: AppSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-7">
-      <ChoiceGroup<"ru" | "ro">
+      <ChoiceGroup<"ru" | "ro" | "id">
         name="default-translation-language"
         legend="Default translation language"
         description="What new learners see on the back of word cards until they change it."
@@ -82,6 +82,7 @@ export function DefaultsForm({ initial }: { initial: AppSettings }) {
         choices={[
           { value: "ru", label: "Русский", lang: "ru" },
           { value: "ro", label: "Română", lang: "ro" },
+          { value: "id", label: "Bahasa Indonesia", lang: "id" },
         ]}
       />
 
