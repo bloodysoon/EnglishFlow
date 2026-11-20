@@ -551,7 +551,7 @@ export default async function StatisticsPage() {
             {stats.levels.map((level) => {
               const accuracy = accuracyOf(level) ?? 0;
               return (
-                <li key={level.level} className="grid grid-cols-[2.75rem_1fr] items-center gap-3">
+                <li key={level.level} className="grid grid-cols-[2.75rem_1fr_3rem] items-center gap-3">
                   <span className="border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box">
                     {level.level}
                   </span>
@@ -563,7 +563,8 @@ export default async function StatisticsPage() {
                     className="group relative block cursor-default focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <span className="block h-5 border-[2px] border-line bg-canvas">
-                      <span className="block h-full bg-box-4" style={{ width: `${accuracy * 100}%` }} />
+                      {/* Primary, not box-4: box-4 means "Known" in the Words by level chart above. */}
+                      <span className="block h-full bg-primary" style={{ width: `${accuracy * 100}%` }} />
                     </span>
                     <span
                       aria-hidden="true"
@@ -571,6 +572,10 @@ export default async function StatisticsPage() {
                     >
                       {plural(locale, reviewsOf(level), s.reviewsCount)}
                     </span>
+                  </span>
+                  {/* "—" when there are no reviews yet: 0% would read as "forgot everything". */}
+                  <span aria-hidden="true" className="text-right text-sm font-black tabular-nums">
+                    {accuracyOf(level) === null ? "—" : percent(accuracy)}
                   </span>
                 </li>
               );

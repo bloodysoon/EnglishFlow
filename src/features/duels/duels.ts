@@ -11,7 +11,7 @@ export const LEAGUE_LEVELS: Record<League, string> = {
 };
 
 export const DUEL_ROUNDS = 10;
-export const ROUND_SECONDS = 5;
+export const ROUND_SECONDS = 7;
 
 export const duelIdSchema = z.uuid();
 export const inviteSchema = z.object({ friendId: z.uuid(), league: z.enum(LEAGUES) });

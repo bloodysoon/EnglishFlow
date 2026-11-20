@@ -523,7 +523,7 @@ export const en = {
     byHour: "By hour (your time)",
     peakWeekday: "Most reviews on {day}",
     peakHour: "Busiest hour: {hour}",
-    levels: "By CEFR level",
+    levels: "Recall by level",
     levelsLead: "How often you remember words of each level.",
     hardWordsLink: "See the words you forget most",
     wordsByLevel: "Words by level",
@@ -737,7 +737,7 @@ export const en = {
   },
   duels: {
     title: "Duels",
-    lead: "Challenge a friend: 10 words, 5 seconds each. Right and fast wins.",
+    lead: "Challenge a friend: 10 words, 7 seconds each. Right and fast wins.",
     newTitle: "New duel",
     newHint: "Your friend sees the invite live and has 5 minutes to accept.",
     friend: "Friend",

@@ -514,7 +514,7 @@ export const id: PlatformDictionary = {
     byHour: "Per jam (waktumu)",
     peakWeekday: "Ulangan terbanyak pada {day}",
     peakHour: "Jam tersibuk: {hour}",
-    levels: "Per level CEFR",
+    levels: "Ingatan per level",
     levelsLead: "Seberapa sering kamu ingat kata dari setiap level.",
     hardWordsLink: "Lihat kata yang paling sering kamu lupa",
     wordsByLevel: "Kata per level",
@@ -728,7 +728,7 @@ export const id: PlatformDictionary = {
   },
   duels: {
     title: "Duel",
-    lead: "Tantang teman: 10 kata, masing-masing 5 detik. Yang benar dan cepat menang.",
+    lead: "Tantang teman: 10 kata, masing-masing 7 detik. Yang benar dan cepat menang.",
     newTitle: "Duel baru",
     newHint: "Temanmu langsung melihat tantangan dan punya 5 menit untuk menerimanya.",
     friend: "Teman",

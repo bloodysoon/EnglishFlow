@@ -537,7 +537,7 @@ export const ro: PlatformDictionary = {
     byHour: "Pe ore (ora ta)",
     peakWeekday: "Cele mai multe recapitulări: {day}",
     peakHour: "Ora cea mai activă: {hour}",
-    levels: "Pe niveluri CEFR",
+    levels: "Reținere pe niveluri",
     levelsLead: "Cât de des știi cuvintele de fiecare nivel.",
     hardWordsLink: "Vezi cuvintele pe care le uiți cel mai des",
     wordsByLevel: "Cuvinte pe niveluri",
@@ -751,7 +751,7 @@ export const ro: PlatformDictionary = {
   },
   duels: {
     title: "Dueluri",
-    lead: "Provoacă un prieten: 10 cuvinte, câte 5 secunde. Câștigă cine răspunde corect și repede.",
+    lead: "Provoacă un prieten: 10 cuvinte, câte 7 secunde. Câștigă cine răspunde corect și repede.",
     newTitle: "Duel nou",
     newHint: "Prietenul vede provocarea pe loc și are 5 minute s-o accepte.",
     friend: "Prieten",

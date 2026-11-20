@@ -39,7 +39,7 @@ describe("duelPhase", () => {
 
 describe("secondsLeft", () => {
   it("is capped at the round length and never negative", () => {
-    expect(secondsLeft(state(), at("2026-11-20T09:59:00.000Z"))).toBe(5);
+    expect(secondsLeft(state(), at("2026-11-20T09:59:00.000Z"))).toBe(7);
     expect(secondsLeft(state(), at("2026-11-20T10:00:03.500Z"))).toBe(1.5);
     expect(secondsLeft(state(), at("2026-11-20T10:00:09.000Z"))).toBe(0);
   });
