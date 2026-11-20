@@ -8,9 +8,9 @@ import { buttonClasses } from "@/components/ui/button";
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { WordTranslation } from "@/components/landing/word-translation";
 import { LEITNER_BOXES, nextBox } from "@/features/leitner/boxes";
-import { fill, type TranslationLanguage } from "@/features/i18n/locales";
+import { fill } from "@/features/i18n/locales";
 import type { LandingDictionary } from "@/features/i18n/landing";
-import { DEMO_WORDS } from "@/features/i18n/landing/words";
+import { DEMO_WORDS, type LandingLanguage } from "@/features/i18n/landing/words";
 
 type Move = { word: string; to: number; remembered: boolean; id: number };
 type DemoWord = (typeof DEMO_WORDS)[number];
@@ -21,7 +21,7 @@ type ReviewDemoProps = {
   dict: LandingDictionary["review"];
   boxLabel: string; // "Box {box}"
   question: string;
-  translationLanguages: TranslationLanguage[];
+  translationLanguages: LandingLanguage[];
 };
 
 // A sample review session. Nothing is saved: it only shows the rule.
@@ -250,7 +250,7 @@ function CardBack({
   languages,
   className = "",
   ...props
-}: { word: DemoWord; languages: TranslationLanguage[] } & ComponentProps<"div">) {
+}: { word: DemoWord; languages: LandingLanguage[] } & ComponentProps<"div">) {
   return (
     <div
       className={`flex flex-col justify-center gap-3 border-[3px] border-line bg-box-3 p-6 text-on-box-3 shadow-brutal ${className}`}

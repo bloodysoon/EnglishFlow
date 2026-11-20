@@ -32,6 +32,11 @@ const empty: AchievementInput = {
   cleanSentences: 0,
   tensesUsed: 0,
   wordTenses: 0,
+  nightReviews: 0,
+  earlyReviews: 0,
+  longestCleanRun: 0,
+  phoenixWords: 0,
+  topicMastered: {},
 };
 
 describe("trackProgress", () => {
@@ -95,7 +100,17 @@ describe("badges", () => {
       perfectWeek: false,
       firstSentence: true,
       tenseMaster: true,
+      nightOwl: false,
+      earlyBird: false,
+      cleanSweep: false,
+      phoenix: false,
     });
+  });
+
+  it("reads the secret badges from the extras", () => {
+    const earned = badges({ ...empty, nightReviews: 1, earlyReviews: 1, longestCleanRun: 30, phoenixWords: 1 });
+    expect([earned.nightOwl, earned.earlyBird, earned.cleanSweep, earned.phoenix]).toEqual([true, true, true, true]);
+    expect(badges({ ...empty, longestCleanRun: 29 }).cleanSweep).toBe(false);
   });
 
   it("needs seven perfect days in a row for a perfect week", () => {
@@ -125,5 +140,8 @@ describe("achievements", () => {
       4,
     );
     expect(result.total).toBeGreaterThan(result.unlocked);
+    // A topic badge needs TOPIC_MASTERY words of that topic in box 5.
+    const topics = achievements({ ...empty, topicMastered: { travel: 20, food: 19 } });
+    expect(topics.topics.filter((t) => t.earned).map((t) => t.id)).toEqual(["travel"]);
   });
 });

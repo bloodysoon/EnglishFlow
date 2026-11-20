@@ -69,6 +69,11 @@ export function unlocksByDay(days: TimelineDay[]): Map<string, Unlock[]> {
       cleanSentences,
       tensesUsed: 0,
       wordTenses: 0,
+      nightReviews: 0,
+      earlyReviews: 0,
+      longestCleanRun: 0,
+      phoenixWords: 0,
+      topicMastered: {},
     });
 
     const unlocks: Unlock[] = [];

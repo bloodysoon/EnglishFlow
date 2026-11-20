@@ -1,12 +1,14 @@
-import { Flame, TrendingUp } from "lucide-react";
+import { Award, Flame, Pin, Tags, TrendingUp } from "lucide-react";
 
 import { badgeIcons, trackIcons } from "@/components/achievements/icons";
+import { frameStyles, medalStyles } from "@/components/achievements/medals";
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { BADGE_IDS, TRACK_IDS, TRACKS } from "@/features/achievements/achievements";
 import { fill, type Locale } from "@/features/i18n/locales";
 import { dateLocale, type PlatformDictionary } from "@/features/i18n/platform";
 import { plural } from "@/features/i18n/plural";
 import { currentStreak, type PublicStats } from "@/features/profile/profile";
+import { frameForLevel, levelTitle, medalForTier } from "@/features/rewards/levels";
 
 const card = "border-[3px] border-line shadow-brutal";
 
@@ -24,7 +26,11 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
   const a = t.achievements;
   const p = t.profile;
   const streak = currentStreak(stats, today);
-  const badges = BADGE_IDS.filter((id) => stats.badges.includes(id));
+  const pinned = stats.showcase.filter((id) => stats.badges.includes(id));
+  // Pinned badges first, in the order the learner chose.
+  const badges = [...pinned, ...BADGE_IDS.filter((id) => stats.badges.includes(id) && !pinned.includes(id))];
+  const frame = frameForLevel(stats.level);
+  const title = t.rewards.titles[levelTitle(stats.level).id];
   const tracks = TRACK_IDS.flatMap((id) => {
     const tier = stats.tracks[id] ?? 0;
     return tier > 0 ? [{ id, tier, total: TRACKS[id].length, reached: TRACKS[id][tier - 1] }] : [];
@@ -35,7 +41,10 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
       <section className={`flex flex-wrap items-center gap-5 bg-chip p-6 text-on-box sm:p-8 ${card}`}>
         <span
           aria-hidden="true"
-          className="font-display flex h-20 w-20 shrink-0 items-center justify-center border-[3px] border-line bg-primary text-4xl font-black text-on-primary uppercase shadow-brutal-sm"
+          title={frame ? fill(p.frame, { medal: a.medals[frame] }) : undefined}
+          className={`font-display flex h-20 w-20 shrink-0 items-center justify-center border-[3px] border-line bg-primary text-4xl font-black text-on-primary uppercase shadow-brutal-sm ${
+            frame ? `outline-[6px] outline-offset-0 outline-solid ${frameStyles[frame]}` : ""
+          }`}
         >
           {(username ?? "?").charAt(0)}
         </span>
@@ -47,6 +56,15 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
             <li className="inline-flex items-center gap-1.5 border-[2px] border-line bg-raised px-3 py-1 text-sm font-black text-fg uppercase shadow-brutal-sm">
               <TrendingUp className="h-4 w-4" aria-hidden="true" />
               {fill(t.dashboard.level, { level: stats.level })}
+            </li>
+            <li
+              className={`inline-flex items-center gap-1.5 border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${
+                frame ? medalStyles[frame] : "bg-raised text-fg"
+              }`}
+            >
+              <Award className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">{t.rewards.title}:</span>
+              {title}
             </li>
             <li className="inline-flex items-center gap-1.5 border-[2px] border-line bg-raised px-3 py-1 text-sm font-black text-fg uppercase shadow-brutal-sm">
               <Flame className="h-4 w-4" aria-hidden="true" />
@@ -67,11 +85,21 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {badges.map((id, i) => {
               const Icon = badgeIcons[id];
+              const isPinned = pinned.includes(id);
               return (
                 <li
                   key={id}
-                  className={`flex items-center gap-3 border-[3px] border-line p-3 shadow-brutal-sm ${leitnerBoxStyles[(i % 4) + 1]}`}
+                  className={`relative flex items-center gap-3 border-[3px] border-line p-3 ${
+                    isPinned ? `shadow-brutal ${medalStyles.gold}` : `shadow-brutal-sm ${leitnerBoxStyles[(i % 4) + 1]}`
+                  }`}
                 >
+                  {isPinned && (
+                    <Pin
+                      className="absolute -top-2.5 -right-2.5 h-6 w-6 rotate-12 border-[2px] border-line bg-raised p-0.5 text-fg"
+                      role="img"
+                      aria-label={p.showcaseTitle}
+                    />
+                  )}
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center border-[2px] border-line bg-raised text-fg">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
@@ -82,6 +110,25 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
           </ul>
         )}
       </section>
+
+      {stats.topics.length > 0 && (
+        <section aria-labelledby="profile-topics">
+          <h2 id="profile-topics" className="mb-4 text-xl font-black uppercase">
+            {a.topicTitle} <span className="text-muted">· {stats.topics.length}</span>
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {stats.topics.map((topic) => (
+              <li
+                key={topic}
+                className={`inline-flex items-center gap-1.5 border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${medalStyles.gold}`}
+              >
+                <Tags className="h-4 w-4" aria-hidden="true" />
+                {t.topics[topic]}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section aria-labelledby="profile-milestones">
         <h2 id="profile-milestones" className="mb-4 text-xl font-black uppercase">
@@ -95,7 +142,10 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
               const Icon = trackIcons[id];
               return (
                 <li key={id} className="flex items-center gap-3 border-[3px] border-line bg-raised p-3 shadow-brutal-sm">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-[2px] border-line bg-box-2 text-on-box">
+                  <span
+                    title={a.medals[medalForTier(tier)!]}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center border-[2px] border-line ${medalStyles[medalForTier(tier)!]}`}
+                  >
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="min-w-0 flex-1">

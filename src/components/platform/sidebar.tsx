@@ -17,8 +17,10 @@ import {
   Trophy,
 } from "lucide-react";
 
+import { NotificationBell } from "@/components/platform/notification-bell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { logoutAction } from "@/features/auth/actions/logout.action";
+import type { Locale } from "@/features/i18n/locales";
 import type { PlatformDictionary } from "@/features/i18n/platform";
 import type { ThemePreference } from "@/features/theme/theme";
 
@@ -39,6 +41,8 @@ type PlatformSidebarProps = {
   themePreference: ThemePreference;
   themeLabels: { label: string; toLight: string; toDark: string };
   labels: PlatformDictionary["nav"];
+  notificationLabels: PlatformDictionary["notifications"];
+  locale: Locale;
 };
 
 export function PlatformSidebar({
@@ -47,6 +51,8 @@ export function PlatformSidebar({
   themePreference,
   themeLabels,
   labels,
+  notificationLabels,
+  locale,
 }: PlatformSidebarProps) {
   const pathname = usePathname();
 
@@ -89,6 +95,7 @@ export function PlatformSidebar({
         </Link>
 
         <div className="flex items-center gap-2">
+          <NotificationBell labels={notificationLabels} locale={locale} />
           <ThemeToggle initialPreference={themePreference} labels={themeLabels} />
           <button
             type="button"

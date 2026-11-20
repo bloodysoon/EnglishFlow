@@ -4,6 +4,7 @@ import type { TimelineDay } from "@/features/achievements/timeline";
 import type { CefrLevel } from "@/features/dictionary/cefr";
 import { learnerLevel, type LearnerLevel } from "@/features/leitner/xp";
 import { splitTranslationCell } from "@/features/dictionary/dictionary-translations";
+import { logSupabaseError } from "@/lib/supabase/log-error";
 import { fetchWiktionaryDraft } from "./lookup";
 import type { Statistics } from "./statistics";
 import { learningStats, streakDays, utcDay, type LearningStats, type UserWordRow } from "./stats";
@@ -19,11 +20,27 @@ export type LearningOverview = LearningStats & {
   xpTotal: number;
   level: LearnerLevel;
   streak: number;
+  // Missed days filled by streak freezes; they count for streaks only.
+  frozenDays: string[];
   today: string;
 };
 
+// Spends earned streak freezes on days missed since the last practice and
+// returns every frozen day. Empty when the database is not ready for it.
+async function spendStreakFreezes(supabase: SupabaseClient): Promise<string[]> {
+  const { data, error } = await supabase.rpc("use_streak_freezes");
+  if (error) {
+    logSupabaseError("[Learn] Streak freezes failed", error);
+    return [];
+  }
+  return ((data as string[] | null) ?? []).map(String);
+}
+
 export async function getLearningOverview(supabase: SupabaseClient): Promise<LearningOverview> {
-  const { data, error } = await supabase.rpc("my_learning_summary");
+  const [{ data, error }, frozenDays] = await Promise.all([
+    supabase.rpc("my_learning_summary"),
+    spendStreakFreezes(supabase),
+  ]);
   if (error) throw error;
 
   const summary = (data ?? {}) as { words?: UserWordRow[]; xp_total?: number; active_days?: string[]; today?: string };
@@ -34,7 +51,8 @@ export async function getLearningOverview(supabase: SupabaseClient): Promise<Lea
     ...learningStats(summary.words ?? [], today),
     xpTotal,
     level: learnerLevel(xpTotal),
-    streak: streakDays(summary.active_days ?? [], today),
+    streak: streakDays([...(summary.active_days ?? []), ...frozenDays], today),
+    frozenDays,
     today,
   };
 }

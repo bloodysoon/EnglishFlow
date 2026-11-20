@@ -53,12 +53,23 @@ function formatRo(days: number): string {
   return `la fiecare ${days}${roOf(days)} zile`;
 }
 
+// "setiap hari", "setiap 3 hari", "setiap minggu", "setiap 2 minggu", "setiap bulan".
+function formatId(days: number): string {
+  assertInterval(days);
+  if (days === 1) return "setiap hari";
+  if (days === 30) return "setiap bulan";
+  if (days % 7 === 0) return days === 7 ? "setiap minggu" : `setiap ${days / 7} minggu`;
+  return `setiap ${days} hari`;
+}
+
 export function formatReviewIntervalFor(locale: Locale, days: number): string {
   switch (locale) {
     case "ru":
       return formatRu(days);
     case "ro":
       return formatRo(days);
+    case "id":
+      return formatId(days);
     default:
       return formatReviewInterval(days);
   }

@@ -6,6 +6,7 @@ import {
   type DayActivity,
   type LevelAccuracy,
 } from "@/features/learning/statistics";
+import { TOPICS, type Topic } from "@/features/dictionary/topics";
 import { TENSES } from "@/features/writing/tenses";
 
 // Achievements are derived from data we already keep (review log, boxes,
@@ -65,15 +66,26 @@ export const BADGE_IDS = [
   "perfectWeek",
   "firstSentence",
   "tenseMaster",
+  // Secret: hidden until earned (SECRET_BADGES).
+  "nightOwl",
+  "earlyBird",
+  "cleanSweep",
+  "phoenix",
 ] as const;
 
 export type BadgeId = (typeof BADGE_IDS)[number];
+
+export const SECRET_BADGES: ReadonlySet<BadgeId> = new Set(["nightOwl", "earlyBird", "cleanSweep", "phoenix"]);
 
 export const FLAWLESS_MIN = 20;
 export const SHARPSHOOTER = { accuracy: 0.9, minReviews: 100 };
 export const ADVANCED_MIN = 100;
 export const COMEBACK_GAP = 7;
 export const PERFECT_WEEK = 7;
+export const CLEAN_SWEEP = 30;
+export const PHOENIX_FALLS = 3;
+// Words of one topic in box 5 for that topic's badge.
+export const TOPIC_MASTERY = 20;
 const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
 export type AchievementInput = {
@@ -99,6 +111,12 @@ export type AchievementInput = {
   // Tenses with a clean sentence, overall and the most on any one word.
   tensesUsed: number;
   wordTenses: number;
+  // From my_achievement_extras (learner's own time zone).
+  nightReviews: number; // 00:00–04:59
+  earlyReviews: number; // 05:00–06:59
+  longestCleanRun: number; // most "remembered" answers in a row
+  phoenixWords: number; // back to box 1 PHOENIX_FALLS+ times, then mastered
+  topicMastered: Partial<Record<Topic, number>>; // words in box 5 per topic
 };
 
 // Practised again after at least COMEBACK_GAP days away.
@@ -140,6 +158,10 @@ export function badges(input: AchievementInput): Record<BadgeId, boolean> {
         ?.length ?? 0) >= PERFECT_WEEK,
     firstSentence: input.sentences > 0,
     tenseMaster: input.wordTenses >= TENSES.length,
+    nightOwl: input.nightReviews > 0,
+    earlyBird: input.earlyReviews > 0,
+    cleanSweep: input.longestCleanRun >= CLEAN_SWEEP,
+    phoenix: input.phoenixWords > 0,
   };
 }
 
@@ -147,8 +169,16 @@ export function achievements(input: AchievementInput) {
   const tracks = TRACK_IDS.map((id) => trackProgress(id, input[id === "streak" ? "longestStreak" : id]));
   const earned = badges(input);
 
-  const unlocked = tracks.reduce((sum, t) => sum + t.tier, 0) + BADGE_IDS.filter((id) => earned[id]).length;
-  const total = tracks.reduce((sum, t) => sum + t.targets.length, 0) + BADGE_IDS.length;
+  const topics = TOPICS.map((id) => {
+    const mastered = input.topicMastered[id] ?? 0;
+    return { id, mastered, earned: mastered >= TOPIC_MASTERY };
+  });
 
-  return { tracks, badges: earned, unlocked, total };
+  const unlocked =
+    tracks.reduce((sum, t) => sum + t.tier, 0) +
+    BADGE_IDS.filter((id) => earned[id]).length +
+    topics.filter((t) => t.earned).length;
+  const total = tracks.reduce((sum, t) => sum + t.targets.length, 0) + BADGE_IDS.length + TOPICS.length;
+
+  return { tracks, badges: earned, topics, unlocked, total };
 }

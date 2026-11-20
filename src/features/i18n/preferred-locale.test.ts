@@ -6,6 +6,7 @@ describe("localeFromAcceptLanguage", () => {
   it.each([
     ["ru-RU,ru;q=0.9,en-US;q=0.8", "ru"],
     ["ro-MD,ro;q=0.9,en;q=0.8", "ro"],
+    ["id-ID,id;q=0.9,en;q=0.8", "id"],
     ["en-US,en;q=0.9,ru;q=0.8", "en"],
     ["de-DE,de;q=0.9,ro;q=0.5", "ro"],
     ["en;q=0.5,ru;q=0.9", "ru"],

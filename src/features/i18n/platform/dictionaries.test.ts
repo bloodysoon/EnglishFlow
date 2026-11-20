@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import { LOCALES } from "@/features/i18n/locales";
 import { en } from "./en";
+import { id } from "./id";
 import { ro } from "./ro";
 import { ru } from "./ru";
 
-const DICTIONARIES = { en, ru, ro };
+const DICTIONARIES = { en, ru, ro, id };
 
 function leaves(value: unknown, path = ""): [string, unknown][] {
   if (value !== null && typeof value === "object") {

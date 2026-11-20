@@ -105,6 +105,109 @@
   }
 }
 
+/* Accent colours unlocked by learner level (src/features/rewards/levels.ts).
+   <html data-accent> swaps only the primary pair; forest is the default above. */
+:root[data-accent="ocean"],
+[data-swatch="ocean"] {
+  --primary: #2c5f7c;
+}
+:root[data-accent="clay"],
+[data-swatch="clay"] {
+  --primary: #9a4f3a;
+}
+:root[data-accent="plum"],
+[data-swatch="plum"] {
+  --primary: #6b4a7a;
+}
+:root[data-accent="honey"],
+[data-swatch="honey"] {
+  --primary: #7f5d14;
+}
+:root[data-accent="midnight"],
+[data-swatch="midnight"] {
+  --primary: #34405a;
+}
+:root[data-theme="dark"][data-accent="ocean"],
+:root[data-theme="dark"] [data-swatch="ocean"] {
+  --primary: #86b9d6;
+}
+:root[data-theme="dark"][data-accent="clay"],
+:root[data-theme="dark"] [data-swatch="clay"] {
+  --primary: #e0a28c;
+}
+:root[data-theme="dark"][data-accent="plum"],
+:root[data-theme="dark"] [data-swatch="plum"] {
+  --primary: #c3a4d4;
+}
+:root[data-theme="dark"][data-accent="honey"],
+:root[data-theme="dark"] [data-swatch="honey"] {
+  --primary: #e3c06e;
+}
+:root[data-theme="dark"][data-accent="midnight"],
+:root[data-theme="dark"] [data-swatch="midnight"] {
+  --primary: #a9b6d3;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"][data-accent="ocean"],
+  :root[data-theme="system"] [data-swatch="ocean"] {
+    --primary: #86b9d6;
+  }
+  :root[data-theme="system"][data-accent="clay"],
+  :root[data-theme="system"] [data-swatch="clay"] {
+    --primary: #e0a28c;
+  }
+  :root[data-theme="system"][data-accent="plum"],
+  :root[data-theme="system"] [data-swatch="plum"] {
+    --primary: #c3a4d4;
+  }
+  :root[data-theme="system"][data-accent="honey"],
+  :root[data-theme="system"] [data-swatch="honey"] {
+    --primary: #e3c06e;
+  }
+  :root[data-theme="system"][data-accent="midnight"],
+  :root[data-theme="system"] [data-swatch="midnight"] {
+    --primary: #a9b6d3;
+  }
+}
+
+/* Swatches in the accent picker show their own colour ([data-swatch]). */
+[data-swatch="forest"] {
+  --primary: #2f6b5c;
+}
+:root[data-theme="dark"] [data-swatch="forest"] {
+  --primary: #7cc0a6;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] [data-swatch="forest"] {
+    --primary: #7cc0a6;
+  }
+}
+
+/* Medals: milestone tiers and avatar frames. Text on them uses --on-box. */
+:root {
+  --medal-bronze: #d39b72;
+  --medal-silver: #c9ccd1;
+  --medal-gold: #e8c55e;
+  --medal-platinum: #b7d4d4;
+  --medal-diamond: #a6d3ea;
+}
+:root[data-theme="dark"] {
+  --medal-bronze: #c08a64;
+  --medal-silver: #aeb3ba;
+  --medal-gold: #d6b456;
+  --medal-platinum: #a1c2c2;
+  --medal-diamond: #8fbfd8;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --medal-bronze: #c08a64;
+    --medal-silver: #aeb3ba;
+    --medal-gold: #d6b456;
+    --medal-platinum: #a1c2c2;
+    --medal-diamond: #8fbfd8;
+  }
+}
+
 /* ========================================
    2. TAILWIND THEME
 ======================================== */
@@ -118,6 +221,11 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-primary: var(--primary);
+  --color-medal-bronze: var(--medal-bronze);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-platinum: var(--medal-platinum);
+  --color-medal-diamond: var(--medal-diamond);
   --color-on-primary: var(--on-primary);
   --color-chip: var(--chip);
   --color-mark: var(--mark);

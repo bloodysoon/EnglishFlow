@@ -1,4 +1,4 @@
-import type { TranslationLanguage } from "@/features/i18n/locales";
+import type { LandingLanguage } from "./words";
 
 // Every landing string, per language. Plain strings only ("{name}"
 // placeholders are filled with `fill`), so slices of it can be passed to
@@ -7,7 +7,7 @@ export type LandingDictionary = {
   meta: { title: string; description: string };
 
   // Which translations of an English word this page shows.
-  translationLanguages: TranslationLanguage[];
+  translationLanguages: LandingLanguage[];
 
   nav: {
     label: string;

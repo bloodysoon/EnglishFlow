@@ -34,6 +34,8 @@ export default async function PlatformLayout({
         themePreference={themePreference}
         themeLabels={{ label: nav.themeLabel, toLight: nav.themeToLight, toDark: nav.themeToDark }}
         labels={t.nav}
+        notificationLabels={t.notifications}
+        locale={locale}
       />
 
       <main className="flex min-w-0 flex-1 flex-col px-4 py-6 sm:px-8 lg:px-10 lg:py-9">

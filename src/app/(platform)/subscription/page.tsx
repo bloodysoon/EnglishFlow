@@ -23,7 +23,7 @@ export default async function SubscriptionPage() {
   const s = t.subscription;
 
   return (
-    <div className="max-w-5xl space-y-8">
+    <div className="space-y-8">
       <h1 className="rise text-3xl font-black tracking-tight uppercase sm:text-4xl" style={riseStyle(0)}>
         {s.title}<span className="text-primary">.</span>
       </h1>

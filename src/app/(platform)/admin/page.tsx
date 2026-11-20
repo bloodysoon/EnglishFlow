@@ -17,7 +17,7 @@ export default async function AdminGeneralPage() {
   const [settings, xpRules] = await Promise.all([getAppSettings(admin.supabase), getXpRules(admin.supabase)]);
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="space-y-8">
       <AdminCard title="New learners" description="Defaults for accounts created from now on. Existing learners keep their choices.">
         <DefaultsForm initial={settings} />
       </AdminCard>

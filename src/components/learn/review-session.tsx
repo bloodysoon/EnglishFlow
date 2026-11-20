@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, ChevronRight, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, PartyPopper, RotateCcw } from "lucide-react";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { WordExample, WordHead, WordTranslation, speak } from "@/components/learn/word-card";
@@ -14,6 +14,8 @@ import { plural } from "@/features/i18n/plural";
 import { reviewWordAction } from "@/features/learning/actions/review-word.action";
 import type { ReviewCard } from "@/features/learning/queries";
 import { LAST_BOX } from "@/features/leitner/boxes";
+import { learnerLevel } from "@/features/leitner/xp";
+import { levelTitle } from "@/features/rewards/levels";
 
 type Answer = { wordId: string; lemma: string; remembered: boolean; xp: number; newBox: number; mastered: boolean };
 
@@ -24,6 +26,8 @@ export function ReviewSession({
   t,
   c,
   sessionEnded,
+  startXp,
+  rewards,
 }: {
   cards: ReviewCard[];
   language: "ru" | "ro";
@@ -31,6 +35,9 @@ export function ReviewSession({
   t: PlatformDictionary["review"];
   c: PlatformDictionary["triage"]; // labels shared with the Learn card
   sessionEnded: string;
+  // XP before this session, to notice a level-up as it happens.
+  startXp: number;
+  rewards: PlatformDictionary["rewards"];
 }) {
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -50,6 +57,23 @@ export function ReviewSession({
   const card = done ? null : cards[index];
   const last = answers.at(-1);
   const xpEarned = answers.reduce((sum, a) => sum + a.xp, 0);
+  const startLevel = learnerLevel(startXp).level;
+  const nowLevel = learnerLevel(startXp + xpEarned).level;
+  const levelUp =
+    nowLevel > startLevel ? (
+      <p
+        role="status"
+        className="stamp mt-4 flex items-center gap-3 border-[3px] border-line bg-medal-gold p-3 font-black text-on-box shadow-brutal-sm"
+      >
+        <PartyPopper className="h-6 w-6 shrink-0" aria-hidden="true" />
+        <span>
+          <span className="block uppercase">{rewards.levelUp}</span>
+          <span className="block text-sm">
+            {fill(rewards.levelReached, { level: nowLevel, title: rewards.titles[levelTitle(nowLevel).id] })}
+          </span>
+        </span>
+      </p>
+    ) : null;
 
   // Keep keyboard focus on the control that matters next.
   useEffect(() => {
@@ -162,6 +186,7 @@ export function ReviewSession({
             </div>
           ))}
         </dl>
+        {levelUp}
         {skipped > 0 && <p className="mt-4 text-sm font-semibold text-muted">{plural(locale, skipped, t.skipped)}</p>}
         <p className="mt-4 font-semibold text-muted">{t.comeBack}</p>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -198,6 +223,7 @@ export function ReviewSession({
           tone="bg-primary"
           className="mt-3 h-3 border-[2px]"
         />
+        {levelUp}
       </div>
 
       {/* The card: the word first, the answer after "Show translation". */}

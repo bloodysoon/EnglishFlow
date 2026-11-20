@@ -1,6 +1,6 @@
 // Interface languages of the public pages (landing, log in, register).
 // English has no prefix ("/login"); the others do ("/ru/login").
-export const LOCALES = ["en", "ru", "ro"] as const;
+export const LOCALES = ["en", "ru", "ro", "id"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -33,10 +33,12 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   en: "English",
   ru: "Русский",
   ro: "Română",
+  id: "Bahasa Indonesia",
 };
 
-// The languages we translate English words into (the learners' languages).
-export type TranslationLanguage = Exclude<Locale, "en">;
+// The languages we translate English words into. Not every interface
+// language has word translations yet (Indonesian does not).
+export type TranslationLanguage = "ru" | "ro";
 
 // Fills "{name}" placeholders. Dictionaries hold plain strings (not
 // functions) so they can be passed to Client Components.

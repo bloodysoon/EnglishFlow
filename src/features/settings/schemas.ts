@@ -29,3 +29,18 @@ export const changePasswordSchema = z
     path: ["newPassword"],
     message: "same_password",
   });
+
+// Which notifications the bell shows. A missing or broken value means "all on".
+export const NOTIFICATION_KINDS = ["dueWords", "badges", "milestones"] as const;
+
+export const notificationPrefsSchema = z.object({
+  dueWords: z.boolean().catch(true),
+  badges: z.boolean().catch(true),
+  milestones: z.boolean().catch(true),
+});
+
+export type NotificationPrefs = z.infer<typeof notificationPrefsSchema>;
+
+export function readNotificationPrefs(value: unknown): NotificationPrefs {
+  return notificationPrefsSchema.parse(value && typeof value === "object" ? value : {});
+}

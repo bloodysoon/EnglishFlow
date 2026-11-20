@@ -17,8 +17,8 @@ describe("localePath", () => {
   });
 
   it("lists one page in every language", () => {
-    expect(localePaths("login")).toEqual({ en: "/login", ru: "/ru/login", ro: "/ro/login" });
-    expect(LOCALE_PATHS).toEqual({ en: "/", ru: "/ru", ro: "/ro" });
+    expect(localePaths("login")).toEqual({ en: "/login", ru: "/ru/login", ro: "/ro/login", id: "/id/login" });
+    expect(LOCALE_PATHS).toEqual({ en: "/", ru: "/ru", ro: "/ro", id: "/id" });
   });
 });
 

@@ -9,6 +9,8 @@ import {
   Languages,
   Layers3,
   LockKeyhole,
+  Snowflake,
+  Sparkles,
   Target,
   Trophy,
   Zap,
@@ -23,7 +25,12 @@ import { getLandingDictionary } from "@/features/i18n/landing";
 import { fill } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
 import { plural } from "@/features/i18n/plural";
-import { getHardWords, getLearningOverview } from "@/features/learning/queries";
+import { trackIcons } from "@/components/achievements/icons";
+import { medalStyles } from "@/components/achievements/medals";
+import { getMyAchievements } from "@/features/achievements/queries";
+import { getHardWords } from "@/features/learning/queries";
+import { closestGoals } from "@/features/rewards/goals";
+import { ACCENTS, FRAME_LEVELS, FREEZE_EVERY, frameForLevel, freezesEarned, levelTitle, MEDALS } from "@/features/rewards/levels";
 import { introduceTodaysWords } from "@/features/learning/server";
 import { effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
 import { LEITNER_BOXES } from "@/features/leitner/boxes";
@@ -47,9 +54,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DashboardPage() {
   const supabase = await createClient();
   // Only the counts need today's words introduced first; the rest runs alongside.
-  const [[overview, hardWords], [{ settings }, plan, { locale, t }]] = await Promise.all([
+  const [[{ overview, result }, hardWords], [{ settings }, plan, { locale, t }]] = await Promise.all([
     introduceTodaysWords(supabase).then(() =>
-      Promise.all([getLearningOverview(supabase), getHardWords(supabase)]),
+      Promise.all([getMyAchievements(supabase), getHardWords(supabase)]),
     ),
     Promise.all([getLearningSettings(), getPlan(supabase), getPlatformI18n()]),
   ]);
@@ -59,6 +66,25 @@ export default async function DashboardPage() {
 
   const { level, streak, dueToday, total, mastered, perBox } = overview;
   const newToday = Math.min(overview.introducedToday, dailyGoal);
+  const r = t.rewards;
+  const a = t.achievements;
+  const number = (n: number) => n.toLocaleString(dateLocale(locale));
+  const goals = closestGoals(result.tracks);
+  const title = levelTitle(level.level);
+  const frame = frameForLevel(level.level);
+  const freezesLeft = Math.max(0, freezesEarned(level.level) - overview.frozenDays.length);
+  // The next things a level brings, soonest first.
+  const nextRewards = [
+    ...(title.nextAt ? [{ at: title.nextAt, label: r.titles[levelTitle(title.nextAt).id] }] : []),
+    ...ACCENTS.filter((c) => c.level > level.level).map((c) => ({ at: c.level, label: `${r.accentTitle}: ${r.accents[c.id]}` })),
+    ...MEDALS.filter((m) => FRAME_LEVELS[m] > level.level).map((m) => ({
+      at: FRAME_LEVELS[m],
+      label: `${r.frameTitle}: ${a.medals[m]}`,
+    })),
+    { at: (Math.floor(level.level / FREEZE_EVERY) + 1) * FREEZE_EVERY, label: r.freezes },
+  ]
+    .sort((x, y) => x.at - y.at)
+    .slice(0, 3);
 
   const next =
     dueToday > 0
@@ -122,6 +148,12 @@ export default async function DashboardPage() {
               {plural(locale, streak, d.days)}
             </p>
             <p className="mt-2 text-sm font-semibold">{streak > 0 ? d.keepGoing : d.startStreak}</p>
+            {freezesEarned(level.level) > 0 && (
+              <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-black uppercase" title={fill(r.freezeHint, { every: FREEZE_EVERY })}>
+                <Snowflake className="h-4 w-4" aria-hidden="true" />
+                {plural(locale, freezesLeft, r.freezesLeft)}
+              </p>
+            )}
           </article>
 
           <article className={`bg-box-3 p-5 text-on-box-3 ${card}`}>
@@ -215,6 +247,56 @@ export default async function DashboardPage() {
         </section>
       )}
 
+      {/* Almost there: the milestones closest to their next level */}
+      {goals.length > 0 && (
+        <section aria-labelledby="goals-heading" className="rise" style={riseStyle(4)}>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 id="goals-heading" className="flex items-center gap-2 text-xl font-black uppercase">
+              <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
+              {r.almostThere}
+            </h2>
+            <Link
+              href="/achievements"
+              className="inline-flex min-h-11 items-center text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark"
+            >
+              {d.seeAll}
+            </Link>
+          </div>
+          <p className="mb-4 text-sm font-semibold text-muted">{r.almostThereHint}</p>
+          <ul className="grid gap-4 sm:grid-cols-3">
+            {goals.map((goal) => {
+              const Icon = trackIcons[goal.id];
+              return (
+                <li key={goal.id} className={`flex flex-col bg-raised p-5 ${card}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center border-[2px] border-line bg-box-2 text-on-box">
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm leading-tight font-black uppercase">{a.tracks[goal.id].name}</span>
+                      <span className="block text-xs font-bold text-muted">
+                        {fill(a.tierOf, { tier: goal.tier + 1, total: goal.targets.length })}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="mt-4 flex items-baseline justify-between gap-2 text-xs font-black uppercase">
+                    <span>{fill(a.progress, { value: number(goal.value), target: number(goal.next!) })}</span>
+                    <span className="text-primary">{fill(r.toGo, { n: number(goal.next! - goal.value) })}</span>
+                  </div>
+                  <ProgressBar
+                    label={a.tracks[goal.id].name}
+                    value={Math.round(goal.toNext * 100)}
+                    max={100}
+                    tone="bg-primary"
+                    className="mt-2 h-4 border-[3px]"
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
       {/* Daily goal and level */}
       <section className="grid gap-5 lg:grid-cols-2">
         <article className={`bg-raised p-6 ${card}`}>
@@ -260,6 +342,34 @@ export default async function DashboardPage() {
           <p className="mt-3 text-sm font-semibold text-muted">
             {fill(d.xpToLevel, { xp: level.xpForNextLevel - level.xpIntoLevel, level: level.level + 1 })}
           </p>
+          <p
+            className={`mt-4 inline-flex items-center gap-1.5 border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${
+              frame ? medalStyles[frame] : "bg-chip text-on-box"
+            }`}
+          >
+            <span className="sr-only">{r.title}:</span>
+            {r.titles[title.id]}
+          </p>
+          <p className="mt-2 text-xs font-bold text-muted">
+            {title.nextAt
+              ? fill(r.nextTitle, { level: title.nextAt, title: r.titles[levelTitle(title.nextAt).id] })
+              : r.allTitles}
+          </p>
+          {nextRewards.length > 0 && (
+            <div className="mt-4 border-t-[3px] border-dashed border-line pt-4">
+              <h3 className="text-xs font-black tracking-wide uppercase">{r.rewardsTitle}</h3>
+              <ul className="mt-2 space-y-1.5">
+                {nextRewards.map((reward) => (
+                  <li key={`${reward.at}-${reward.label}`} className="flex items-center gap-2 text-sm font-bold">
+                    <span className="shrink-0 border-[2px] border-line bg-raised px-1.5 py-0.5 text-[10px] leading-none font-black uppercase">
+                      {fill(r.unlocksAt, { level: reward.at })}
+                    </span>
+                    <span className="min-w-0">{reward.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </article>
       </section>
 

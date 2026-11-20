@@ -16,7 +16,7 @@ import { getLandingDictionary } from "@/features/i18n/landing";
 import { getThemePreference } from "@/features/theme/server";
 import { getMotionPaused } from "@/features/motion/server";
 
-const OG_LOCALES: Record<Locale, string> = { en: "en_US", ru: "ru_RU", ro: "ro_RO" };
+const OG_LOCALES: Record<Locale, string> = { en: "en_US", ru: "ru_RU", ro: "ro_RO", id: "id_ID" };
 
 // Shared metadata for "/", "/ru" and "/ro": localized title and
 // description plus hreflang links between the three versions.

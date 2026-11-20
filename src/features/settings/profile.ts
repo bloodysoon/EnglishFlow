@@ -1,6 +1,8 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { createClient } from "@/lib/supabase/server";
 import { getAppSettings, type AppSettings } from "./app-settings";
-import { learningSettingsSchema, type LearningSettings } from "./schemas";
+import { learningSettingsSchema, readNotificationPrefs, type LearningSettings, type NotificationPrefs } from "./schemas";
 
 // Server only. The learner's saved settings plus the app-wide options
 // (goal choices, defaults) from the admin panel. Before the learner saves
@@ -31,4 +33,10 @@ export async function getLearningSettings(): Promise<{ settings: LearningSetting
       : { translationLanguage: app.defaultTranslationLanguage, dailyGoal: app.defaultDailyGoal },
     app,
   };
+}
+
+// Server only. Which notifications the bell shows; all on until saved.
+export async function getNotificationPrefs(supabase: SupabaseClient, userId: string): Promise<NotificationPrefs> {
+  const { data } = await supabase.from("profiles").select("notification_prefs").eq("id", userId).maybeSingle();
+  return readNotificationPrefs(data?.notification_prefs);
 }

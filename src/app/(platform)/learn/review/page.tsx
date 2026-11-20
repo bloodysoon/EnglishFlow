@@ -66,6 +66,8 @@ export default async function ReviewPage() {
           t={r}
           c={t.triage}
           sessionEnded={t.common.sessionEnded}
+          startXp={overview.xpTotal}
+          rewards={t.rewards}
         />
       ) : (
         <section className="max-w-xl border-[3px] border-line bg-raised p-6 shadow-brutal sm:p-8">

@@ -23,6 +23,11 @@ const empty: AchievementInput = {
   cleanSentences: 0,
   tensesUsed: 0,
   wordTenses: 0,
+  nightReviews: 0,
+  earlyReviews: 0,
+  longestCleanRun: 0,
+  phoenixWords: 0,
+  topicMastered: {},
 };
 
 describe("usernameSchema", () => {
@@ -38,17 +43,25 @@ describe("usernameSchema", () => {
 });
 
 describe("publicStats", () => {
-  it("keeps only level, streak, earned badges and reached milestones", () => {
-    const result = achievements({ ...empty, reviews: 10, longestStreak: 3 });
-    const stats = publicStats(result, 2, 3, "2026-11-19");
+  it("keeps only level, streak, earned badges, topics, pins and reached milestones", () => {
+    const result = achievements({ ...empty, reviews: 10, longestStreak: 3, topicMastered: { travel: 20 } });
+    // An unearned pin (flawless) is dropped.
+    const stats = publicStats(result, 2, 3, "2026-11-19", ["flawless", "firstStep"]);
     expect(stats).toEqual({
       level: 2,
       streak: 3,
       streakDay: "2026-11-19",
       badges: ["firstStep"],
       tracks: { streak: 1, reviews: 1 },
+      topics: ["travel"],
+      showcase: ["firstStep"],
     });
     expect(publicStatsSchema.parse(stats)).toEqual(stats);
+  });
+
+  it("reads snapshots saved before topics and pins existed", () => {
+    const old = { level: 1, streak: 0, streakDay: "2026-11-19", badges: [], tracks: {} };
+    expect(publicStatsSchema.parse(old)).toMatchObject({ topics: [], showcase: [] });
   });
 });
 

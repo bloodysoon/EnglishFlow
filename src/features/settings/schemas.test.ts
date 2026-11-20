@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { changePasswordSchema, learningSettingsSchema } from "./schemas";
+import { changePasswordSchema, learningSettingsSchema, readNotificationPrefs } from "./schemas";
 
 describe("learningSettingsSchema", () => {
   it("accepts the supported languages and goals", () => {
@@ -38,5 +38,16 @@ describe("changePasswordSchema", () => {
     const result = changePasswordSchema.safeParse({ currentPassword: "same pass", newPassword: "same pass" });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe("same_password");
+  });
+});
+
+describe("readNotificationPrefs", () => {
+  it("keeps saved choices and turns missing or broken ones on", () => {
+    expect(readNotificationPrefs({ dueWords: false, badges: "no" })).toEqual({
+      dueWords: false,
+      badges: true,
+      milestones: true,
+    });
+    expect(readNotificationPrefs(null)).toEqual({ dueWords: true, badges: true, milestones: true });
   });
 });

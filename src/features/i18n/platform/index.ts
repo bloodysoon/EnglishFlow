@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import { LOCALE_COOKIE, type Locale } from "@/features/i18n/locales";
 import { preferredLocale } from "@/features/i18n/preferred-locale";
 import { en } from "./en";
+import { id } from "./id";
 import { ro } from "./ro";
 import { ru } from "./ru";
 
@@ -10,7 +11,7 @@ import { ru } from "./ru";
 type Widen<T> = T extends string ? string : T extends object ? { [K in keyof T]: Widen<T[K]> } : T;
 export type PlatformDictionary = Widen<typeof en>;
 
-const DICTIONARIES: Record<Locale, PlatformDictionary> = { en, ru, ro };
+const DICTIONARIES: Record<Locale, PlatformDictionary> = { en, ru, ro, id };
 
 export function getPlatformDictionary(locale: Locale): PlatformDictionary {
   return DICTIONARIES[locale];

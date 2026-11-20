@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Archivo, Onest, Unbounded } from "next/font/google";
 import "./globals.css";
+import { cookies } from "next/headers";
 import { getMotionPaused } from "@/features/motion/server";
+import { ACCENT_COOKIE, parseAccent } from "@/features/rewards/levels";
 import { getThemePreference } from "@/features/theme/server";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -44,12 +46,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Theme on <html> so every page, the body and the scrollbars match.
   const themePreference = await getThemePreference();
   const motionPaused = await getMotionPaused();
+  // shortcut: the level lock is checked in Settings only; a hand-made cookie just changes a colour.
+  const accent = parseAccent((await cookies()).get(ACCENT_COOKIE)?.value);
 
   return (
     <html
       lang="en"
       data-theme={themePreference}
       data-motion-paused={motionPaused ? "" : undefined}
+      data-accent={accent === "forest" ? undefined : accent}
       className={`${archivo.variable} ${unbounded.variable} ${onest.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

@@ -1,9 +1,8 @@
-import type { TranslationLanguage } from "@/features/i18n/locales";
-import type { LandingWord } from "@/features/i18n/landing/words";
+import type { LandingLanguage, LandingWord } from "@/features/i18n/landing/words";
 
 type WordTranslationProps = {
   word: LandingWord;
-  languages: TranslationLanguage[];
+  languages: LandingLanguage[];
   className?: string;
 };
 

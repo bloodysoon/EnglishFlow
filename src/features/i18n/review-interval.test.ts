@@ -36,8 +36,18 @@ describe("formatReviewIntervalFor", () => {
     expect(formatReviewIntervalFor("ro", days)).toBe(expected);
   });
 
+  it.each([
+    [1, "setiap hari"],
+    [3, "setiap 3 hari"],
+    [7, "setiap minggu"],
+    [14, "setiap 2 minggu"],
+    [30, "setiap bulan"],
+  ])("id: %i → %s", (days, expected) => {
+    expect(formatReviewIntervalFor("id", days)).toBe(expected);
+  });
+
   it("covers every Leitner box in every language", () => {
-    for (const locale of ["en", "ru", "ro"] as const) {
+    for (const locale of ["en", "ru", "ro", "id"] as const) {
       for (const { intervalDays } of LEITNER_BOXES) {
         expect(formatReviewIntervalFor(locale, intervalDays)).not.toBe("");
       }

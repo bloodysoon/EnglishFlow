@@ -36,6 +36,7 @@ describe("landing dictionaries", () => {
   it("shows the page's own language as the word translation", () => {
     expect(getLandingDictionary("ru").translationLanguages).toEqual(["ru"]);
     expect(getLandingDictionary("ro").translationLanguages).toEqual(["ro"]);
+    expect(getLandingDictionary("id").translationLanguages).toEqual(["id"]);
   });
 });
 
