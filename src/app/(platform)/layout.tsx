@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { DuelInviteListener } from "@/components/duels/duel-invite-listener";
 import { DataCredits } from "@/components/learn/data-credits";
 import { PlatformSidebar } from "@/components/platform/sidebar";
 import { isAdminUser } from "@/features/admin/roles";
@@ -39,11 +40,12 @@ export default async function PlatformLayout({
       />
 
       <main className="flex min-w-0 flex-1 flex-col px-4 py-6 sm:px-8 lg:px-10 lg:py-9">
-        <div className="mx-auto w-full max-w-7xl">{children}</div>
-        <footer className="mx-auto mt-auto w-full max-w-7xl pt-10">
+        <div className="w-full">{children}</div>
+        <footer className="mt-auto w-full pt-10">
           <DataCredits labels={t.credits} />
         </footer>
       </main>
+      <DuelInviteListener userId={user.id} t={t.duels} />
     </div>
   );
 }

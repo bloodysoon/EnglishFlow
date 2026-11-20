@@ -1,5 +1,7 @@
+import { ChartTip, tipAlign, tipMark } from "./chart-tip";
+
 // Plain vertical bars for one series (weekday, hour). Thick borders and a
-// marked peak keep it readable without colour; every bar has a tooltip.
+// marked peak keep it readable without colour; every bar shows its value on hover or tap.
 type Props = {
   values: number[];
   labels: string[];
@@ -17,7 +19,8 @@ export function BarChart({ values, labels, tickEvery = 1, titles, peak }: Props)
     <div>
       <ol className="flex h-36 items-end gap-[3px] border-b-[3px] border-line">
         {values.map((value, i) => (
-          <li key={i} title={titles[i]} className="flex h-full min-w-0 flex-1 items-end">
+          <li key={i} tabIndex={-1} className={`flex h-full min-w-0 flex-1 items-end ${tipMark}`}>
+            <ChartTip text={titles[i]} align={tipAlign(i, values.length)} />
             <span className="sr-only">{titles[i]}</span>
             {value > 0 && (
               <span

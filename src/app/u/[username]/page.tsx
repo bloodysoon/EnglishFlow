@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AddFriendForm } from "@/components/friends/add-friend-form";
 import { ProfileCard } from "@/components/profile/profile-card";
 import { buttonClasses } from "@/components/ui/button";
 import { LogoLink } from "@/components/ui/logo-link";
 import { getPlatformI18n } from "@/features/i18n/platform";
 import { usernameSchema } from "@/features/profile/profile";
-import { getPublicProfile } from "@/features/profile/queries";
+import { getMyProfile, getPublicProfile } from "@/features/profile/queries";
 import { utcDay } from "@/features/learning/stats";
 import { createClient } from "@/lib/supabase/server";
 
@@ -29,8 +30,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PublicProfilePage({ params }: Props) {
-  const [profile, { locale, t }] = await Promise.all([load(params), getPlatformI18n()]);
+  const supabase = await createClient();
+  const [profile, { locale, t }, { data: { user } }] = await Promise.all([
+    load(params),
+    getPlatformI18n(),
+    supabase.auth.getUser(),
+  ]);
   if (!profile) notFound();
+  // Signed-in visitors may ask to be friends; not on their own page.
+  const me = user ? await getMyProfile(supabase, user.id) : null;
+  const canAdd = me !== null && me.username !== profile.username;
 
   return (
     <div lang={locale} className="min-h-dvh bg-canvas px-4 py-6 text-fg sm:px-8 lg:py-10">
@@ -41,9 +50,20 @@ export default async function PublicProfilePage({ params }: Props) {
         ) : (
           <p className="font-semibold text-muted">{t.profile.nothingYet}</p>
         )}
-        <Link href="/" className={buttonClasses({ size: "lg" })}>
-          {t.profile.cta}
-        </Link>
+        {canAdd ? (
+          <AddFriendForm
+            username={profile.username}
+            t={t.friends}
+            sessionEnded={t.common.sessionEnded}
+            unexpected={t.common.unexpected}
+          />
+        ) : (
+          !user && (
+            <Link href="/" className={buttonClasses({ size: "lg" })}>
+              {t.profile.cta}
+            </Link>
+          )
+        )}
       </div>
     </div>
   );

@@ -12,6 +12,9 @@ import {
   learnerLevel,
   reviewXp,
   xpForLevel,
+  XP_BOOST_MAX,
+  XP_BOOST_PER_LEVEL,
+  xpBoost,
 } from "./xp";
 
 describe("knownWordXp", () => {
@@ -75,6 +78,22 @@ describe("learner levels", () => {
   });
 });
 
+describe("xpBoost", () => {
+  it("adds 1% per level above 1, up to 20%", () => {
+    expect(xpBoost(1)).toBe(0);
+    expect(xpBoost(6)).toBeCloseTo(0.05);
+    expect(xpBoost(21)).toBeCloseTo(0.2);
+    expect(xpBoost(80)).toBeCloseTo(0.2);
+  });
+
+  it("raises review XP and the mastery bonus", () => {
+    // A1 remembered: 10 → 10.5 → 11 with +5%; mastering B2: (10 + 50) × 2 × 1.2.
+    expect(reviewXp(1, true, "A1", undefined, 0.05).xp).toBe(11);
+    expect(reviewXp(4, true, "B2", undefined, 0.2)).toMatchObject({ xp: 144, bonus: 120 });
+    expect(reviewXp(1, true, "A1").xp).toBe(10);
+  });
+});
+
 // The database applies these rules on its own (public.xp_rules,
 // public.review_word). Read the migration and make sure it matches.
 describe("the database matches the TypeScript rules", () => {
@@ -83,7 +102,8 @@ describe("the database matches the TypeScript rules", () => {
   const sql = read("20261114140000_admin.sql");
   // …and this is the latest definition of review_word (and the forgot default).
   const latest = read("20261115120000_no_xp_for_forgot.sql");
-  const reviewWord = latest.slice(latest.indexOf("create or replace function public.review_word"));
+  const boosted = read("20261120140000_level_xp_boost.sql");
+  const reviewWord = boosted.slice(boosted.indexOf("create or replace function public.review_word"));
 
   it("starts xp_rules with the default values", () => {
     expect(sql).toMatch(new RegExp(`xp_remembered smallint not null default ${DEFAULT_XP_RULES.remembered}\\b`));
@@ -109,6 +129,10 @@ describe("the database matches the TypeScript rules", () => {
     }
     expect(reviewWord).toContain("least(v_box + 1, 5)");
     expect(reviewWord).toContain("p_remembered and v_box = 4");
+  });
+
+  it("applies the same level boost", () => {
+    expect(reviewWord).toContain(`* ${XP_BOOST_PER_LEVEL}, ${XP_BOOST_MAX.toFixed(2)})`);
   });
 
   it("refuses words that are still waiting in the queue", () => {

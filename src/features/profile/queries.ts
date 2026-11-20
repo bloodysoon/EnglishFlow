@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getMyAchievements } from "@/features/achievements/queries";
+import { getEquipped } from "@/features/rewards/inventory";
 import { logSupabaseError } from "@/lib/supabase/log-error";
 import type { BadgeId } from "@/features/achievements/achievements";
 import { publicStats, publicStatsSchema, showcaseSchema, type PublicStats } from "./profile";
@@ -25,13 +26,14 @@ export async function getMyProfile(supabase: SupabaseClient, userId: string): Pr
 // shortcut: learners can write their own row (RLS), so a determined one
 // could fake their own snapshot; compute it in SQL if that ever matters.
 export async function getAchievementsAndPublish(supabase: SupabaseClient, userId: string) {
-  const [data, pinned] = await Promise.all([
+  const [data, pinned, equipped] = await Promise.all([
     getMyAchievements(supabase),
     supabase.from("profiles").select("showcase").eq("id", userId).maybeSingle(),
+    getEquipped(supabase, userId),
   ]);
   const { overview, result } = data;
   const showcase = showcaseSchema.catch([]).parse(pinned.data?.showcase ?? []);
-  const stats = publicStats(result, overview.level.level, overview.streak, overview.today, showcase);
+  const stats = publicStats(result, overview.level.level, overview.streak, overview.today, showcase, equipped);
   const { error } = await supabase.from("profiles").update({ public_stats: stats }).eq("id", userId);
   // The page still works with a stale snapshot.
   if (error) logSupabaseError("[Profile] Saving the public snapshot failed", error);

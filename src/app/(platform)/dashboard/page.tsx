@@ -29,8 +29,17 @@ import { trackIcons } from "@/components/achievements/icons";
 import { medalStyles } from "@/components/achievements/medals";
 import { getMyAchievements } from "@/features/achievements/queries";
 import { getHardWords } from "@/features/learning/queries";
+import { XP_BOOST_MAX, XP_BOOST_PER_LEVEL, xpBoost } from "@/features/leitner/xp";
 import { closestGoals } from "@/features/rewards/goals";
-import { ACCENTS, FRAME_LEVELS, FREEZE_EVERY, frameForLevel, freezesEarned, levelTitle, MEDALS } from "@/features/rewards/levels";
+import {
+  ACCENTS,
+  FRAME_LEVELS,
+  FREEZE_EVERY,
+  frameForLevel,
+  freezesEarned,
+  levelTitle,
+  MEDALS,
+} from "@/features/rewards/levels";
 import { introduceTodaysWords } from "@/features/learning/server";
 import { effectiveDailyGoal, getPlan } from "@/features/subscription/plans";
 import { LEITNER_BOXES } from "@/features/leitner/boxes";
@@ -40,10 +49,25 @@ import { createClient } from "@/lib/supabase/server";
 const card = "border-[3px] border-line shadow-brutal";
 
 const exercises = [
-  { key: "vocabulary", icon: Layers3, tone: "bg-box-5 text-on-box-5", href: "/learn" },
+  {
+    key: "vocabulary",
+    icon: Layers3,
+    tone: "bg-box-5 text-on-box-5",
+    href: "/learn",
+  },
   { key: "grammar", icon: BookOpen, tone: "bg-raised text-fg", href: null },
-  { key: "listening", icon: Headphones, tone: "bg-box-1 text-on-box", href: null },
-  { key: "translation", icon: Languages, tone: "bg-box-4 text-on-box", href: null },
+  {
+    key: "listening",
+    icon: Headphones,
+    tone: "bg-box-1 text-on-box",
+    href: null,
+  },
+  {
+    key: "translation",
+    icon: Languages,
+    tone: "bg-box-4 text-on-box",
+    href: null,
+  },
 ] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -54,7 +78,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DashboardPage() {
   const supabase = await createClient();
   // Only the counts need today's words introduced first; the rest runs alongside.
-  const [[{ overview, result }, hardWords], [{ settings }, plan, { locale, t }]] = await Promise.all([
+  const [
+    [{ overview, result }, hardWords],
+    [{ settings }, plan, { locale, t }],
+  ] = await Promise.all([
     introduceTodaysWords(supabase).then(() =>
       Promise.all([getMyAchievements(supabase), getHardWords(supabase)]),
     ),
@@ -72,30 +99,48 @@ export default async function DashboardPage() {
   const goals = closestGoals(result.tracks);
   const title = levelTitle(level.level);
   const frame = frameForLevel(level.level);
-  const freezesLeft = Math.max(0, freezesEarned(level.level) - overview.frozenDays.length);
+  const freezesLeft = Math.max(
+    0,
+    freezesEarned(level.level) - overview.frozenDays.length,
+  );
   // The next things a level brings, soonest first.
   const nextRewards = [
-    ...(title.nextAt ? [{ at: title.nextAt, label: r.titles[levelTitle(title.nextAt).id] }] : []),
-    ...ACCENTS.filter((c) => c.level > level.level).map((c) => ({ at: c.level, label: `${r.accentTitle}: ${r.accents[c.id]}` })),
+    ...(title.nextAt
+      ? [{ at: title.nextAt, label: r.titles[levelTitle(title.nextAt).id] }]
+      : []),
+    ...ACCENTS.filter((c) => c.level > level.level).map((c) => ({
+      at: c.level,
+      label: `${r.accentTitle}: ${r.accents[c.id]}`,
+    })),
     ...MEDALS.filter((m) => FRAME_LEVELS[m] > level.level).map((m) => ({
       at: FRAME_LEVELS[m],
       label: `${r.frameTitle}: ${a.medals[m]}`,
     })),
-    { at: (Math.floor(level.level / FREEZE_EVERY) + 1) * FREEZE_EVERY, label: r.freezes },
+    {
+      at: (Math.floor(level.level / FREEZE_EVERY) + 1) * FREEZE_EVERY,
+      label: r.freezes,
+    },
   ]
     .sort((x, y) => x.at - y.at)
     .slice(0, 3);
 
   const next =
     dueToday > 0
-      ? { title: plural(locale, dueToday, d.waiting), cta: d.startReview, href: "/learn/review" }
+      ? {
+          title: plural(locale, dueToday, d.waiting),
+          cta: d.startReview,
+          href: "/learn/review",
+        }
       : total === 0
         ? { title: d.pickFirst, cta: d.chooseSet, href: "/learn" }
         : { title: d.allDone, cta: d.browseSets, href: "/learn" };
 
   return (
     <div className="space-y-10">
-      <h1 className="rise text-3xl font-black tracking-tight uppercase sm:text-4xl" style={riseStyle(0)}>
+      <h1
+        className="rise text-3xl font-black tracking-tight uppercase sm:text-4xl"
+        style={riseStyle(0)}
+      >
         {d.title}
         <span className="text-primary">.</span>
       </h1>
@@ -108,16 +153,23 @@ export default async function DashboardPage() {
       >
         <div className="relative z-10 max-w-2xl">
           <span className="inline-block -rotate-2 border-[2px] border-line bg-raised px-3 py-1 text-xs font-black text-fg uppercase shadow-brutal-sm">
-            {streak > 0 ? plural(locale, streak, d.streakBadge) : d.firstStepBadge}
+            {streak > 0
+              ? plural(locale, streak, d.streakBadge)
+              : d.firstStepBadge}
           </span>
           <h2
             id="next-heading"
             className="mt-6 flex flex-col items-start gap-3 text-3xl leading-tight font-black tracking-tight uppercase sm:text-5xl"
           >
             <span>{d.welcome}</span>
-            <span className="brutal-lift text-[0.7em] whitespace-normal text-fg">{next.title}</span>
+            <span className="brutal-lift text-[0.7em] whitespace-normal text-fg">
+              {next.title}
+            </span>
           </h2>
-          <Link href={next.href} className={buttonClasses({ size: "lg", className: "group mt-7" })}>
+          <Link
+            href={next.href}
+            className={buttonClasses({ size: "lg", className: "group mt-7" })}
+          >
             {next.cta}
             <ArrowRight
               className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none"
@@ -134,22 +186,33 @@ export default async function DashboardPage() {
       </section>
 
       {/* Stats */}
-      <section aria-labelledby="progress-heading" className="rise" style={riseStyle(2)}>
+      <section
+        aria-labelledby="progress-heading"
+        className="rise"
+        style={riseStyle(2)}
+      >
         <h2 id="progress-heading" className="mb-4 text-xl font-black uppercase">
           {d.progress}
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <article className={`bg-box-2 p-5 text-on-box ${card}`}>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-black tracking-wide uppercase">{d.streak}</p>
+              <p className="text-xs font-black tracking-wide uppercase">
+                {d.streak}
+              </p>
               <Flame className="h-6 w-6" aria-hidden="true" />
             </div>
             <p className="font-display mt-5 text-3xl font-black tracking-tight sm:text-4xl">
               {plural(locale, streak, d.days)}
             </p>
-            <p className="mt-2 text-sm font-semibold">{streak > 0 ? d.keepGoing : d.startStreak}</p>
+            <p className="mt-2 text-sm font-semibold">
+              {streak > 0 ? d.keepGoing : d.startStreak}
+            </p>
             {freezesEarned(level.level) > 0 && (
-              <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-black uppercase" title={fill(r.freezeHint, { every: FREEZE_EVERY })}>
+              <p
+                className="mt-2 inline-flex items-center gap-1.5 text-xs font-black uppercase"
+                title={fill(r.freezeHint, { every: FREEZE_EVERY })}
+              >
                 <Snowflake className="h-4 w-4" aria-hidden="true" />
                 {plural(locale, freezesLeft, r.freezesLeft)}
               </p>
@@ -158,32 +221,44 @@ export default async function DashboardPage() {
 
           <article className={`bg-box-3 p-5 text-on-box-3 ${card}`}>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-black tracking-wide uppercase">{d.totalXp}</p>
+              <p className="text-xs font-black tracking-wide uppercase">
+                {d.totalXp}
+              </p>
               <Zap className="h-6 w-6" aria-hidden="true" />
             </div>
             <p className="font-display mt-5 text-3xl font-black tracking-tight sm:text-4xl">
               {overview.xpTotal.toLocaleString(dateLocale(locale))}
             </p>
-            <p className="mt-2 text-sm font-semibold">{fill(d.levelLearner, { level: level.level })}</p>
+            <p className="mt-2 text-sm font-semibold">
+              {fill(d.levelLearner, { level: level.level })}
+            </p>
           </article>
 
           <article className={`bg-raised p-5 text-fg ${card}`}>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-black tracking-wide uppercase">{d.mastered}</p>
+              <p className="text-xs font-black tracking-wide uppercase">
+                {d.mastered}
+              </p>
               <Trophy className="h-6 w-6" aria-hidden="true" />
             </div>
             <p className="font-display mt-5 text-3xl font-black tracking-tight sm:text-4xl">
               {mastered} / {total}
             </p>
-            <p className="mt-2 text-sm font-semibold">{fill(d.inBox, { box: LEITNER_BOXES.length })}</p>
+            <p className="mt-2 text-sm font-semibold">
+              {fill(d.inBox, { box: LEITNER_BOXES.length })}
+            </p>
           </article>
 
           <article className={`bg-box-4 p-5 text-on-box ${card}`}>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-black tracking-wide uppercase">{d.known}</p>
+              <p className="text-xs font-black tracking-wide uppercase">
+                {d.known}
+              </p>
               <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
             </div>
-            <p className="font-display mt-5 text-3xl font-black tracking-tight sm:text-4xl">{overview.known}</p>
+            <p className="font-display mt-5 text-3xl font-black tracking-tight sm:text-4xl">
+              {overview.known}
+            </p>
             <Link
               href="/learn/known"
               className="mt-2 inline-block text-sm font-semibold underline decoration-2 underline-offset-2 hover:decoration-mark"
@@ -195,7 +270,11 @@ export default async function DashboardPage() {
       </section>
 
       {/* Boxes */}
-      <section aria-labelledby="boxes-heading" className="rise" style={riseStyle(3)}>
+      <section
+        aria-labelledby="boxes-heading"
+        className="rise"
+        style={riseStyle(3)}
+      >
         <h2 id="boxes-heading" className="mb-4 text-xl font-black uppercase">
           {d.boxes}
         </h2>
@@ -215,24 +294,39 @@ export default async function DashboardPage() {
                     )
                   }
                 >
-                  <span className="text-[10px] font-black tracking-wider uppercase sm:text-xs">{fill(d.box, { box })}</span>
-                  <span className="font-display text-2xl font-black sm:text-4xl">{count}</span>
-                  <span className="hidden text-center text-xs font-bold sm:block">{boxLabels[box]}</span>
+                  <span className="text-[10px] font-black tracking-wider uppercase sm:text-xs">
+                    {fill(d.box, { box })}
+                  </span>
+                  <span className="font-display text-2xl font-black sm:text-4xl">
+                    {count}
+                  </span>
+                  <span className="hidden text-center text-xs font-bold sm:block">
+                    {boxLabels[box]}
+                  </span>
                 </LeitnerCrate>
               </li>
             );
           })}
         </ol>
         {overview.queued > 0 && (
-          <p className="mt-3 text-sm font-semibold text-muted">{plural(locale, overview.queued, d.queued)}</p>
+          <p className="mt-3 text-sm font-semibold text-muted">
+            {plural(locale, overview.queued, d.queued)}
+          </p>
         )}
       </section>
 
       {/* Hardest words: shown only once some word has been forgotten twice */}
       {hardWords.length > 0 && (
-        <section aria-labelledby="hard-words-heading" className="rise" style={riseStyle(4)}>
+        <section
+          aria-labelledby="hard-words-heading"
+          className="rise"
+          style={riseStyle(4)}
+        >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h2 id="hard-words-heading" className="text-xl font-black uppercase">
+            <h2
+              id="hard-words-heading"
+              className="text-xl font-black uppercase"
+            >
               {d.hardWords}
             </h2>
             <Link
@@ -242,17 +336,25 @@ export default async function DashboardPage() {
               {d.seeAll}
             </Link>
           </div>
-          <p className="mb-4 text-sm font-semibold text-muted">{d.hardWordsHint}</p>
+          <p className="mb-4 text-sm font-semibold text-muted">
+            {d.hardWordsHint}
+          </p>
           <HardWordList words={hardWords} locale={locale} d={d} />
         </section>
       )}
 
       {/* Almost there: the milestones closest to their next level */}
       {goals.length > 0 && (
-        <section aria-labelledby="goals-heading" className="rise" style={riseStyle(4)}>
+        <section
+          aria-labelledby="goals-heading"
+          className="rise"
+          style={riseStyle(4)}
+        >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h2 id="goals-heading" className="flex items-center gap-2 text-xl font-black uppercase">
-              <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
+            <h2
+              id="goals-heading"
+              className="flex items-center gap-2 text-xl font-black uppercase"
+            >
               {r.almostThere}
             </h2>
             <Link
@@ -262,26 +364,43 @@ export default async function DashboardPage() {
               {d.seeAll}
             </Link>
           </div>
-          <p className="mb-4 text-sm font-semibold text-muted">{r.almostThereHint}</p>
+          <p className="mb-4 text-sm font-semibold text-muted">
+            {r.almostThereHint}
+          </p>
           <ul className="grid gap-4 sm:grid-cols-3">
             {goals.map((goal) => {
               const Icon = trackIcons[goal.id];
               return (
-                <li key={goal.id} className={`flex flex-col bg-raised p-5 ${card}`}>
+                <li
+                  key={goal.id}
+                  className={`flex flex-col bg-raised p-5 ${card}`}
+                >
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center border-[2px] border-line bg-box-2 text-on-box">
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-sm leading-tight font-black uppercase">{a.tracks[goal.id].name}</span>
+                      <span className="block text-sm leading-tight font-black uppercase">
+                        {a.tracks[goal.id].name}
+                      </span>
                       <span className="block text-xs font-bold text-muted">
-                        {fill(a.tierOf, { tier: goal.tier + 1, total: goal.targets.length })}
+                        {fill(a.tierOf, {
+                          tier: goal.tier + 1,
+                          total: goal.targets.length,
+                        })}
                       </span>
                     </span>
                   </div>
                   <div className="mt-4 flex items-baseline justify-between gap-2 text-xs font-black uppercase">
-                    <span>{fill(a.progress, { value: number(goal.value), target: number(goal.next!) })}</span>
-                    <span className="text-primary">{fill(r.toGo, { n: number(goal.next! - goal.value) })}</span>
+                    <span>
+                      {fill(a.progress, {
+                        value: number(goal.value),
+                        target: number(goal.next!),
+                      })}
+                    </span>
+                    <span className="text-primary">
+                      {fill(r.toGo, { n: number(goal.next! - goal.value) })}
+                    </span>
                   </div>
                   <ProgressBar
                     label={a.tracks[goal.id].name}
@@ -310,9 +429,16 @@ export default async function DashboardPage() {
             </p>
             <span className="text-xs font-black uppercase">{d.newToday}</span>
           </div>
-          <ProgressBar label={d.newToday} value={newToday} max={dailyGoal} tone="bg-box-3" />
+          <ProgressBar
+            label={d.newToday}
+            value={newToday}
+            max={dailyGoal}
+            tone="bg-box-3"
+          />
           <p className="mt-3 text-sm font-semibold text-muted">
-            {dueToday > 0 ? fill(d.toReview, { n: dueToday }) : d.nothingToReview}{" "}
+            {dueToday > 0
+              ? fill(d.toReview, { n: dueToday })
+              : d.nothingToReview}{" "}
             <Link
               href="/settings"
               className="font-black underline decoration-2 underline-offset-2 hover:decoration-mark"
@@ -328,7 +454,9 @@ export default async function DashboardPage() {
             <Zap className="h-6 w-6 text-primary" aria-hidden="true" />
           </div>
           <div className="mt-5 flex items-end justify-between gap-3">
-            <p className="font-display text-3xl font-black">{fill(d.level, { level: level.level })}</p>
+            <p className="font-display text-3xl font-black">
+              {fill(d.level, { level: level.level })}
+            </p>
             <span className="text-xs font-black uppercase">
               {level.xpIntoLevel} / {level.xpForNextLevel} XP
             </span>
@@ -340,7 +468,20 @@ export default async function DashboardPage() {
             tone="bg-primary"
           />
           <p className="mt-3 text-sm font-semibold text-muted">
-            {fill(d.xpToLevel, { xp: level.xpForNextLevel - level.xpIntoLevel, level: level.level + 1 })}
+            {fill(d.xpToLevel, {
+              xp: level.xpForNextLevel - level.xpIntoLevel,
+              level: level.level + 1,
+            })}
+          </p>
+          <p
+            className="mt-2 inline-flex items-center gap-1.5 text-xs font-black uppercase"
+            title={fill(r.xpBoostHint, {
+              max: Math.round(XP_BOOST_MAX * 100),
+              cap: 1 + Math.round(XP_BOOST_MAX / XP_BOOST_PER_LEVEL),
+            })}
+          >
+            <Zap className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+            {fill(r.xpBoost, { pct: Math.round(xpBoost(level.level) * 100) })}
           </p>
           <p
             className={`mt-4 inline-flex items-center gap-1.5 border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${
@@ -352,15 +493,23 @@ export default async function DashboardPage() {
           </p>
           <p className="mt-2 text-xs font-bold text-muted">
             {title.nextAt
-              ? fill(r.nextTitle, { level: title.nextAt, title: r.titles[levelTitle(title.nextAt).id] })
+              ? fill(r.nextTitle, {
+                  level: title.nextAt,
+                  title: r.titles[levelTitle(title.nextAt).id],
+                })
               : r.allTitles}
           </p>
           {nextRewards.length > 0 && (
             <div className="mt-4 border-t-[3px] border-dashed border-line pt-4">
-              <h3 className="text-xs font-black tracking-wide uppercase">{r.rewardsTitle}</h3>
+              <h3 className="text-xs font-black tracking-wide uppercase">
+                {r.rewardsTitle}
+              </h3>
               <ul className="mt-2 space-y-1.5">
                 {nextRewards.map((reward) => (
-                  <li key={`${reward.at}-${reward.label}`} className="flex items-center gap-2 text-sm font-bold">
+                  <li
+                    key={`${reward.at}-${reward.label}`}
+                    className="flex items-center gap-2 text-sm font-bold"
+                  >
                     <span className="shrink-0 border-[2px] border-line bg-raised px-1.5 py-0.5 text-[10px] leading-none font-black uppercase">
                       {fill(r.unlocksAt, { level: reward.at })}
                     </span>
@@ -379,7 +528,9 @@ export default async function DashboardPage() {
           <h2 id="practice-heading" className="text-xl font-black uppercase">
             {d.practice}
           </h2>
-          <span className="text-xs font-bold text-muted uppercase">{d.moreSoon}</span>
+          <span className="text-xs font-bold text-muted uppercase">
+            {d.moreSoon}
+          </span>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {exercises.map(({ key, icon: Icon, tone, href }) => {
@@ -396,18 +547,23 @@ export default async function DashboardPage() {
                   )}
                 </div>
                 <h3 className="mt-5 text-2xl font-black uppercase">{title}</h3>
-                <p className="mt-2 max-w-sm text-sm font-medium">{description}</p>
+                <p className="mt-2 max-w-sm text-sm font-medium">
+                  {description}
+                </p>
                 <div className="mt-auto pt-5">
                   {href ? (
                     <span className="inline-flex items-center gap-2 text-sm font-black uppercase">
-                      <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> {d.open}
+                      <CheckCircle2 className="h-4 w-4" aria-hidden="true" />{" "}
+                      {d.open}
                       <ArrowRight
                         className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
                         aria-hidden="true"
                       />
                     </span>
                   ) : (
-                    <span className="text-xs font-black uppercase">{d.inDevelopment}</span>
+                    <span className="text-xs font-black uppercase">
+                      {d.inDevelopment}
+                    </span>
                   )}
                 </div>
               </>
@@ -422,7 +578,10 @@ export default async function DashboardPage() {
                 {body}
               </Link>
             ) : (
-              <article key={key} className={`flex min-h-56 flex-col p-6 ${card} ${tone}`}>
+              <article
+                key={key}
+                className={`flex min-h-56 flex-col p-6 ${card} ${tone}`}
+              >
                 {body}
               </article>
             );

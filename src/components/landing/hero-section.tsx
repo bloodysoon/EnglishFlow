@@ -71,8 +71,9 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
           )}
         </div>
 
+        {/* Hidden on phones so the deck and the scroll arrow come up sooner. */}
         <ul
-          className="rise flex flex-wrap gap-x-5 gap-y-2 pt-2 text-sm font-black tracking-wide uppercase"
+          className="rise hidden flex-wrap gap-x-5 gap-y-2 pt-2 text-sm font-black tracking-wide uppercase sm:flex"
           style={rise(3)}
         >
           {hero.facts.map((fact) => (

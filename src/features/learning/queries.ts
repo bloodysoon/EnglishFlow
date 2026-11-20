@@ -8,7 +8,8 @@ import { logSupabaseError } from "@/lib/supabase/log-error";
 import { fetchWiktionaryDraft } from "./lookup";
 import type { Statistics } from "./statistics";
 import { learningStats, streakDays, utcDay, type LearningStats, type UserWordRow } from "./stats";
-import { wordTimeline, type TimelineStep } from "./timeline";
+import { PRACTICE_COLUMNS, toPracticeEntry } from "@/features/writing/history";
+import { withPractice, wordTimeline, type TimelineStep } from "./timeline";
 
 type Row = Record<string, unknown>;
 
@@ -123,6 +124,61 @@ export async function getStatistics(supabase: SupabaseClient): Promise<Statistic
   };
 }
 
+// My words per CEFR level, next to the dictionary's size for that level.
+export type LevelWords = { level: string; dictionary: number; known: number; mastered: number; learning: number };
+
+// Empty when the database is not ready for it: the section just hides.
+export async function getWordsByLevel(supabase: SupabaseClient): Promise<LevelWords[]> {
+  const { data, error } = await supabase.rpc("my_words_by_level");
+  if (error) {
+    logSupabaseError("[Statistics] Words by level failed", error);
+    return [];
+  }
+  return ((data as Row[] | null) ?? []).map((row) => ({
+    level: String(row.level),
+    dictionary: Number(row.dictionary ?? 0),
+    known: Number(row.known ?? 0),
+    mastered: Number(row.mastered ?? 0),
+    learning: Number(row.learning ?? 0),
+  }));
+}
+
+// My words per part of speech ("" = not sure), most words first.
+export type TypeWords = { type: string; dictionary: number; known: number; mastered: number; learning: number };
+
+export async function getWordsByType(supabase: SupabaseClient): Promise<TypeWords[]> {
+  const { data, error } = await supabase.rpc("my_words_by_type");
+  if (error) {
+    logSupabaseError("[Statistics] Words by type failed", error);
+    return [];
+  }
+  return ((data as Row[] | null) ?? []).map((row) => ({
+    type: String(row.type ?? ""),
+    dictionary: Number(row.dictionary ?? 0),
+    known: Number(row.known ?? 0),
+    mastered: Number(row.mastered ?? 0),
+    learning: Number(row.learning ?? 0),
+  }));
+}
+
+// My words per topic, most words first (a word may count in several).
+export type TopicWords = { topic: string; dictionary: number; known: number; mastered: number; learning: number };
+
+export async function getWordsByTopic(supabase: SupabaseClient): Promise<TopicWords[]> {
+  const { data, error } = await supabase.rpc("my_words_by_topic");
+  if (error) {
+    logSupabaseError("[Statistics] Words by topic failed", error);
+    return [];
+  }
+  return ((data as Row[] | null) ?? []).map((row) => ({
+    topic: String(row.topic),
+    dictionary: Number(row.dictionary ?? 0),
+    known: Number(row.known ?? 0),
+    mastered: Number(row.mastered ?? 0),
+    learning: Number(row.learning ?? 0),
+  }));
+}
+
 // ---------------------------------------------------------------------
 // Timeline page (one row per day, from my_timeline)
 // ---------------------------------------------------------------------
@@ -156,6 +212,72 @@ export async function getTimeline(supabase: SupabaseClient): Promise<TimelineDay
       words: words((row.practice as Row | null)?.words),
     },
   }));
+}
+
+// One event of a timeline day, for the day's detail view.
+export type DayStep = TimelineStep & { wordId: string; lemma: string; level: string | null };
+
+// Everything that happened on one UTC day, oldest first. Each touched word's
+// whole log is replayed so box moves are right, then cut to the day.
+// shortcut: words removed since drop out (no added_at to replay from); reads up to 1000 log rows.
+export async function getDaySteps(supabase: SupabaseClient, userId: string, day: string): Promise<DayStep[]> {
+  const from = `${day}T00:00:00Z`;
+  const to = new Date(Date.parse(from) + 86_400_000).toISOString();
+  const [events, added, practice] = await Promise.all([
+    supabase.from("xp_events").select("word_id").eq("user_id", userId).gte("created_at", from).lt("created_at", to),
+    supabase.from("user_words").select("word_id").eq("user_id", userId).gte("added_at", from).lt("added_at", to),
+    supabase
+      .from("practice_sentences")
+      .select(`word_id, ${PRACTICE_COLUMNS}`)
+      .eq("user_id", userId)
+      .gte("created_at", from)
+      .lt("created_at", to),
+  ]);
+  for (const r of [events, added, practice]) if (r.error) throw r.error;
+
+  const ids = [
+    ...new Set(
+      [events.data, added.data, practice.data].flatMap((rows) =>
+        ((rows as Row[] | null) ?? []).flatMap((r) => (r.word_id ? [String(r.word_id)] : [])),
+      ),
+    ),
+  ];
+  if (ids.length === 0) return [];
+
+  const [mine, log] = await Promise.all([
+    supabase.from("user_words").select("word_id, added_at, words(lemma, cefr_level)").eq("user_id", userId).in("word_id", ids),
+    supabase
+      .from("xp_events")
+      .select("word_id, reason, amount, created_at")
+      .eq("user_id", userId)
+      .in("word_id", ids)
+      .lt("created_at", to)
+      .order("created_at", { ascending: true })
+      .limit(1000),
+  ]);
+  if (mine.error) throw mine.error;
+  if (log.error) throw log.error;
+
+  const logRows = (log.data as Row[] | null) ?? [];
+  const practiceRows = (practice.data as Row[] | null) ?? [];
+  const inDay = (at: string) => Date.parse(at) >= Date.parse(from) && Date.parse(at) < Date.parse(to);
+  return ((mine.data as Row[] | null) ?? [])
+    .flatMap((w) => {
+      const wordId = String(w.word_id);
+      const lemma = String((w.words as Row | null)?.lemma ?? "");
+      const level = ((w.words as Row | null)?.cefr_level as string | null) ?? null;
+      const steps = withPractice(
+        wordTimeline(
+          String(w.added_at),
+          logRows
+            .filter((e) => e.word_id === w.word_id)
+            .map((e) => ({ reason: String(e.reason), amount: Number(e.amount), at: String(e.created_at) })),
+        ),
+        practiceRows.filter((p) => p.word_id === w.word_id).map(toPracticeEntry),
+      );
+      return steps.filter((s) => inDay(s.at)).map((s) => ({ ...s, wordId, lemma, level }));
+    })
+    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
 }
 
 // ---------------------------------------------------------------------

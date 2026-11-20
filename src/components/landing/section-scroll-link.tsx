@@ -6,6 +6,8 @@ type SectionScrollLinkProps = {
 };
 
 // The "go to the next screen" button that closes every landing section.
+// Below lg a section is taller than the screen, so the down arrow sticks to
+// the bottom while its section scrolls by; its label gets a backing so it reads over content.
 export function SectionScrollLink({
   href,
   label,
@@ -15,9 +17,11 @@ export function SectionScrollLink({
   return (
     <a
       href={href}
-      className={`group mx-auto flex w-fit flex-col items-center gap-2 text-center text-xs font-black tracking-widest uppercase ${className}`}
+      className={`group mx-auto flex w-fit flex-col items-center gap-2 text-center text-xs font-black tracking-widest uppercase ${
+        direction === "down" ? "max-lg:sticky max-lg:bottom-4 max-lg:z-20" : ""
+      } ${className}`}
     >
-      <span className="relative after:absolute after:-bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:bg-mark after:transition-transform after:duration-300 group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+      <span className={`relative ${direction === "down" ? "max-lg:border-2 max-lg:border-line max-lg:bg-raised max-lg:px-2 max-lg:py-1 max-lg:shadow-brutal-sm" : ""} after:absolute after:-bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:bg-mark after:transition-transform after:duration-300 group-hover:after:scale-x-100 motion-reduce:after:transition-none`}>
         {label}
       </span>
 

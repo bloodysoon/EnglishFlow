@@ -132,7 +132,7 @@ export function Navbar({ isAuthenticated, email, themePreference, locale, dict }
           {!isAuthenticated && (
             <Link
               href={localePath(locale, "login")}
-              className="inline-flex min-h-11 items-center px-1 text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark max-sm:hidden"
+              className={buttonClasses({ variant: "secondary", size: "toolbar", className: "max-sm:hidden" })}
             >
               {dict.logIn}
             </Link>

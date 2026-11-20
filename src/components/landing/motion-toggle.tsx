@@ -27,22 +27,18 @@ export function MotionToggle({ label, initialPaused }: { label: string; initialP
       type="button"
       onClick={toggle}
       aria-pressed={paused}
-      aria-label={label}
-      title={label}
       className="
-        flex h-11 w-11 cursor-pointer items-center justify-center
-        border-[3px] border-line bg-raised text-fg shadow-brutal-sm
-        transition-[transform,box-shadow,background-color] duration-150
-        hover:bg-box-2 hover:text-on-box hover:shadow-brutal-md
-        active:shadow-none aria-pressed:bg-box-2 aria-pressed:text-on-box
+        inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-black text-muted uppercase
+        underline decoration-2 underline-offset-4 hover:text-fg hover:decoration-mark
         motion-reduce:hidden
       "
     >
       {paused ? (
-        <Play aria-hidden="true" strokeWidth={2.75} className="h-5 w-5" />
+        <Play aria-hidden="true" strokeWidth={2.75} className="h-4 w-4" />
       ) : (
-        <Pause aria-hidden="true" strokeWidth={2.75} className="h-5 w-5" />
+        <Pause aria-hidden="true" strokeWidth={2.75} className="h-4 w-4" />
       )}
+      {label}
     </button>
   );
 }

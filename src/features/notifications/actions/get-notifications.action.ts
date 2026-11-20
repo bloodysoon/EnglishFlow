@@ -1,9 +1,11 @@
 "use server";
 
 import { getMyAchievements } from "@/features/achievements/queries";
+import { getFriends } from "@/features/friends/queries";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
 import { utcDay } from "@/features/learning/stats";
 import { getNotificationPrefs } from "@/features/settings/profile";
+import { logSupabaseError } from "@/lib/supabase/log-error";
 import { createClient } from "@/lib/supabase/server";
 import { monthlyChallenges } from "@/features/rewards/challenges";
 import { earnedNotices, NOTICE_SETTING, type AchievementNotice, type DueWord } from "../notifications";
@@ -16,6 +18,8 @@ export type Notifications = {
   dueCount: number;
   // null when both badges and milestones are switched off.
   achievements: AchievementNotice[] | null;
+  // Usernames of people waiting for my answer, newest first.
+  friendRequests: string[];
 };
 
 export async function getNotificationsAction(): Promise<
@@ -32,7 +36,7 @@ export async function getNotificationsAction(): Promise<
     const wantsAchievements = prefs.badges || prefs.milestones;
 
     // Only the work the learner asked for: achievements need several queries.
-    const [{ locale, t }, mine, due] = await Promise.all([
+    const [{ locale, t }, mine, due, friends] = await Promise.all([
       getPlatformI18n(),
       wantsAchievements ? getMyAchievements(supabase) : null,
       prefs.dueWords
@@ -45,6 +49,11 @@ export async function getNotificationsAction(): Promise<
             .order("box", { ascending: true })
             .limit(DUE_LIMIT)
         : null,
+      // Extra: if friends fail to load, the rest of the bell still works.
+      getFriends(supabase).catch((error) => {
+        logSupabaseError("[Notifications] Loading friend requests failed", error);
+        return [];
+      }),
     ]);
     if (due?.error) throw due.error;
 
@@ -68,6 +77,7 @@ export async function getNotificationsAction(): Promise<
         due: rows.map((row) => ({ lemma: row.words.lemma, box: Number(row.box) })),
         dueCount: due?.count ?? rows.length,
         achievements,
+        friendRequests: friends.filter((f) => f.kind === "incoming").map((f) => f.username),
       },
     };
   } catch (error) {

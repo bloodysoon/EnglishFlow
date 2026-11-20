@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, Bell, CalendarCheck, ChevronDown, Medal, Tags, TrendingUp, type LucideIcon } from "lucide-react";
+import { Award, Bell, CalendarCheck, ChevronDown, Medal, Tags, TrendingUp, UserPlus, type LucideIcon } from "lucide-react";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { fill, type Locale } from "@/features/i18n/locales";
@@ -126,12 +126,15 @@ export function NotificationBell({ labels, locale }: NotificationBellProps) {
   }, [open, close]);
 
   const dueCount = data?.dueCount ?? 0;
-  const count = fresh.length + (dueCount > 0 ? 1 : 0);
+  // Like due words, requests stay in the bell until answered on /friends.
+  const requests = data?.friendRequests ?? [];
+  const count = fresh.length + (dueCount > 0 ? 1 : 0) + (requests.length > 0 ? 1 : 0);
   const chip = "shrink-0 border-[2px] border-line px-1.5 py-0.5 text-[10px] leading-none font-black uppercase";
 
   return (
     // lg:z-[60]: on desktop the menu column below is a z-50 flex item and would cover the panel.
-    <div ref={rootRef} className="relative lg:z-[60]">
+    // Not positioned below lg, so the panel hangs from the whole top bar and stays on screen.
+    <div ref={rootRef} className="lg:relative lg:z-[60]">
       <button
         ref={buttonRef}
         type="button"
@@ -157,7 +160,7 @@ export function NotificationBell({ labels, locale }: NotificationBellProps) {
           id="notification-panel"
           role="region"
           aria-label={labels.label}
-          className="absolute top-full right-0 z-50 mt-3 max-h-[min(32rem,75dvh)] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto border-[3px] border-line bg-raised text-fg shadow-brutal lg:right-auto lg:left-0"
+          className="absolute top-full right-4 left-4 z-50 mt-3 max-h-[min(32rem,75dvh)] overflow-y-auto border-[3px] border-line bg-raised text-fg shadow-brutal sm:left-auto sm:w-[22rem] lg:right-auto lg:left-0"
         >
           <p className="border-b-[3px] border-line px-4 py-3 text-sm font-black uppercase">{labels.label}</p>
 
@@ -167,6 +170,25 @@ export function NotificationBell({ labels, locale }: NotificationBellProps) {
             <p className="p-4 text-sm font-semibold text-muted">{labels.empty}</p>
           ) : (
             <ul className="divide-y-[2px] divide-line">
+              {requests.length > 0 && (
+                <li>
+                  <Link
+                    href="/friends"
+                    onClick={() => close(false)}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-box-2 hover:text-on-box"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border-[2px] border-line bg-box-3 text-on-box">
+                      <UserPlus className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 text-sm leading-tight font-black break-words">
+                      {requests.length === 1
+                        ? fill(labels.friendRequest, { name: requests[0] })
+                        : plural(locale, requests.length, labels.friendRequests)}
+                    </span>
+                  </Link>
+                </li>
+              )}
+
               {fresh.map((notice) => {
                 const Icon = ICONS[notice.kind];
                 return (

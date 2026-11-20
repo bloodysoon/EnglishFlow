@@ -9,6 +9,9 @@ import {
   Flame,
   Gauge,
   GraduationCap,
+  Layers,
+  Shapes,
+  Tags,
   Hourglass,
   Repeat,
   Sparkles,
@@ -18,12 +21,20 @@ import {
 
 import { HourChart } from "@/components/statistics/hour-chart";
 import { BarChart } from "@/components/statistics/bar-chart";
+import { ChartTip, tipAlign, tipMark } from "@/components/statistics/chart-tip";
+import { StackedBar, type BarPart } from "@/components/statistics/stacked-bar";
 import { buttonClasses } from "@/components/ui/button";
 import { riseStyle } from "@/components/ui/rise";
 import { fill, type Locale } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
 import { plural } from "@/features/i18n/plural";
-import { getLearningOverview, getStatistics } from "@/features/learning/queries";
+import {
+  getLearningOverview,
+  getStatistics,
+  getWordsByLevel,
+  getWordsByTopic,
+  getWordsByType,
+} from "@/features/learning/queries";
 import {
   accuracyOf,
   accuracyTrend,
@@ -85,13 +96,39 @@ function StatCard({
 
 export default async function StatisticsPage() {
   const supabase = await createClient();
-  const [stats, overview, { locale, t }] = await Promise.all([
+  const [stats, overview, { locale, t }, wordsByLevel, wordsByType, wordsByTopic] = await Promise.all([
     getStatistics(supabase),
     getLearningOverview(supabase),
     getPlatformI18n(),
+    getWordsByLevel(supabase),
+    getWordsByType(supabase),
+    getWordsByTopic(supabase),
   ]);
   const s = t.statistics;
   const { today, days } = stats;
+  const number = (n: number) => n.toLocaleString(dateLocale(locale));
+
+  // Words by level and by type share one look: known, mastered, learning.
+  const wordParts = (w: { known: number; mastered: number; learning: number }): BarPart[] => [
+    { tone: "bg-box-4", label: s.knownWords, value: w.known },
+    { tone: "bg-box-5", label: s.masteredWords, value: w.mastered },
+    { tone: "bg-box-2", label: s.learningWords, value: w.learning },
+  ];
+  const describe = (parts: BarPart[]) => parts.map((p) => `${p.label} ${number(p.value)}`).join(", ");
+  const legend = (
+    <ul className="mt-3 mb-5 flex flex-wrap gap-x-4 gap-y-1 text-xs font-black uppercase">
+      {wordParts({ known: 0, mastered: 0, learning: 0 }).map((p) => (
+        <li key={p.label} className="inline-flex items-center gap-1.5">
+          <span aria-hidden="true" className={`h-3 w-3 border-[2px] border-line ${p.tone}`} />
+          {p.label}
+        </li>
+      ))}
+    </ul>
+  );
+  const posNames = t.addWord.partsOfSpeech as Record<string, string>;
+  const typeName = (type: string) => posNames[type] ?? type;
+  const topicNames = t.topics as Record<string, string>;
+
 
   const header = (
     <header className="rise space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0" style={riseStyle(0)}>
@@ -249,7 +286,7 @@ export default async function StatisticsPage() {
           {s.activityLead} {plural(locale, summary.activeDays, s.activeDays)}.
         </p>
         {/* rtl: on narrow screens the scroller starts at today, on the right. */}
-        <div dir="rtl" className="mt-5 overflow-x-auto pb-2">
+        <div dir="rtl" className="mt-1 overflow-x-auto pt-10 pb-2">
           <div dir="ltr" className="inline-flex flex-col gap-1" aria-hidden="true">
             <div className="flex gap-[3px]">
               {weeks.map((week, w) => (
@@ -270,9 +307,14 @@ export default async function StatisticsPage() {
                     cell ? (
                       <span
                         key={d}
-                        title={`${fullDate(cell.day)} · ${plural(locale, cell.reviews, s.reviewsCount)}`}
-                        className={`h-3 w-3 border border-line/40 ${heatTone[intensity(cell.reviews, heatMax)]}`}
-                      />
+                        tabIndex={-1}
+                        className={`h-3 w-3 border border-line/40 ${heatTone[intensity(cell.reviews, heatMax)]} ${tipMark}`}
+                      >
+                        <ChartTip
+                          text={`${fullDate(cell.day)} · ${plural(locale, cell.reviews, s.reviewsCount)}`}
+                          align={tipAlign(w, weeks.length)}
+                        />
+                      </span>
                     ) : (
                       <span key={d} className="h-3 w-3" />
                     ),
@@ -324,11 +366,16 @@ export default async function StatisticsPage() {
           </p>
         )}
         <ol className="mt-5 flex h-44 items-end gap-[2px] border-b-[3px] border-line">
-          {recent.map((d) => {
+          {recent.map((d, i) => {
             const title = `${fullDate(d.day)} · ${s.remembered}: ${d.remembered} · ${s.forgot}: ${d.forgot}`;
             return (
-              <li key={d.day} title={title} className="flex h-full min-w-0 flex-1 flex-col justify-end gap-[2px]">
+              <li
+                key={d.day}
+                tabIndex={-1}
+                className={`flex h-full min-w-0 flex-1 flex-col justify-end gap-[2px] ${tipMark}`}
+              >
                 <span className="sr-only">{title}</span>
+                <ChartTip text={title} align={tipAlign(i, recent.length)} />
                 {d.forgot > 0 && (
                   <span
                     aria-hidden="true"
@@ -380,6 +427,116 @@ export default async function StatisticsPage() {
         </div>
       </section>
 
+      {/* My words per level, out of the dictionary */}
+      {wordsByLevel.some((l) => l.known + l.mastered + l.learning > 0) && (
+        <section aria-labelledby="words-level-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="words-level-heading" className="text-xl font-black uppercase">
+              {s.wordsByLevel}
+            </h2>
+            <Layers className="h-6 w-6 text-primary" aria-hidden="true" />
+          </div>
+          <p className="mt-1 text-sm font-semibold text-muted">{s.wordsByLevelLead}</p>
+          {legend}
+          <ul className="space-y-4">
+            {wordsByLevel.map((l) => {
+              const parts = wordParts(l);
+              const mine = l.known + l.mastered + l.learning;
+              const heading = fill(s.ofDictionary, { n: number(mine), total: number(l.dictionary) });
+              return (
+                <li key={l.level} className="grid grid-cols-[2.75rem_1fr] items-center gap-3">
+                  <span className="border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box">
+                    {l.level}
+                  </span>
+                  <StackedBar
+                    parts={parts}
+                    // Own words can push a level past the dictionary's count.
+                    max={Math.max(l.dictionary, mine)}
+                    heading={heading}
+                    label={`${l.level}: ${describe(parts)} · ${heading}`}
+                    format={number}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
+      {/* My words per part of speech, out of the dictionary */}
+      {wordsByType.length > 0 && (
+        <section aria-labelledby="words-type-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="words-type-heading" className="text-xl font-black uppercase">
+              {s.wordsByType}
+            </h2>
+            <Shapes className="h-6 w-6 text-primary" aria-hidden="true" />
+          </div>
+          <p className="mt-1 text-sm font-semibold text-muted">{s.wordsByTypeLead}</p>
+          {legend}
+          <ul className="space-y-4">
+            {wordsByType.map((w) => {
+              const parts = wordParts(w);
+              const mine = w.known + w.mastered + w.learning;
+              const name = typeName(w.type);
+              const heading = w.dictionary > 0 ? fill(s.ofDictionary, { n: number(mine), total: number(w.dictionary) }) : number(mine);
+              return (
+                <li key={w.type} className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]">
+                  <span className="truncate border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box uppercase">
+                    {name}
+                  </span>
+                  <StackedBar
+                    parts={parts}
+                    // Out of the dictionary's words of this type, as the box says.
+                    max={Math.max(w.dictionary, mine)}
+                    heading={heading}
+                    label={`${name}: ${describe(parts)} · ${heading}`}
+                    format={number}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
+      {/* My words per topic, out of the dictionary */}
+      {wordsByTopic.length > 0 && (
+        <section aria-labelledby="words-topic-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="words-topic-heading" className="text-xl font-black uppercase">
+              {s.wordsByTopic}
+            </h2>
+            <Tags className="h-6 w-6 text-primary" aria-hidden="true" />
+          </div>
+          <p className="mt-1 text-sm font-semibold text-muted">{s.wordsByTopicLead}</p>
+          {legend}
+          <ul className="space-y-4">
+            {wordsByTopic.map((w) => {
+              const parts = wordParts(w);
+              const mine = w.known + w.mastered + w.learning;
+              const name = topicNames[w.topic] ?? w.topic;
+              const heading = fill(s.ofDictionary, { n: number(mine), total: number(w.dictionary) });
+              return (
+                <li key={w.topic} className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]">
+                  <span className="truncate border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box uppercase">
+                    {name}
+                  </span>
+                  <StackedBar
+                    parts={parts}
+                    // Out of the dictionary's words of this topic, as the box says.
+                    max={Math.max(w.dictionary, mine)}
+                    heading={heading}
+                    label={`${name}: ${describe(parts)} · ${heading}`}
+                    format={number}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
       {/* CEFR levels */}
       {stats.levels.length > 0 && (
         <section aria-labelledby="levels-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
@@ -394,20 +551,26 @@ export default async function StatisticsPage() {
             {stats.levels.map((level) => {
               const accuracy = accuracyOf(level) ?? 0;
               return (
-                <li key={level.level} className="grid grid-cols-[2.75rem_1fr_auto] items-center gap-3">
+                <li key={level.level} className="grid grid-cols-[2.75rem_1fr] items-center gap-3">
                   <span className="border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box">
                     {level.level}
                   </span>
+                  {/* The review count shows on hover, keyboard focus or tap. */}
                   <span
-                    className="h-5 border-[2px] border-line bg-canvas"
+                    tabIndex={0}
                     role="img"
-                    aria-label={`${level.level}: ${percent(accuracy)}`}
+                    aria-label={`${level.level}: ${percent(accuracy)} · ${plural(locale, reviewsOf(level), s.reviewsCount)}`}
+                    className="group relative block cursor-default focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
-                    <span className="block h-full bg-box-4" style={{ width: `${accuracy * 100}%` }} />
-                  </span>
-                  <span className="text-right text-xs font-bold">
-                    <span className="block text-sm font-black">{percent(accuracy)}</span>
-                    <span className="text-muted">{plural(locale, reviewsOf(level), s.reviewsCount)}</span>
+                    <span className="block h-5 border-[2px] border-line bg-canvas">
+                      <span className="block h-full bg-box-4" style={{ width: `${accuracy * 100}%` }} />
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute bottom-full left-0 z-10 mb-2 hidden border-[2px] border-line bg-raised px-2 py-1 text-xs font-black whitespace-nowrap text-fg shadow-brutal-sm group-hover:block group-focus:block"
+                    >
+                      {plural(locale, reviewsOf(level), s.reviewsCount)}
+                    </span>
                   </span>
                 </li>
               );

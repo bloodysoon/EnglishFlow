@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { unlocksByDay, type TimelineDay } from "./timeline";
+import { dayUpTo, unlockTimes, unlocksByDay, type TimelineDay } from "./timeline";
 
 const day = (d: Partial<TimelineDay> & { day: string }): TimelineDay => ({
   active: false,
@@ -50,5 +50,25 @@ describe("unlocksByDay", () => {
 
   it("returns nothing for an empty history", () => {
     expect(unlocksByDay([]).size).toBe(0);
+  });
+});
+
+describe("unlockTimes", () => {
+  const step = (kind: "added" | "remembered", at: string) => ({ kind, at, xp: kind === "remembered" ? 10 : 0, level: "A1" });
+
+  it("puts each unlock at the step that reached it", () => {
+    const steps = [
+      ...Array.from({ length: 10 }, (_, i) => step("added", `2026-11-01T09:0${i}:00Z`)),
+      step("remembered", "2026-11-01T15:30:00Z"),
+    ];
+    expect(unlockTimes([dayUpTo("2026-11-01", steps)], "2026-11-01", steps)).toEqual([
+      { unlock: { kind: "track", id: "words", target: 10 }, at: "2026-11-01T09:09:00Z" },
+      { unlock: { kind: "badge", id: "firstStep" }, at: "2026-11-01T15:30:00Z" },
+    ]);
+  });
+
+  it("returns nothing for a day without unlocks", () => {
+    const steps = [step("added", "2026-11-01T09:00:00Z")];
+    expect(unlockTimes([dayUpTo("2026-11-01", steps)], "2026-11-01", steps)).toEqual([]);
   });
 });

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Backpack,
   BarChart3,
   BookOpen,
   Gem,
@@ -12,9 +13,11 @@ import {
   LogOut,
   Menu,
   Settings,
+  Swords,
   X,
   ShieldCheck,
   Trophy,
+  Users,
 } from "lucide-react";
 
 import { NotificationBell } from "@/components/platform/notification-bell";
@@ -32,6 +35,9 @@ const navigation = [
   { key: "subscription", href: "/subscription", icon: Gem, ready: true },
   { key: "statistics", href: "/statistics", icon: BarChart3, ready: true },
   { key: "achievements", href: "/achievements", icon: Trophy, ready: true },
+  { key: "inventory", href: "/inventory", icon: Backpack, ready: true },
+  { key: "friends", href: "/friends", icon: Users, ready: true },
+  { key: "duels", href: "/duels", icon: Swords, ready: true },
   { key: "timeline", href: "/timeline", icon: History, ready: true },
 ] as const;
 
@@ -110,16 +116,20 @@ export function PlatformSidebar({
         </div>
       </div>
 
-      {/* Dimmed page behind the open drawer; a tap closes it. */}
-      {open && (
-        <div aria-hidden="true" className="fixed inset-0 z-40 bg-fg/40 lg:hidden" onClick={() => setOpen(false)} />
-      )}
+      {/* Dimmed page behind the open drawer; a tap closes it. Always mounted so it fades both ways. */}
+      <div
+        aria-hidden="true"
+        className={`fixed inset-0 z-40 bg-fg/40 transition-opacity duration-300 motion-reduce:transition-none lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setOpen(false)}
+      />
 
       {/* Drawer on small screens, plain column on desktop. A tapped link closes it. */}
       <div
         id="platform-menu"
         onClick={(e) => (e.target as HTMLElement).closest("a") && setOpen(false)}
-        className={`fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col overflow-y-auto border-r-[3px] border-line bg-surface transition-[transform,visibility] duration-200 motion-reduce:transition-none lg:visible lg:static lg:w-auto lg:flex-1 lg:translate-x-0 lg:border-r-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col overflow-y-auto border-r-[3px] border-line bg-surface transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none lg:visible lg:static lg:w-auto lg:flex-1 lg:translate-x-0 lg:border-r-0 ${
           open ? "visible translate-x-0" : "invisible -translate-x-full"
         }`}
       >

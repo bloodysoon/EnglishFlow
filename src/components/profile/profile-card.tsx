@@ -29,8 +29,9 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
   const pinned = stats.showcase.filter((id) => stats.badges.includes(id));
   // Pinned badges first, in the order the learner chose.
   const badges = [...pinned, ...BADGE_IDS.filter((id) => stats.badges.includes(id) && !pinned.includes(id))];
-  const frame = frameForLevel(stats.level);
-  const title = t.rewards.titles[levelTitle(stats.level).id];
+  // Older snapshots have no equipped title or frame: follow the level.
+  const frame = stats.frame === undefined ? frameForLevel(stats.level) : stats.frame;
+  const title = t.rewards.titles[stats.title ?? levelTitle(stats.level).id];
   const tracks = TRACK_IDS.flatMap((id) => {
     const tier = stats.tracks[id] ?? 0;
     return tier > 0 ? [{ id, tier, total: TRACKS[id].length, reached: TRACKS[id][tier - 1] }] : [];

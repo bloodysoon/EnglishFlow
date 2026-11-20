@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, ChevronRight, PartyPopper, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, PartyPopper, RotateCcw, X } from "lucide-react";
+import { createPortal } from "react-dom";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { WordExample, WordHead, WordTranslation, speak } from "@/components/learn/word-card";
@@ -45,6 +46,7 @@ export function ReviewSession({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [skipped, setSkipped] = useState(0);
+  const [closedLevel, setClosedLevel] = useState<number | null>(null);
   // Starts at the Settings language; switching here only changes what the card shows.
   const [shownLanguage, setShownLanguage] = useState(language);
 
@@ -59,21 +61,34 @@ export function ReviewSession({
   const xpEarned = answers.reduce((sum, a) => sum + a.xp, 0);
   const startLevel = learnerLevel(startXp).level;
   const nowLevel = learnerLevel(startXp + xpEarned).level;
+  // Pop-up at the top centre until closed; a further level-up shows it again.
+  // Portalled to <body>: animated (transformed) parents would trap position: fixed.
   const levelUp =
-    nowLevel > startLevel ? (
-      <p
-        role="status"
-        className="stamp mt-4 flex items-center gap-3 border-[3px] border-line bg-medal-gold p-3 font-black text-on-box shadow-brutal-sm"
-      >
-        <PartyPopper className="h-6 w-6 shrink-0" aria-hidden="true" />
-        <span>
-          <span className="block uppercase">{rewards.levelUp}</span>
-          <span className="block text-sm">
-            {fill(rewards.levelReached, { level: nowLevel, title: rewards.titles[levelTitle(nowLevel).id] })}
-          </span>
-        </span>
-      </p>
-    ) : null;
+    nowLevel > startLevel && closedLevel !== nowLevel
+      ? createPortal(
+          <div
+            role="status"
+            className="stamp fixed inset-x-0 top-4 z-[80] mx-auto flex w-[min(28rem,calc(100vw-2rem))] items-center gap-3 border-[3px] border-line bg-medal-gold p-3 font-black text-on-box shadow-brutal"
+          >
+            <PartyPopper className="h-7 w-7 shrink-0" aria-hidden="true" />
+            <span className="min-w-0 flex-1">
+              <span className="block uppercase">{rewards.levelUp}</span>
+              <span className="block text-sm">
+                {fill(rewards.levelReached, { level: nowLevel, title: rewards.titles[levelTitle(nowLevel).id] })}
+              </span>
+            </span>
+            <button
+              type="button"
+              aria-label={rewards.close}
+              onClick={() => setClosedLevel(nowLevel)}
+              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center border-[2px] border-line bg-raised text-fg shadow-brutal-sm hover:bg-box-2 hover:text-on-box"
+            >
+              <X className="h-5 w-5" strokeWidth={2.75} aria-hidden="true" />
+            </button>
+          </div>,
+          document.body,
+        )
+      : null;
 
   // Keep keyboard focus on the control that matters next.
   useEffect(() => {

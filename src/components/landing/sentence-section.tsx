@@ -16,9 +16,9 @@ export function SentenceSection({ dict }: { dict: LandingDictionary }) {
     <section
       id="sentence-practice"
       aria-labelledby="sentence-practice-title"
-      className="scroll-mt-(--navbar-height) bg-canvas px-4 py-16 sm:px-8 sm:py-20 lg:px-10"
+      className="flex scroll-mt-(--navbar-height) flex-col bg-canvas px-4 py-16 sm:px-8 sm:py-20 lg:min-h-[calc(100dvh-var(--navbar-height))] lg:px-10 lg:pb-8"
     >
-      <div className="mx-auto grid w-full max-w-[1360px] items-center gap-14 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid w-full max-w-[1360px] items-center gap-14 lg:my-auto lg:grid-cols-2 lg:gap-16">
         <div className="lg:order-2">
           <h2
             id="sentence-practice-title"

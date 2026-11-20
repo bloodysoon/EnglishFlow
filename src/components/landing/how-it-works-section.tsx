@@ -24,10 +24,11 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
       aria-labelledby="how-it-works-title"
       className="
         flex scroll-mt-(--navbar-height)
-        flex-col justify-center lg:min-h-[calc(100dvh-var(--navbar-height))] bg-canvas px-4 py-16 sm:px-8 sm:py-20 lg:px-10
+        flex-col justify-center lg:min-h-[calc(100dvh-var(--navbar-height))] bg-canvas px-4 py-16 sm:px-8 sm:py-20 lg:px-10 lg:pb-8
       "
     >
-      <div className="mx-auto w-full max-w-[1360px]">
+      {/* my-auto centres the content and leaves the arrow at the bottom of the screen. */}
+      <div className="mx-auto w-full max-w-[1360px] lg:my-auto">
         <div className="mb-12 grid gap-5 lg:grid-cols-2 lg:items-end lg:gap-10">
           <div>
             <h2
@@ -131,8 +132,9 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
           </p>
         </div>
 
-        <SectionScrollLink href="#daily-review" label={dict.scroll.toReview} className="mt-12" />
       </div>
+
+      <SectionScrollLink href="#daily-review" label={dict.scroll.toReview} className="mt-12" />
     </section>
   );
 }

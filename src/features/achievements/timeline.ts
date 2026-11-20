@@ -94,3 +94,77 @@ export function unlocksByDay(days: TimelineDay[]): Map<string, Unlock[]> {
   }
   return result;
 }
+
+// What a step of the day view needs here (DayStep fits).
+type Step = {
+  kind: "added" | "known" | "remembered" | "forgot" | "mastered" | "practice";
+  at: string;
+  xp: number;
+  level: string | null; // CEFR level of the word
+  practice?: { issues: unknown[]; tenseOk: boolean | null };
+};
+
+// The day as it stood after these steps, in my_timeline's shape.
+export function dayUpTo(day: string, steps: Step[]): TimelineDay {
+  const count = (kind: Step["kind"]) =>
+    steps.filter((s) => s.kind === kind).length;
+  const levels: Record<string, number> = {};
+  for (const s of steps) {
+    if ((s.kind === "remembered" || s.kind === "forgot") && s.level)
+      levels[s.level] = (levels[s.level] ?? 0) + 1;
+  }
+  const practice = steps.flatMap((s) => (s.practice ? [s.practice] : []));
+  return {
+    day,
+    // XP events: everything but adding a word and writing a sentence.
+    active: steps.some((s) => s.kind !== "added" && s.kind !== "practice"),
+    remembered: count("remembered"),
+    forgot: count("forgot"),
+    xp: steps.reduce((sum, s) => sum + s.xp, 0),
+    mastered: count("mastered"),
+    levels,
+    added: count("added"),
+    known: count("known"),
+    words: [],
+    boxes: {},
+    practice: {
+      count: practice.length,
+      clean: practice.filter(
+        (p) => p.issues.length === 0 && p.tenseOk !== false,
+      ).length,
+      words: [],
+    },
+  };
+}
+
+const unlockKey = (u: Unlock) =>
+  u.kind === "track" ? `${u.id}-${u.target}` : u.id;
+
+// When during the day each of its unlocks happened: the step after which it
+// first shows up. at = null when no single step explains it (a day-level
+// badge like comeback, or words removed since).
+// shortcut: replays the whole history once per step (fine for hundreds of days); keep a running state if it gets slow.
+export function unlockTimes(
+  days: TimelineDay[],
+  day: string,
+  steps: Step[],
+): { unlock: Unlock; at: string | null }[] {
+  const all = unlocksByDay(days).get(day) ?? [];
+  if (all.length === 0) return [];
+  const wanted = new Set(all.map(unlockKey));
+  const before = days.filter((d) => d.day < day);
+  const found = new Map<string, { unlock: Unlock; at: string }>();
+  for (let k = 1; k <= steps.length && found.size < wanted.size; k++) {
+    for (const u of unlocksByDay([
+      ...before,
+      dayUpTo(day, steps.slice(0, k)),
+    ]).get(day) ?? []) {
+      const key = unlockKey(u);
+      if (wanted.has(key) && !found.has(key))
+        found.set(key, { unlock: u, at: steps[k - 1].at });
+    }
+  }
+  return all.map(
+    (unlock) => found.get(unlockKey(unlock)) ?? { unlock, at: null },
+  );
+}

@@ -23,12 +23,19 @@ const issuesSchema = z.array(
 export async function getPracticeHistory(supabase: SupabaseClient, wordId: string): Promise<PracticeEntry[]> {
   const { data, error } = await supabase
     .from("practice_sentences")
-    .select("id, sentence, tense, tense_ok, issues, created_at")
+    .select(PRACTICE_COLUMNS)
     .eq("word_id", wordId)
     .order("created_at", { ascending: false })
     .limit(HISTORY_LIMIT);
   if (error) throw error;
-  return (data ?? []).map((row) => ({
+  return (data ?? []).map(toPracticeEntry);
+}
+
+export const PRACTICE_COLUMNS = "id, sentence, tense, tense_ok, issues, created_at";
+
+// A practice_sentences row selected with PRACTICE_COLUMNS.
+export function toPracticeEntry(row: Record<string, unknown>): PracticeEntry {
+  return {
     id: Number(row.id),
     sentence: String(row.sentence),
     tense: tenseSchema.nullable().catch(null).parse(row.tense),
@@ -36,7 +43,7 @@ export async function getPracticeHistory(supabase: SupabaseClient, wordId: strin
     // Rows are the learner's own writes; a bad shape just shows no issues.
     issues: issuesSchema.catch([]).parse(row.issues),
     at: String(row.created_at),
-  }));
+  };
 }
 
 // Tenses this word already has a clean sentence for: right tense, no mistakes.

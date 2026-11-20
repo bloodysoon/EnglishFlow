@@ -4,7 +4,6 @@ import { Navbar } from "@/components/landing/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
 import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { WordMarquee } from "@/components/landing/word-marquee";
-import { MotionToggle } from "@/components/landing/motion-toggle";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { ReviewDemoSection } from "@/components/landing/review-demo-section";
 import { SentenceSection } from "@/components/landing/sentence-section";
@@ -79,13 +78,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         <div className="flex min-h-[calc(100dvh-var(--navbar-height))] flex-col">
           <HeroSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
           <SectionScrollLink href="#how-it-works" label={dict.scroll.toMethod} className="mb-8" />
-          <div className="relative">
-            <WordMarquee />
-            {/* An end cap on the band, so the button never sits on a word. */}
-            <div className="absolute inset-y-[3px] right-0 flex items-center border-l-[3px] border-line bg-surface px-3 motion-reduce:hidden sm:px-6 lg:px-8">
-              <MotionToggle label={dict.pauseMotion} initialPaused={motionPaused} />
-            </div>
-          </div>
+          <WordMarquee />
         </div>
 
         <HowItWorksSection locale={locale} dict={dict} />
@@ -97,7 +90,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         <FinalCtaSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
       </main>
 
-      <Footer locale={locale} dict={dict} />
+      <Footer locale={locale} dict={dict} motionPaused={motionPaused} />
     </div>
   );
 }

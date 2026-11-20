@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { BADGE_IDS, TRACK_IDS, type achievements, type BadgeId } from "@/features/achievements/achievements";
 import { TOPICS } from "@/features/dictionary/topics";
+import { MEDALS, resolveEquipped, TITLE_IDS, type Equipped } from "@/features/rewards/levels";
 import { daysBetween } from "@/features/learning/statistics";
 
 // Mirrors profiles_username_check in the database.
@@ -35,6 +36,9 @@ export const publicStatsSchema = z.object({
   // Added later: older snapshots lack them.
   topics: z.array(z.enum(TOPICS)).default([]),
   showcase: z.array(z.enum(BADGE_IDS)).max(SHOWCASE_MAX).default([]),
+  // Equipped in the inventory; missing means "follow the level".
+  title: z.enum(TITLE_IDS).optional(),
+  frame: z.enum(MEDALS).nullable().optional(),
 });
 
 export type PublicStats = z.infer<typeof publicStatsSchema>;
@@ -45,8 +49,10 @@ export function publicStats(
   streak: number,
   today: string,
   showcase: readonly BadgeId[] = [],
+  equipped: Equipped = { title: null, frame: null },
 ): PublicStats {
   return {
+    ...resolveEquipped(equipped, level),
     level,
     streak,
     streakDay: today,

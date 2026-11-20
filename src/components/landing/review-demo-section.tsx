@@ -19,10 +19,10 @@ export function ReviewDemoSection({ isAuthenticated, locale, dict }: ReviewDemoS
       className="
         flex scroll-mt-(--navbar-height)
         flex-col justify-center lg:min-h-[calc(100dvh-var(--navbar-height))] border-y-[3px] border-line bg-surface
-        px-4 py-16 sm:px-8 sm:py-20 lg:px-10
+        px-4 py-16 sm:px-8 sm:py-20 lg:px-10 lg:pb-8
       "
     >
-      <div className="mx-auto grid w-full max-w-[1360px] items-center gap-14 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid w-full max-w-[1360px] items-center gap-14 lg:my-auto lg:grid-cols-2 lg:gap-16">
         <div>
           <h2
             id="daily-review-title"

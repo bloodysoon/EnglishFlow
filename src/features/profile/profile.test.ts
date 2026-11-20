@@ -48,6 +48,8 @@ describe("publicStats", () => {
     // An unearned pin (flawless) is dropped.
     const stats = publicStats(result, 2, 3, "2026-11-19", ["flawless", "firstStep"]);
     expect(stats).toEqual({
+      title: "starter",
+      frame: null,
       level: 2,
       streak: 3,
       streakDay: "2026-11-19",

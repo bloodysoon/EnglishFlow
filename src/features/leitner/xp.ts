@@ -30,15 +30,27 @@ export type ReviewXp = {
   newBox: number;
 };
 
+// Level boost on review XP: +1% per learner level above 1, at most +20%
+// (reached at level 21). Small on purpose: it rewards staying, without
+// making the level curve collapse. public.review_word repeats this.
+export const XP_BOOST_PER_LEVEL = 0.01;
+export const XP_BOOST_MAX = 0.2;
+
+export function xpBoost(learnerLevel: number): number {
+  return Math.min(Math.max(0, learnerLevel - 1) * XP_BOOST_PER_LEVEL, XP_BOOST_MAX);
+}
+
 // XP for answering one due word that sat in `box` (same maths as
-// public.review_word; used for previews in the admin panel).
+// public.review_word; used for previews in the admin panel). `boost` is
+// the learner's level boost (xpBoost), 0 for previews.
 export function reviewXp(
   box: number,
   remembered: boolean,
   level: CefrLevel | null,
   rules: XpRules = DEFAULT_XP_RULES,
+  boost = 0,
 ): ReviewXp {
-  const multiplier = rules.multipliers[level ?? "A1"];
+  const multiplier = rules.multipliers[level ?? "A1"] * (1 + boost);
   const newBox = nextBox(box, remembered);
   const mastered = remembered && box === LAST_BOX - 1;
 

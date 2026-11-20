@@ -1,3 +1,5 @@
+import { XP_BOOST_MAX, XP_BOOST_PER_LEVEL } from "@/features/leitner/xp";
+
 // What a learner level brings: a title, cosmetic unlocks (accent colours,
 // an avatar frame) and streak freezes. Cosmetics never change learning.
 
@@ -76,4 +78,60 @@ export const FREEZE_EVERY = 5;
 
 export function freezesEarned(level: number): number {
   return Math.floor(level / FREEZE_EVERY);
+}
+
+// ---------------------------------------------------------------------
+// Inventory: what the learner may equip, and every reward by level.
+// ---------------------------------------------------------------------
+
+export const TITLE_IDS = LEVEL_TITLES.map((t) => t.id) as [LevelTitleId, ...LevelTitleId[]];
+
+export function titleUnlocked(id: LevelTitleId, level: number): boolean {
+  return level >= (LEVEL_TITLES.find((t) => t.id === id)?.from ?? Infinity);
+}
+
+export function frameUnlocked(medal: Medal, level: number): boolean {
+  return level >= FRAME_LEVELS[medal];
+}
+
+// Chosen title and frame; null means "follow my level" (the newest one).
+// Frame "none" hides the frame on purpose.
+export type Equipped = { title: LevelTitleId | null; frame: Medal | "none" | null };
+
+// What the profile shows: the choice while it is still unlocked, else the default.
+export function resolveEquipped(equipped: Equipped, level: number): { title: LevelTitleId; frame: Medal | null } {
+  const title = equipped.title && titleUnlocked(equipped.title, level) ? equipped.title : levelTitle(level).id;
+  const frame =
+    equipped.frame === "none"
+      ? null
+      : equipped.frame && frameUnlocked(equipped.frame, level)
+        ? equipped.frame
+        : frameForLevel(level);
+  return { title, frame };
+}
+
+export type LevelReward =
+  | { kind: "title"; id: LevelTitleId }
+  | { kind: "accent"; id: AccentId }
+  | { kind: "frame"; id: Medal }
+  | { kind: "freeze" }
+  | { kind: "boost" };
+
+export const ROADMAP_MAX_LEVEL = 100;
+
+// Every reward from level 2 to ROADMAP_MAX_LEVEL, grouped by level.
+export function rewardRoadmap(maxLevel = ROADMAP_MAX_LEVEL): { level: number; rewards: LevelReward[] }[] {
+  const byLevel = new Map<number, LevelReward[]>();
+  const add = (level: number, reward: LevelReward) => {
+    if (level < 2 || level > maxLevel) return;
+    byLevel.set(level, [...(byLevel.get(level) ?? []), reward]);
+  };
+  for (const t of LEVEL_TITLES) add(t.from, { kind: "title", id: t.id });
+  for (const a of ACCENTS) add(a.level, { kind: "accent", id: a.id });
+  for (const m of MEDALS) add(FRAME_LEVELS[m], { kind: "frame", id: m });
+  for (let level = FREEZE_EVERY; level <= maxLevel; level += FREEZE_EVERY) add(level, { kind: "freeze" });
+  // +1% review XP per level until the boost is maxed (xpBoost).
+  const lastBoost = 1 + Math.round(XP_BOOST_MAX / XP_BOOST_PER_LEVEL);
+  for (let level = 2; level <= lastBoost; level++) add(level, { kind: "boost" });
+  return [...byLevel].sort(([a], [b]) => a - b).map(([level, rewards]) => ({ level, rewards }));
 }
