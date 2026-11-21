@@ -785,6 +785,13 @@ export const en = {
     see: "See",
     hide: "Hide",
   },
+  // First visit: pick a nickname before anything else (src/app/welcome).
+  welcome: {
+    title: "Pick a nickname",
+    lead: "Friends find you by it, and it shows in duels. You can change it later in your profile.",
+    cta: "Continue",
+    saving: "Saving...",
+  },
   profile: {
     title: "Profile",
     lead: "Your learning card: level, streak, badges and milestones.",

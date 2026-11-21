@@ -813,6 +813,13 @@ export const ru: PlatformDictionary = {
     see: "Открыть",
     hide: "Скрыть",
   },
+  // First visit: pick a nickname before anything else (src/app/welcome).
+  welcome: {
+    title: "Выберите ник",
+    lead: "По нему вас найдут друзья, и он виден в дуэлях. Изменить его можно потом в профиле.",
+    cta: "Продолжить",
+    saving: "Сохраняем...",
+  },
   profile: {
     title: "Профиль",
     lead: "Ваша карточка ученика: уровень, серия, значки и рубежи.",

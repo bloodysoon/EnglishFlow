@@ -799,6 +799,13 @@ export const ro: PlatformDictionary = {
     see: "Vezi",
     hide: "Ascunde",
   },
+  // First visit: pick a nickname before anything else (src/app/welcome).
+  welcome: {
+    title: "Alege un nume",
+    lead: "Prietenii te găsesc după el și apare în dueluri. Îl poți schimba mai târziu din profil.",
+    cta: "Continuă",
+    saving: "Se salvează...",
+  },
   profile: {
     title: "Profil",
     lead: "Cartea ta de învățare: nivel, serie, insigne și repere.",

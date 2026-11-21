@@ -776,6 +776,13 @@ export const id: PlatformDictionary = {
     see: "Lihat",
     hide: "Sembunyikan",
   },
+  // First visit: pick a nickname before anything else (src/app/welcome).
+  welcome: {
+    title: "Pilih nama panggilan",
+    lead: "Teman menemukanmu lewat nama ini, dan nama ini muncul di duel. Kamu bisa mengubahnya nanti di profil.",
+    cta: "Lanjut",
+    saving: "Menyimpan...",
+  },
   profile: {
     title: "Profil",
     lead: "Kartu belajarmu: level, runtutan, lencana dan tonggak.",

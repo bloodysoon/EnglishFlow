@@ -24,7 +24,18 @@ export default async function PlatformLayout({
     redirect("/login");
   }
 
-  const [themePreference, { locale, t }] = await Promise.all([getThemePreference(), getPlatformI18n()]);
+  const [themePreference, { locale, t }, profile] = await Promise.all([
+    getThemePreference(),
+    getPlatformI18n(),
+    supabase.from("profiles").select("username").eq("id", user.id).maybeSingle(),
+  ]);
+
+  // First visit: pick a nickname first (friends and duels need one).
+  // Only on a clean read with no username, so a failed query never locks anyone out.
+  if (!profile.error && !profile.data?.username) {
+    redirect("/welcome");
+  }
+
   const { nav } = getLandingDictionary(locale);
 
   return (

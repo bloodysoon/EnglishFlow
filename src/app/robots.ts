@@ -19,6 +19,7 @@ const PRIVATE_PATHS = [
   "/timeline",
   // Public profiles: shared by link, not meant to be found by search.
   "/u",
+  "/welcome",
 ];
 
 export default function robots(): MetadataRoute.Robots {
