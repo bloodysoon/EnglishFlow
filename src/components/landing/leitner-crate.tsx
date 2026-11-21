@@ -6,8 +6,6 @@ type LeitnerCrateProps = {
   box: number;
   // Flaps open when still (also the reduced-motion state).
   open?: boolean;
-  // Flaps open and shut on the 8s hop cycle; `style` carries its delay.
-  hop?: boolean;
   style?: CSSProperties;
   // What sits in the box, its lower part hidden by the front face.
   inside?: ReactNode;
@@ -20,7 +18,7 @@ const face = "absolute border-[3px] border-line";
 const flap = "crate-flap border-[3px] border-line";
 
 // A Leitner box as a 3D cardboard box (geometry in globals.css, `.crate`).
-export function LeitnerCrate({ box, open, hop, style, inside, className = "", children }: LeitnerCrateProps) {
+export function LeitnerCrate({ box, open, style, inside, className = "", children }: LeitnerCrateProps) {
   const tone = leitnerBoxStyles[box];
   // Inner and side walls sit in shadow.
   const shade = <span className="absolute inset-0 bg-line/25" />;
@@ -28,7 +26,7 @@ export function LeitnerCrate({ box, open, hop, style, inside, className = "", ch
   return (
     <div className="crate pt-14 sm:pt-16">
       <div
-        className={`crate-scene ${open ? "crate-open" : ""} ${hop ? "crate-hop" : ""}`}
+        className={`crate-scene ${open ? "crate-open" : ""}`}
         style={style}
       >
         <div aria-hidden="true" className={`crate-back inset-0 bg-line ${face}`} />

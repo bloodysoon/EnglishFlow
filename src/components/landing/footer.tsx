@@ -1,23 +1,20 @@
 import Link from "next/link";
 
-import { MotionToggle } from "@/components/landing/motion-toggle";
 import type { LandingDictionary } from "@/features/i18n/landing";
 import { localePath, type Locale } from "@/features/i18n/locales";
 
 export function Footer({
   locale,
   dict,
-  motionPaused,
 }: {
   locale: Locale;
   dict: LandingDictionary;
-  motionPaused: boolean;
 }) {
   const links = [
     { href: "#how-it-works", label: dict.nav.method },
     { href: "#daily-review", label: dict.nav.review },
     { href: localePath(locale, "login"), label: dict.nav.logIn },
-    { href: localePath(locale, "register"), label: dict.footer.signUp },
+    { href: localePath(locale, "register"), label: dict.hero.ctaStart },
   ];
 
   return (
@@ -48,10 +45,6 @@ export function Footer({
               </Link>
             </li>
           ))}
-          {/* Stops the looping animations (WCAG 2.2.2); kept quiet down here. */}
-          <li className="motion-reduce:hidden">
-            <MotionToggle label={dict.pauseMotion} initialPaused={motionPaused} />
-          </li>
         </ul>
       </div>
     </footer>

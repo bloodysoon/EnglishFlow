@@ -4,9 +4,13 @@ import { Navbar } from "@/components/landing/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
 import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { WordMarquee } from "@/components/landing/word-marquee";
+import { FallingWords } from "@/components/landing/falling-words";
+import { MotionToggle } from "@/components/landing/motion-toggle";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
+import { TriageSection } from "@/components/landing/triage-section";
 import { ReviewDemoSection } from "@/components/landing/review-demo-section";
 import { SentenceSection } from "@/components/landing/sentence-section";
+import { DuelSection } from "@/components/landing/duel-section";
 import { FinalCtaSection } from "@/components/landing/final-cta-section";
 import { Footer } from "@/components/landing/footer";
 import { createClient } from "@/lib/supabase/server";
@@ -15,7 +19,12 @@ import { getLandingDictionary } from "@/features/i18n/landing";
 import { getThemePreference } from "@/features/theme/server";
 import { getMotionPaused } from "@/features/motion/server";
 
-const OG_LOCALES: Record<Locale, string> = { en: "en_US", ru: "ru_RU", ro: "ro_RO", id: "id_ID" };
+const OG_LOCALES: Record<Locale, string> = {
+  en: "en_US",
+  ru: "ru_RU",
+  ro: "ro_RO",
+  id: "id_ID",
+};
 
 // Shared metadata for "/", "/ru" and "/ro": localized title and
 // description plus hreflang links between the three versions.
@@ -61,10 +70,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
   return (
     // lang here because the root layout's <html lang="en"> is shared by
     // every route; this sets the language for everything on the page.
-    <div
-      lang={locale}
-      className="min-h-dvh overflow-x-clip bg-canvas text-fg"
-    >
+    <div lang={locale} className="min-h-dvh overflow-x-clip bg-canvas text-fg">
       <Navbar
         isAuthenticated={isAuthenticated}
         email={user?.email ?? ""}
@@ -76,21 +82,48 @@ export async function LandingPage({ locale }: { locale: Locale }) {
       <main>
         {/* First screen: hero, the way down, and the word ticker. */}
         <div className="flex min-h-[calc(100dvh-var(--navbar-height))] flex-col">
-          <HeroSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
-          <SectionScrollLink href="#how-it-works" label={dict.scroll.toMethod} className="mb-8" />
-          <WordMarquee />
+          <HeroSection dict={dict} />
+          <SectionScrollLink
+            href="#new-words"
+            label={dict.scroll.toWords}
+            className="mb-8"
+          />
+          {/* The pause sits on the ticker it stops (WCAG 2.2.2), on the
+              first screen rather than at the foot of the page. */}
+          <div className="relative">
+            <WordMarquee />
+            <div className="absolute inset-y-0 right-4 flex items-center sm:right-8 lg:right-10">
+              <MotionToggle
+                label={dict.pauseMotion}
+                initialPaused={motionPaused}
+              />
+            </div>
+          </div>
         </div>
+
+        <TriageSection dict={dict} />
 
         <HowItWorksSection locale={locale} dict={dict} />
 
-        <ReviewDemoSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
+        <ReviewDemoSection dict={dict} />
+
+        {/* Duels before sentences: the page ends on using the language,
+            not on competing. */}
+        <DuelSection dict={dict} />
 
         <SentenceSection dict={dict} />
 
-        <FinalCtaSection isAuthenticated={isAuthenticated} locale={locale} dict={dict} />
+        <FinalCtaSection
+          isAuthenticated={isAuthenticated}
+          locale={locale}
+          dict={dict}
+        />
       </main>
 
-      <Footer locale={locale} dict={dict} motionPaused={motionPaused} />
+      {/* Words from the first screen falling into the Method boxes. */}
+      <FallingWords />
+
+      <Footer locale={locale} dict={dict} />
     </div>
   );
 }

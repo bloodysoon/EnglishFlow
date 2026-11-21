@@ -13,6 +13,8 @@ export type LandingDictionary = {
     label: string;
     home: string;
     method: string;
+    newWords: string;
+    duels: string;
     review: string;
     sentences: string;
     start: string;
@@ -31,7 +33,9 @@ export type LandingDictionary = {
   scroll: {
     toMethod: string;
     toReview: string;
+    toWords: string;
     toSentences: string;
+    toDuels: string;
     toStart: string;
     toTop: string;
   };
@@ -41,10 +45,7 @@ export type LandingDictionary = {
     titleLine2: string;
     lead: string;
     ctaStart: string;
-    ctaContinue: string;
     ctaMethod: string;
-    already: string;
-    logIn: string;
     facts: string[];
   };
 
@@ -79,20 +80,17 @@ export type LandingDictionary = {
     titleLine2: string;
     lead: string;
     points: { title: string; text: string }[];
-    wordOf: string; // {current} {total}
-    done: string;
-    doneTitle: string;
-    summary: string; // {up} {back}
-    showTranslation: string;
+    // The sample eight days (src/components/landing/review-month.tsx).
+    day: string; // {n}
+    thinking: string; // "do you remember it?"
+    gotIt: string; // the verdict stamps
     forgot: string;
-    gotIt: string;
-    tryAgain: string;
-    signUp: string;
-    yourWords: string;
-    perBox: string;
-    wordCount: string; // {count}
-    liveMoved: string; // {word} {box}
-    liveBack: string; // {word}
+    remembered: string; // {word} {from} {to}
+    forgotten: string; // {word} {from} {to}
+    nothingDue: string;
+    nextUp: string; // {words} {n}: who comes back next, and when
+    zeroMin: string; // the stamp on a day with nothing due
+    calendarLabel: string;
   };
 
   // A worked example of sentence practice: one try with a mistake, one fixed.
@@ -115,19 +113,67 @@ export type LandingDictionary = {
     tense: string;
   };
 
+  // Duels, shown as one frozen round of a live match (src/components/duels/duel-match.tsx).
+  duel: {
+    titleLine1: string;
+    titleLine2: string;
+    lead: string;
+    points: { title: string; text: string }[];
+    round: string; // {n} {total}
+    timeLeft: string;
+    pick: string;
+    you: string;
+    theyAnswered: string; // {name}
+  };
+
+  // New words, dealt from a hanging badge deck as the page scrolls (src/components/landing/word-badge.tsx).
+  triage: {
+    titleLine1: string;
+    titleLine2: string;
+    lead: string;
+    points: { title: string; text: string }[];
+    question: string;
+    know: string;
+    learn: string;
+    hint: string;
+    known: string; // {n}
+    toLearn: string; // {n}
+    // Words of this section that fall into the boxes of "How it works":
+    // the word, the box it lands in from lg (0: phones only), and where it
+    // sits ("title", "lead", "points.0.title", "method", "card", "hint",
+    // "counter"). See FallText and FallingWords.
+    // In each box, cards stand left to right in this list's order;
+    // `right` packs that box's cards against its right side, half over each
+    // other; `nudge` fine-tunes one card.
+    falling: {
+      word: string;
+      box: number;
+      place: string;
+      right?: boolean;
+      front?: boolean; // its card stands over its neighbours
+      nudge?: number; // moves its card sideways, as a share of the box width (- left)
+    }[];
+  };
+
   cta: {
     titleLine1: string;
     titleStick: string;
     lead: string;
-    create: string;
+    reassure: string; // calm small print under the final call to action
     dashboard: string;
     already: string;
     logIn: string;
-    stickers: [string, string, string, string];
+    // The receipt that prints at the end of the page (final-cta-section.tsx).
+    receipt: {
+      rows: { label: string; value: string }[];
+      total: string;
+      sum: string;
+      thanks: string;
+      stamp: string;
+    };
   };
 
   footer: {
     tagline: string;
-    signUp: string;
   };
 };

@@ -41,6 +41,7 @@
   --on-box: #22201c;
   --on-box-3: #22201c;
   --cta: var(--box-3);
+  --on-cta: var(--on-box-3);
   --on-box-5: #f3eee4;
 
   /* Neo-brutalism */
@@ -75,7 +76,9 @@
   --box-5: #ece5d8;
   --on-box: #14181d;
   --on-box-3: #14181d;
-  --cta: #6e9a7a;
+  /* Deep green, so the mint button and cream text stand out on it. */
+  --cta: #26392f;
+  --on-cta: var(--fg);
   --on-box-5: #1e242c;
 }
 
@@ -100,7 +103,8 @@
     --box-5: #ece5d8;
     --on-box: #14181d;
     --on-box-3: #14181d;
-  --cta: #6e9a7a;
+    --cta: #26392f;
+    --on-cta: var(--fg);
     --on-box-5: #1e242c;
   }
 }
@@ -233,6 +237,7 @@
   --color-box-2: var(--box-2);
   --color-box-3: var(--box-3);
   --color-cta: var(--cta);
+  --color-on-cta: var(--on-cta);
   --color-box-4: var(--box-4);
   --color-box-5: var(--box-5);
   --color-on-box: var(--on-box);
@@ -537,46 +542,12 @@ html {
   }
 }
 
-/* Crate boxes: the flaps fold open, the word drops in, sits, lifts out,
-   and the flaps fold shut. Same 8s cycle and 20% window as leitner-hop.
-   --lid goes 0 (shut) to 1 (open); every flap derives its angle from it. */
+/* Crate flaps: --lid goes 0 (shut) to 1 (open); every flap derives its
+   angle from it. Registered so it can be computed from the scroll. */
 @property --lid {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
-}
-
-@keyframes crate-lid {
-  0%,
-  22%,
-  100% {
-    --lid: 0;
-  }
-
-  4%,
-  18% {
-    --lid: 1;
-  }
-}
-
-@keyframes crate-drop {
-  0%,
-  3% {
-    opacity: 0;
-    transform: translateY(-40px) rotate(-3deg);
-  }
-
-  8%,
-  15% {
-    opacity: 1;
-    transform: translateY(0) rotate(-3deg);
-  }
-
-  19%,
-  100% {
-    opacity: 0;
-    transform: translateY(-40px) rotate(-3deg);
-  }
 }
 
 /* The box holding the word lifts while it has it (same timing). */
@@ -666,31 +637,6 @@ html {
   }
 }
 
-/* Review demo: the answered card leaves toward its new box. Up a box
-   flies up and right; back to box 1 drops away into the page. It stays
-   opaque until late, so its text never blends with the next card's. */
-@keyframes card-out-up {
-  70% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-    transform: perspective(1200px) translate3d(55%, -35%, 120px) rotateY(-25deg) rotateZ(12deg);
-  }
-}
-
-@keyframes card-out-back {
-  70% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-    transform: perspective(1200px) translate3d(-40%, 35%, -240px) rotateX(45deg) rotateZ(-10deg);
-  }
-}
-
 @keyframes chip-pop {
   0% {
     transform: scale(1);
@@ -720,11 +666,6 @@ html {
    shows the same point, the card shows its front. */
 .leitner-hop {
   opacity: 0;
-}
-
-.crate-drop {
-  opacity: 0;
-  transform: rotate(-3deg);
 }
 
 .leitner-hop--rest {
@@ -903,9 +844,40 @@ html {
   }
 }
 
+/* The receipt at the end of the landing page: a torn zigzag top edge, and a
+   barcode of uneven bars. */
+.receipt-edge {
+  background:
+    linear-gradient(135deg, transparent 50%, var(--raised) 50%) 0 0 / 14px 14px repeat-x,
+    linear-gradient(-135deg, transparent 50%, var(--raised) 50%) 0 0 / 14px 14px repeat-x;
+}
+
+.receipt-barcode {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--fg) 0 2px,
+    transparent 2px 4px,
+    var(--fg) 4px 7px,
+    transparent 7px 8px,
+    var(--fg) 8px 9px,
+    transparent 9px 12px
+  );
+}
+
+/* Thin bar under the landing navbar that fills as the page scrolls. */
+@keyframes page-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* MotionToggle on the landing stops every looping animation. Scroll-driven
    ones (.scroll-tilt) stay: they only move while the visitor scrolls. */
-[data-motion-paused] :is(.bob, .flip-card, .marquee-track, .leitner-hop, .crate-hop, .crate-drop, .box-active, .track-fill, .scroll-nudge, .scroll-nudge-up, .flame) {
+[data-motion-paused] :is(.bob, .flip-card, .marquee-track, .leitner-hop, .box-active, .track-fill, .scroll-nudge, .scroll-nudge-up, .flame) {
   animation-play-state: paused;
 }
 
@@ -948,6 +920,97 @@ html {
     animation: card-flip 7s cubic-bezier(0.65, 0, 0.35, 1) 1.6s infinite;
   }
 
+  /* Scroll scenes (ScrollScene): each .scene-* piece plays while the
+     scene's --p goes from its --a to its --b; --k is its own 0 to 1.
+     Without --p (no JS yet) everything shows. */
+  :is(.scene-rise, .scene-pop, .scene-slam, .scene-print, .scene-fade, .scene-word, .scene-letter, .scene-left, .scene-right, .scene-drain, .scene-grow, .scene-underline) {
+    --k: clamp(0, (var(--p, 1) - var(--a, 0)) / (var(--b, 1) - var(--a, 0)), 1);
+  }
+
+  .scene-rise {
+    opacity: var(--k);
+    transform: translateY(calc((1 - var(--k)) * 56px));
+  }
+
+  .scene-pop {
+    opacity: var(--k);
+    transform: scale(calc(0.8 + 0.2 * var(--k))) rotate(calc((1 - var(--k)) * -8deg));
+  }
+
+  .scene-fade,
+  .scene-letter {
+    opacity: var(--k);
+  }
+
+  /* The wavy mistake line draws in. */
+  .scene-underline {
+    text-decoration-color: color-mix(in oklab, var(--color-mark) calc(var(--k) * 100%), transparent);
+  }
+
+  /* Words light up as they are read, from the paragraph's own colour (which
+     already meets contrast) to full ink. Never faded out, so the text stays
+     readable at every point of the scroll. */
+  .scene-word {
+    color: color-mix(in oklab, var(--scene-word-to, var(--fg)) calc(var(--k) * 100%), currentColor);
+  }
+
+  .scene-left {
+    opacity: var(--k);
+    transform: translateX(calc((1 - var(--k)) * -160px)) rotate(calc((1 - var(--k)) * -10deg));
+  }
+
+  .scene-right {
+    opacity: var(--k);
+    transform: translateX(calc((1 - var(--k)) * 160px)) rotate(calc((1 - var(--k)) * 10deg));
+  }
+
+  /* Lands from big and tilted, like a stamp brought down hard. */
+  .scene-slam {
+    display: inline-block;
+    opacity: var(--k);
+    transform: scale(calc(1.7 - 0.7 * var(--k))) rotate(calc((1 - var(--k)) * -10deg));
+  }
+
+  /* Comes up out of a slot below it (the receipt printer). */
+  .scene-print {
+    transform: translateY(calc((1 - var(--k)) * 100%));
+  }
+
+  /* A bar that empties (timer) or fills (progress) with the scene. */
+  .scene-drain {
+    transform-origin: left;
+    transform: scaleX(calc(1 - var(--k) * var(--drain, 0.8)));
+  }
+
+  .scene-grow {
+    transform-origin: left;
+    transform: scaleX(var(--k));
+  }
+
+  @media (min-width: 64rem) {
+    /* Pinned: the scene holds at the top for --len extra screens (the
+       spacer after it) while it plays. At least a screen tall; a taller
+       one sticks at its top. */
+    .scene-pin {
+      position: sticky;
+      top: var(--navbar-height);
+      min-height: calc(100svh - var(--navbar-height));
+    }
+
+    .scene-spacer {
+      display: block;
+      height: calc(var(--len, 1) * 100svh);
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .page-progress {
+      display: block;
+      animation: page-progress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+
   .deck-stage {
     transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -983,14 +1046,6 @@ html {
     opacity: 0;
   }
 
-  .crate-hop {
-    animation: crate-lid 8s cubic-bezier(0.22, 1, 0.36, 1) infinite backwards;
-  }
-
-  .crate-drop {
-    animation: crate-drop 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-  }
-
   .box-active {
     animation: box-active 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
@@ -1009,14 +1064,6 @@ html {
 
   .card-in {
     animation: card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .card-out--up {
-    animation: card-out-up 600ms cubic-bezier(0.55, 0, 0.75, 0.2) both;
-  }
-
-  .card-out--back {
-    animation: card-out-back 600ms cubic-bezier(0.55, 0, 0.75, 0.2) both;
   }
 
   .chip-pop {

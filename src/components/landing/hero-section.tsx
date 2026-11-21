@@ -1,18 +1,12 @@
-import Link from "next/link";
-
-import { buttonClasses } from "@/components/ui/button";
 import { HeroDeck } from "@/components/landing/hero-deck";
 import { riseStyle as rise } from "@/components/ui/rise";
 import type { LandingDictionary } from "@/features/i18n/landing";
-import { localePath, type Locale } from "@/features/i18n/locales";
 
 type HeroSectionProps = {
-  isAuthenticated: boolean;
-  locale: Locale;
   dict: LandingDictionary;
 };
 
-export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps) {
+export function HeroSection({ dict }: HeroSectionProps) {
   const { hero } = dict;
 
   return (
@@ -44,33 +38,6 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
           {hero.lead}
         </p>
 
-        <div className="rise w-full sm:w-auto" style={rise(2)}>
-          <Link
-            href={isAuthenticated ? "/dashboard" : localePath(locale, "register")}
-            className={buttonClasses({ variant: "primary", size: "lg", className: "group w-full sm:w-auto" })}
-          >
-            {isAuthenticated ? hero.ctaContinue : hero.ctaStart}
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-0.5"
-            >
-              ↗
-            </span>
-          </Link>
-          {/* The navbar has no room for "Log in" on phones; returning learners find it here. */}
-          {!isAuthenticated && (
-            <p className="mt-3 text-sm font-semibold text-muted sm:hidden">
-              {hero.already}{" "}
-              <Link
-                href={localePath(locale, "login")}
-                className="inline-flex min-h-11 items-center font-black text-fg underline decoration-[3px] underline-offset-4"
-              >
-                {hero.logIn}
-              </Link>
-            </p>
-          )}
-        </div>
-
         {/* Hidden on phones so the deck and the scroll arrow come up sooner. */}
         <ul
           className="rise hidden flex-wrap gap-x-5 gap-y-2 pt-2 text-sm font-black tracking-wide uppercase sm:flex"
@@ -78,7 +45,10 @@ export function HeroSection({ isAuthenticated, locale, dict }: HeroSectionProps)
         >
           {hero.facts.map((fact) => (
             <li key={fact} className="flex items-center gap-2">
-              <span aria-hidden="true" className="h-2.5 w-2.5 border-2 border-line bg-mark" />
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 border-2 border-line bg-mark"
+              />
               {fact}
             </li>
           ))}

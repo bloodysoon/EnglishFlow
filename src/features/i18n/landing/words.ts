@@ -11,14 +11,6 @@ export type LandingWord = {
   translations: Record<LandingLanguage, string>;
 };
 
-// The word that hops through the boxes in "How it works".
-export const HOP_WORD: LandingWord = {
-  word: "hello",
-  phonetic: "/həˈləʊ/",
-  example: "Hello, nice to meet you!",
-  translations: { ru: "привет", ro: "salut", id: "halo" },
-};
-
 // The card on the hero deck.
 export const HERO_WORD: LandingWord = {
   word: "resilient",
@@ -66,7 +58,8 @@ export const DEMO_WORDS: readonly (LandingWord & { box: number })[] = [
   },
 ];
 
-// Words in the ticker, each tagged with the box it sits in.
+// Words in the ticker, each tagged with the box it sits in; they drop into
+// those boxes in "How it works".
 export const MARQUEE_WORDS = [
   { word: "resilient", box: 2 },
   { word: "although", box: 5 },
@@ -79,3 +72,45 @@ export const MARQUEE_WORDS = [
   { word: "afford", box: 2 },
   { word: "curious", box: 5 },
 ] as const;
+
+// The word in the frozen duel round on the landing page.
+export const DUEL_WORD: LandingWord = {
+  word: "journey",
+  phonetic: "/ˈdʒɜː.ni/",
+  example: "It was a long journey home.",
+  translations: { ru: "путешествие", ro: "călătorie", id: "perjalanan" },
+};
+
+// The badge deck in the new-words section, top card first.
+export const TRIAGE_WORDS: readonly LandingWord[] = [
+  {
+    word: "brave",
+    phonetic: "/breɪv/",
+    example: "It was brave of you to ask.",
+    translations: { ru: "смелый", ro: "curajos", id: "berani" },
+  },
+  {
+    word: "ladder",
+    phonetic: "/ˈlæd.ər/",
+    example: "He climbed the ladder to the roof.",
+    translations: { ru: "лестница", ro: "scară", id: "tangga" },
+  },
+  {
+    word: "although",
+    phonetic: "/ɔːlˈðəʊ/",
+    example: "Although it rained, we went out.",
+    translations: { ru: "хотя", ro: "deși", id: "meskipun" },
+  },
+  {
+    word: "rough",
+    phonetic: "/rʌf/",
+    example: "The sea was rough today.",
+    translations: { ru: "грубый", ro: "aspru", id: "kasar" },
+  },
+  {
+    word: "wonder",
+    phonetic: "/ˈwʌn.dər/",
+    example: "I wonder where she is.",
+    translations: { ru: "задаваться вопросом", ro: "a se întreba", id: "bertanya-tanya" },
+  },
+];

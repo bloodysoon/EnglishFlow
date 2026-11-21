@@ -8,7 +8,8 @@ import { MOTION_COOKIE, MOTION_COOKIE_MAX_AGE, MOTION_PAUSED } from "@/features/
 // Pauses the landing's looping animations (WCAG 2.2.2): hover-to-pause
 // alone is not reachable by keyboard or touch. The flag lives on <html>
 // (set by the root layout from the cookie, so it holds across visits) and
-// one CSS rule in globals.css covers every section. Hidden under reduced
+// one CSS rule in globals.css covers every section. A square button on the
+// word ticker, its name in aria-label and the tooltip. Hidden under reduced
 // motion, where nothing loops anyway.
 export function MotionToggle({ label, initialPaused }: { label: string; initialPaused: boolean }) {
   const [paused, setPaused] = useState(initialPaused);
@@ -27,10 +28,14 @@ export function MotionToggle({ label, initialPaused }: { label: string; initialP
       type="button"
       onClick={toggle}
       aria-pressed={paused}
+      aria-label={label}
+      title={label}
       className="
-        inline-flex min-h-11 cursor-pointer items-center gap-1.5 text-sm font-black text-muted uppercase
-        underline decoration-2 underline-offset-4 hover:text-fg hover:decoration-mark
-        motion-reduce:hidden
+        lift-safe flex h-11 w-11 cursor-pointer items-center justify-center
+        border-[3px] border-line bg-raised text-fg shadow-brutal-sm
+        transition-[transform,background-color] duration-150 hover:-translate-y-0.5
+        aria-pressed:bg-box-2 aria-pressed:text-on-box
+        motion-reduce:hidden motion-reduce:transition-none
       "
     >
       {paused ? (
@@ -38,7 +43,6 @@ export function MotionToggle({ label, initialPaused }: { label: string; initialP
       ) : (
         <Pause aria-hidden="true" strokeWidth={2.75} className="h-4 w-4" />
       )}
-      {label}
     </button>
   );
 }
