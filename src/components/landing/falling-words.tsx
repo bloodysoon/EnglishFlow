@@ -156,8 +156,9 @@ export function FallingWords() {
           rect: el.getBoundingClientRect(),
           word: el.dataset.fallSource ?? "",
         }))
-        .filter(({ rect, word }) => {
-          const key = word.toLowerCase();
+        .filter(({ el, rect, word }) => {
+          // Same word bound for another box (Indonesian "Kata"/"kata") still falls.
+          const key = `${word.toLowerCase()}:${el.dataset.fallTarget}`;
           if (
             rect.width === 0 ||
             rect.right < 0 ||
@@ -256,18 +257,31 @@ export function FallingWords() {
           });
           box.template.parentElement!.appendChild(card);
           const boxWidth = box.right - box.left;
-          // Packed right, each card covers half of the one before it.
-          const spread = right
-            ? card.offsetWidth / 2
-            : Math.min(60, (boxWidth - card.offsetWidth) / Math.max(1, n - 1));
           const nudge = Number(el.dataset.fallNudge ?? 0) * boxWidth;
-          card.style.left = `${
-            nudge +
-            (right
-              ? boxWidth - card.offsetWidth - 12 - (n - 1 - pos) * spread
-              : (boxWidth - card.offsetWidth) / 2 +
-                (pos - (n - 1) / 2) * spread)
-          }px`;
+          let left: number;
+          if (right) {
+            // Packed right, each card covers half of the one before it:
+            // measure the cards from here to the right end by their words.
+            const widthOf = (w: string) => {
+              if (text) text.textContent = w;
+              return card.offsetWidth;
+            };
+            const widths = row.slice(pos).map((p) => widthOf(p.word));
+            if (text) text.textContent = word;
+            left =
+              boxWidth -
+              12 -
+              widths[widths.length - 1] -
+              widths.slice(0, -1).reduce((sum, w) => sum + w / 2, 0);
+          } else {
+            const spread = Math.min(
+              60,
+              (boxWidth - card.offsetWidth) / Math.max(1, n - 1),
+            );
+            left =
+              (boxWidth - card.offsetWidth) / 2 + (pos - (n - 1) / 2) * spread;
+          }
+          card.style.left = `${nudge + left}px`;
 
           // Where its card stands in the page (before any pinning).
           const slotRect = card.getBoundingClientRect();

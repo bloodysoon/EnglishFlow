@@ -45,7 +45,12 @@ export const en: LandingDictionary = {
     lead: "Pick a ready-made word set, write your own sentences with each word, and every word comes back right before you would forget it.",
     ctaStart: "Start learning free",
     ctaMethod: "See the method",
-    facts: ["Ready-made sets", "Your own sentences", "RU & RO translations", "Free to start"],
+    facts: [
+      "Ready-made sets",
+      "Your own sentences",
+      "RU & RO translations",
+      "Free to start",
+    ],
   },
 
   card: {
@@ -85,9 +90,18 @@ export const en: LandingDictionary = {
     titleLine2: "minutes.",
     lead: "Each word comes back only when its box says so. Scroll through eight days with three words: a few seconds a day, a couple of minutes in all.",
     points: [
-      { title: "Only what's due", text: "Each day shows the words whose box says it's time, nothing else." },
-      { title: "One honest tap", text: "Got it or forgot. The box does the scheduling for you." },
-      { title: "Ready-made word sets", text: "Start from curated sets instead of building lists by hand." },
+      {
+        title: "Only what's due",
+        text: "Each day shows the words whose box says it's time, nothing else.",
+      },
+      {
+        title: "One honest tap",
+        text: "Got it or forgot. The box does the scheduling for you.",
+      },
+      {
+        title: "Ready-made word sets",
+        text: "Start from curated sets instead of building lists by hand.",
+      },
     ],
     day: "Day {n}",
     thinking: "Remember it?",
@@ -106,9 +120,18 @@ export const en: LandingDictionary = {
     titleLine2: "in a sentence.",
     lead: "Knowing a word means using it. Write your own sentence with each word, and Elevo marks the mistakes and names the tense you used.",
     points: [
-      { title: "Your words, your sentences", text: "Practise right on the word's page, as often as you like." },
-      { title: "Mistakes marked", text: "Grammar and spelling are checked, with a suggestion for each mistake." },
-      { title: "Tenses named", text: "See which tense you used, or pick one to practise." },
+      {
+        title: "Your words, your sentences",
+        text: "Practise right on the word's page, as often as you like.",
+      },
+      {
+        title: "Mistakes marked",
+        text: "Grammar and spelling are checked, with a suggestion for each mistake.",
+      },
+      {
+        title: "Tenses named",
+        text: "See which tense you used, or pick one to practise.",
+      },
     ],
     prompt: "Write a sentence with this word",
     firstTry: "First try",
@@ -128,9 +151,18 @@ export const en: LandingDictionary = {
     titleLine2: "a friend",
     lead: "A live word duel: 10 words, 7 seconds each. You both get the same word at the same moment, and the right, fast answer wins.",
     points: [
-      { title: "Head to head", text: "Same word, same timer, at the same time." },
-      { title: "Speed counts", text: "A right answer earns more the faster you give it. The last round counts double." },
-      { title: "Just friends", text: "Add friends in the app and send a challenge when you both have a minute." },
+      {
+        title: "Head to head",
+        text: "Same word, same timer, at the same time.",
+      },
+      {
+        title: "Speed counts",
+        text: "A right answer earns more the faster you give it. The last round counts double.",
+      },
+      {
+        title: "Just friends",
+        text: "Add friends in the app and send a challenge when you both have a minute.",
+      },
     ],
     round: "Round {n} of {total}",
     timeLeft: "Time left",
@@ -144,9 +176,18 @@ export const en: LandingDictionary = {
     titleLine2: "sorted in seconds",
     lead: "Words come from ready-made sets. Know one? Swipe it left and it stays out of your way. New? Swipe it right and it goes straight into your reviews.",
     points: [
-      { title: "Know it? Skip it", text: "Words you already know stay out of your reviews." },
-      { title: "New? Box 1", text: "It starts in the first box and joins today's review." },
-      { title: "A few a day", text: "A daily limit on new words keeps reviews short." },
+      {
+        title: "Know it? Skip it",
+        text: "Words you already know stay out of your reviews.",
+      },
+      {
+        title: "New? Box 1",
+        text: "It starts in the first box and joins today's review.",
+      },
+      {
+        title: "A few a day",
+        text: "A daily limit on new words keeps reviews short.",
+      },
     ],
     question: "Do you know this word?",
     know: "I know it",
@@ -155,16 +196,24 @@ export const en: LandingDictionary = {
     known: "Known: {n}",
     toLearn: "To learn: {n}",
     falling: [
-      { word: "words", box: 2, place: "title" },
-      { word: "sorted", box: 1, place: "title" },
-      { word: "way", box: 1, place: "lead" },
-      { word: "straight", box: 1, place: "lead" },
+      { word: "reviews", box: 1, place: "lead" },
       { word: "Know", box: 1, place: "points.0.title" },
-      { word: "short", box: 2, place: "points.2.text" },
-      { word: "reviews", box: 2, place: "points.2.text" },
+      { word: "daily", box: 1, place: "points.2.text", nudge: -0.12 },
+      { word: "way", box: 1, place: "lead", front: true, nudge: -0.06 },
+      { word: "words", box: 1, place: "title", nudge: -0.08 },
+      { word: "sorted", box: 1, place: "title", nudge: -0.02 },
+      {
+        word: "short",
+        box: 2,
+        place: "points.2.text",
+        right: true,
+        nudge: -0.07,
+      },
+      { word: "straight", box: 2, place: "lead", right: true, nudge: -0.07 },
       { word: "See", box: 3, place: "method" },
+      { word: "scrolling", box: 4, place: "hint", nudge: -0.12 },
       { word: "wonder", box: 4, place: "card" },
-      { word: "scrolling", box: 5, place: "hint" },
+      { word: "word", box: 5, place: "question" },
       { word: "Known", box: 0, place: "counter" },
       { word: "learn", box: 0, place: "counter" },
     ],
@@ -180,11 +229,11 @@ export const en: LandingDictionary = {
     logIn: "Log in",
     receipt: {
       rows: [
-      { label: "5 Leitner boxes", value: "✓" },
-      { label: "Ready-made word sets", value: "✓" },
-      { label: "Sentence checks", value: "✓" },
-      { label: "Duels with friends", value: "✓" },
-      { label: "Time a day", value: "~5 min" },
+        { label: "5 Leitner boxes", value: "✓" },
+        { label: "Ready-made word sets", value: "✓" },
+        { label: "Sentence checks", value: "✓" },
+        { label: "Duels with friends", value: "✓" },
+        { label: "Time a day", value: "~5 min" },
       ],
       total: "Total to start",
       sum: "0.00",

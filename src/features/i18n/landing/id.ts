@@ -45,7 +45,12 @@ export const id: LandingDictionary = {
     lead: "Pilih set kata yang sudah siap, tulis kalimatmu sendiri dengan setiap kata, dan setiap kata kembali tepat sebelum kamu melupakannya.",
     ctaStart: "Mulai belajar gratis",
     ctaMethod: "Lihat metodenya",
-    facts: ["Set siap pakai", "Kalimatmu sendiri", "Terjemahan RU & RO", "Gratis untuk memulai"],
+    facts: [
+      "Set siap pakai",
+      "Kalimatmu sendiri",
+      "Terjemahan RU & RO",
+      "Gratis untuk memulai",
+    ],
   },
 
   card: {
@@ -85,9 +90,18 @@ export const id: LandingDictionary = {
     titleLine2: "beberapa menit.",
     lead: "Setiap kata kembali hanya saat kotaknya bilang sudah waktunya. Gulir delapan hari dengan tiga kata: beberapa detik sehari, beberapa menit total.",
     points: [
-      { title: "Hanya yang terjadwal", text: "Setiap hari hanya muncul kata yang kotaknya bilang sudah waktunya." },
-      { title: "Satu ketukan jujur", text: "Ingat atau lupa. Kotak yang mengatur jadwalnya untukmu." },
-      { title: "Set kata siap pakai", text: "Mulai dari set pilihan, tanpa menyusun daftar sendiri." },
+      {
+        title: "Hanya yang terjadwal",
+        text: "Setiap hari hanya muncul kata yang kotaknya bilang sudah waktunya.",
+      },
+      {
+        title: "Satu ketukan jujur",
+        text: "Ingat atau lupa. Kotak yang mengatur jadwalnya untukmu.",
+      },
+      {
+        title: "Set kata siap pakai",
+        text: "Mulai dari set pilihan, tanpa menyusun daftar sendiri.",
+      },
     ],
     day: "Hari {n}",
     thinking: "Ingat?",
@@ -106,9 +120,18 @@ export const id: LandingDictionary = {
     titleLine2: "dalam kalimat.",
     lead: "Tahu sebuah kata berarti bisa memakainya. Tulis kalimatmu sendiri dengan setiap kata, dan Elevo menandai kesalahan serta menyebut tenses yang kamu pakai.",
     points: [
-      { title: "Katamu, kalimatmu", text: "Berlatih langsung di halaman kata, sesering yang kamu mau." },
-      { title: "Kesalahan ditandai", text: "Tata bahasa dan ejaan diperiksa, dengan saran untuk setiap kesalahan." },
-      { title: "Tenses disebutkan", text: "Lihat tenses yang kamu pakai, atau pilih satu untuk dilatih." },
+      {
+        title: "Katamu, kalimatmu",
+        text: "Berlatih langsung di halaman kata, sesering yang kamu mau.",
+      },
+      {
+        title: "Kesalahan ditandai",
+        text: "Tata bahasa dan ejaan diperiksa, dengan saran untuk setiap kesalahan.",
+      },
+      {
+        title: "Tenses disebutkan",
+        text: "Lihat tenses yang kamu pakai, atau pilih satu untuk dilatih.",
+      },
     ],
     prompt: "Tulis kalimat dengan kata ini",
     firstTry: "Percobaan pertama",
@@ -128,9 +151,18 @@ export const id: LandingDictionary = {
     titleLine2: "teman",
     lead: "Duel kata secara langsung: 10 kata, masing-masing 7 detik. Kalian melihat kata yang sama di saat yang sama, dan jawaban yang benar dan cepat menang.",
     points: [
-      { title: "Satu lawan satu", text: "Kata yang sama, waktu yang sama, di saat yang sama." },
-      { title: "Kecepatan penting", text: "Jawaban benar dapat poin lebih banyak jika lebih cepat. Ronde terakhir bernilai ganda." },
-      { title: "Hanya dengan teman", text: "Tambahkan teman di aplikasi dan kirim tantangan saat kalian berdua punya waktu sebentar." },
+      {
+        title: "Satu lawan satu",
+        text: "Kata yang sama, waktu yang sama, di saat yang sama.",
+      },
+      {
+        title: "Kecepatan penting",
+        text: "Jawaban benar dapat poin lebih banyak jika lebih cepat. Ronde terakhir bernilai ganda.",
+      },
+      {
+        title: "Hanya dengan teman",
+        text: "Tambahkan teman di aplikasi dan kirim tantangan saat kalian berdua punya waktu sebentar.",
+      },
     ],
     round: "Ronde {n} dari {total}",
     timeLeft: "Sisa waktu",
@@ -144,9 +176,18 @@ export const id: LandingDictionary = {
     titleLine2: "dipilah dalam detik",
     lead: "Kata-kata datang dari set siap pakai. Sudah tahu? Geser ke kiri dan kata itu tidak mengganggu lagi. Baru? Geser ke kanan dan langsung masuk ke ulangan.",
     points: [
-      { title: "Sudah tahu? Lewati", text: "Kata yang sudah kamu tahu tidak masuk ulangan." },
-      { title: "Baru? Ke kotak 1", text: "Kata mulai dari kotak pertama dan ikut ulangan hari ini." },
-      { title: "Sedikit tiap hari", text: "Batas kata baru per hari menjaga ulangan tetap singkat." },
+      {
+        title: "Sudah tahu? Lewati",
+        text: "Kata yang sudah kamu tahu tidak masuk ulangan.",
+      },
+      {
+        title: "Baru? Ke kotak 1",
+        text: "Kata mulai dari kotak pertama dan ikut ulangan hari ini.",
+      },
+      {
+        title: "Sedikit tiap hari",
+        text: "Batas kata baru per hari menjaga ulangan tetap singkat.",
+      },
     ],
     question: "Kamu tahu kata ini?",
     know: "Sudah tahu",
@@ -155,16 +196,24 @@ export const id: LandingDictionary = {
     known: "Sudah tahu: {n}",
     toLearn: "Dipelajari: {n}",
     falling: [
-      { word: "Kata", box: 2, place: "title" },
-      { word: "dipilah", box: 1, place: "title" },
-      { word: "mengganggu", box: 1, place: "lead" },
-      { word: "langsung", box: 1, place: "lead" },
+      { word: "ulangan", box: 1, place: "lead" },
       { word: "tahu", box: 1, place: "points.0.title" },
-      { word: "singkat", box: 2, place: "points.2.text" },
-      { word: "ulangan", box: 2, place: "points.2.text" },
+      { word: "hari", box: 1, place: "points.2.text", nudge: -0.12 },
+      { word: "mengganggu", box: 1, place: "lead", front: true, nudge: 0.02 },
+      { word: "Kata", box: 1, place: "title", nudge: -0.08 },
+      { word: "dipilah", box: 1, place: "title", nudge: -0.02 },
+      {
+        word: "singkat",
+        box: 2,
+        place: "points.2.text",
+        right: true,
+        nudge: -0.07,
+      },
+      { word: "langsung", box: 2, place: "lead", right: true, nudge: -0.07 },
       { word: "metodenya", box: 3, place: "method" },
+      { word: "Gulir", box: 4, place: "hint", nudge: -0.12 },
       { word: "wonder", box: 4, place: "card" },
-      { word: "Gulir", box: 5, place: "hint" },
+      { word: "kata", box: 5, place: "question" },
       { word: "tahu", box: 0, place: "counter" },
       { word: "Dipelajari", box: 0, place: "counter" },
     ],
@@ -180,11 +229,11 @@ export const id: LandingDictionary = {
     logIn: "Masuk",
     receipt: {
       rows: [
-      { label: "5 kotak Leitner", value: "✓" },
-      { label: "Set kata siap pakai", value: "✓" },
-      { label: "Cek kalimat", value: "✓" },
-      { label: "Duel dengan teman", value: "✓" },
-      { label: "Waktu per hari", value: "~5 menit" },
+        { label: "5 kotak Leitner", value: "✓" },
+        { label: "Set kata siap pakai", value: "✓" },
+        { label: "Cek kalimat", value: "✓" },
+        { label: "Duel dengan teman", value: "✓" },
+        { label: "Waktu per hari", value: "~5 menit" },
       ],
       total: "Total untuk mulai",
       sum: "0,00",
