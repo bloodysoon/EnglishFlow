@@ -13,7 +13,8 @@ function leaves(value: unknown, path = ""): [string, unknown][] {
   return [[path, value]];
 }
 
-const placeholders = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+const placeholders = (text: string) =>
+  [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 
 describe("landing dictionaries", () => {
   const en = new Map(leaves(getLandingDictionary("en")));
@@ -42,7 +43,9 @@ describe("landing dictionaries", () => {
 
 describe("fill", () => {
   it("replaces known placeholders", () => {
-    expect(fill("Word {current} of {total}", { current: 2, total: 5 })).toBe("Word 2 of 5");
+    expect(fill("Word {current} of {total}", { current: 2, total: 5 })).toBe(
+      "Word 2 of 5",
+    );
   });
 
   it("leaves unknown placeholders visible", () => {

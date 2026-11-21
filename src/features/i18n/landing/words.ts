@@ -25,7 +25,11 @@ export const DEMO_WORDS: readonly (LandingWord & { box: number })[] = [
     word: "eager",
     phonetic: "/ˈiː.ɡər/",
     example: "He was eager to start the course.",
-    translations: { ru: "полный энтузиазма", ro: "nerăbdător", id: "bersemangat" },
+    translations: {
+      ru: "полный энтузиазма",
+      ro: "nerăbdător",
+      id: "bersemangat",
+    },
     box: 1,
   },
   {
@@ -46,7 +50,11 @@ export const DEMO_WORDS: readonly (LandingWord & { box: number })[] = [
     word: "afford",
     phonetic: "/əˈfɔːd/",
     example: "We can't afford a new car yet.",
-    translations: { ru: "позволить себе", ro: "a-și permite", id: "mampu membeli" },
+    translations: {
+      ru: "позволить себе",
+      ro: "a-și permite",
+      id: "mampu membeli",
+    },
     box: 1,
   },
   {
@@ -111,6 +119,10 @@ export const TRIAGE_WORDS: readonly LandingWord[] = [
     word: "wonder",
     phonetic: "/ˈwʌn.dər/",
     example: "I wonder where she is.",
-    translations: { ru: "задаваться вопросом", ro: "a se întreba", id: "bertanya-tanya" },
+    translations: {
+      ru: "задаваться вопросом",
+      ro: "a se întreba",
+      id: "bertanya-tanya",
+    },
   },
 ];
