@@ -502,8 +502,13 @@ export function FallingWords() {
       if (!frame) frame = requestAnimationFrame(tick);
     }
 
+    let width = innerWidth;
+
     function onResize() {
-      if (built) build();
+      // Phones fire resize when the URL bar shows or hides (height only);
+      // rebuilding mid-scroll then measures pinned, moved pieces and misplaces the flights.
+      if (built && innerWidth !== width) build();
+      width = innerWidth;
       draw(smooth);
     }
 
