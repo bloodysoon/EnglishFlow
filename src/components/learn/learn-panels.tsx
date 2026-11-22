@@ -24,7 +24,7 @@ type Today = { done: number; goal: number; addedText: string };
 
 const HiddenContext = createContext<{ hidden: PanelId[]; toggle: (id: PanelId) => void } | null>(null);
 
-function useHidden() {
+export function useHidden() {
   const value = useContext(HiddenContext);
   if (!value) throw new Error("LearnPanelsProvider is missing");
   return value;
@@ -47,7 +47,7 @@ export function PanelChips({ today, labels }: { today: Today; labels: Labels }) 
   const { hidden, toggle } = useHidden();
   const session = useLearnSession();
   const { learn, triage } = labels;
-  const chip = buttonClasses({ size: "toolbar", variant: "secondary", className: "chip-pop gap-1.5" });
+  const chip = buttonClasses({ size: "compact", variant: "secondary", className: "chip-pop" });
 
   return (
     <>
@@ -59,7 +59,7 @@ export function PanelChips({ today, labels }: { today: Today; labels: Labels }) 
           title={learn.today}
           className={chip}
         >
-          <Target className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+          <Target className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={3} aria-hidden="true" />
           <span className="text-xs">
             {today.done}/{today.goal}
           </span>
@@ -75,7 +75,7 @@ export function PanelChips({ today, labels }: { today: Today; labels: Labels }) 
           title={triage.session}
           className={chip}
         >
-          <Layers className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+          <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={3} aria-hidden="true" />
           <span className="text-xs">
             {session.seen}
             <span className="text-primary"> +{session.added}</span>
@@ -87,7 +87,7 @@ export function PanelChips({ today, labels }: { today: Today; labels: Labels }) 
 }
 
 // Folds the panel's height and fades it; nothing is focusable while folded.
-function Collapsible({ open, children }: { open: boolean; children: ReactNode }) {
+export function Collapsible({ open, children }: { open: boolean; children: ReactNode }) {
   return (
     <div
       inert={!open}
@@ -100,7 +100,7 @@ function Collapsible({ open, children }: { open: boolean; children: ReactNode })
   );
 }
 
-function HideButton({ label, onClick }: { label: string; onClick: () => void }) {
+export function HideButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
       type="button"

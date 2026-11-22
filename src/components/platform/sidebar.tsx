@@ -7,6 +7,7 @@ import {
   Backpack,
   BarChart3,
   BookOpen,
+  ChevronDown,
   Gem,
   History,
   LayoutDashboard,
@@ -24,6 +25,7 @@ import { NotificationBell } from "@/components/platform/notification-bell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { logoutAction } from "@/features/auth/actions/logout.action";
 import type { Locale } from "@/features/i18n/locales";
+import { plural } from "@/features/i18n/plural";
 import type { PlatformDictionary } from "@/features/i18n/platform";
 import type { ThemePreference } from "@/features/theme/theme";
 
@@ -39,6 +41,13 @@ const navigation = [
   { key: "friends", href: "/friends", icon: Users, ready: true },
   { key: "duels", href: "/duels", icon: Swords, ready: true },
   { key: "timeline", href: "/timeline", icon: History, ready: true },
+] as const;
+
+// Shown under Learn when it is expanded.
+const learnLinks = [
+  { key: "newWords", href: "/learn/new-words" },
+  { key: "myWords", href: "/learn/words" },
+  { key: "review", href: "/learn/review" },
 ] as const;
 
 type PlatformSidebarProps = {
@@ -68,6 +77,14 @@ export function PlatformSidebar({
   const adminActive = pathname === "/admin" || pathname.startsWith("/admin/");
   // Phones and tablets: the menu is a drawer behind a burger button. Desktop: always shown.
   const [open, setOpen] = useState(false);
+  // null until the user toggles it: then Learn starts expanded on /learn pages.
+  const [learnToggled, setLearnToggled] = useState<boolean | null>(null);
+  // Words waiting for review; the bell loads it and reloads after every navigation.
+  const [due, setDue] = useState(0);
+  const dueText = due > 0 ? plural(locale, due, labels.due) : labels.nothingDue;
+  // Box 1 colour: "comes back today" in the Leitner boxes.
+  const dueBadge =
+    "flex h-6 min-w-6 shrink-0 items-center justify-center border-[2px] border-line bg-box-1 px-1 text-xs leading-none font-black text-on-box shadow-brutal-sm";
 
   useEffect(() => {
     if (!open) return;
@@ -101,7 +118,7 @@ export function PlatformSidebar({
         </Link>
 
         <div className="flex items-center gap-2">
-          <NotificationBell labels={notificationLabels} locale={locale} />
+          <NotificationBell labels={notificationLabels} locale={locale} onDueCount={setDue} />
           <ThemeToggle initialPreference={themePreference} labels={themeLabels} />
           <button
             type="button"
@@ -160,15 +177,91 @@ export function PlatformSidebar({
             }
 
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const itemClass = `lift-safe flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none ${
+              active ? "bg-chip text-on-box shadow-brutal-sm" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
+            }`;
+
+            if (item.key === "learn") {
+              const expanded = learnToggled ?? active;
+              return (
+                <div key={item.href} className="flex flex-col">
+                  <button
+                    type="button"
+                    aria-expanded={expanded}
+                    aria-controls="learn-submenu"
+                    onClick={() => setLearnToggled(!expanded)}
+                    className={`${itemClass} w-full cursor-pointer text-left`}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
+                    <span>{labels.learn}</span>
+                    {due > 0 && (
+                      <>
+                        <span className="sr-only">, {dueText}</span>
+                        {/* Pulses only while folded: open, the Review row below says it in words. */}
+                        <span aria-hidden="true" className={`ml-auto ${dueBadge} ${expanded ? "" : "animate-pulse motion-reduce:animate-none"}`}>
+                          {due}
+                        </span>
+                      </>
+                    )}
+                    <ChevronDown
+                      aria-hidden="true"
+                      className={`${due > 0 ? "" : "ml-auto"} h-4 w-4 shrink-0 transition-transform duration-200 motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`}
+                      strokeWidth={3}
+                    />
+                  </button>
+                  {/* 0fr → 1fr animates the height (the clipping box has no padding, so folded is 0px); inert keeps closed links out of Tab order. */}
+                  <div
+                    id="learn-submenu"
+                    inert={!expanded}
+                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
+                      expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                  <div className="min-h-0 overflow-hidden">
+                  <ul className="ml-5 flex flex-col gap-2 border-l-[3px] border-line pt-2 pr-1 pb-1 pl-3">
+                    {learnLinks.map((sub) => {
+                      const subActive = pathname === sub.href || pathname.startsWith(`${sub.href}/`);
+                      return (
+                        <li key={sub.href}>
+                          <Link
+                            href={sub.href}
+                            aria-current={subActive ? "page" : undefined}
+                            className={`flex min-h-11 items-center gap-2 border-[2px] border-line px-3 py-2 text-xs font-black uppercase transition-colors duration-150 motion-reduce:transition-none ${
+                              subActive ? "bg-chip text-on-box shadow-brutal-sm" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
+                            }`}
+                          >
+                            {sub.key === "review" ? (
+                              <>
+                                <span className="flex min-w-0 flex-col">
+                                  <span>{labels.review}</span>
+                                  <span className="text-[11px] font-bold normal-case opacity-75">{dueText}</span>
+                                </span>
+                                {due > 0 && (
+                                  <span aria-hidden="true" className={`ml-auto ${dueBadge}`}>
+                                    {due}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              labels[sub.key]
+                            )}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  </div>
+                  </div>
+                </div>
+              );
+            }
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`lift-safe flex shrink-0 items-center gap-3 border-[2px] border-line px-3 py-3 text-sm font-black uppercase transition-[transform,background-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-brutal-sm motion-reduce:transition-none ${
-                  active ? "bg-chip text-on-box shadow-brutal-sm" : "bg-raised text-fg hover:bg-box-2 hover:text-on-box"
-                }`}
+                className={itemClass}
               >
                 <Icon className="h-5 w-5 shrink-0" />
                 <span>{labels[item.key]}</span>

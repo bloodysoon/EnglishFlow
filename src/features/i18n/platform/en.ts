@@ -48,6 +48,11 @@ export const en = {
     friends: "Friends",
     duels: "Duels",
     timeline: "Timeline",
+    newWords: "New words",
+    myWords: "My words",
+    review: "Review",
+    due: p({ one: "{n} word to review", other: "{n} words to review" }),
+    nothingDue: "Nothing to review",
     soon: "Soon",
     admin: "Admin",
     yourAccount: "Your account",
@@ -140,14 +145,11 @@ export const en = {
     known: "Known",
     title: "Learn",
     // Header button; {n} is how many words wait for review.
-    review: "Review ({n})",
     today: "Today's learning",
     hidePanel: "Hide {panel}",
     showPanel: "Show {panel}",
     addedToday: p({ one: "{n} new word added today", other: "{n} new words added today" }),
-    yourWords: "Your words",
     addWord: "Add word",
-    myWords: "My words",
   },
 
   tour: {
@@ -163,8 +165,6 @@ export const en = {
         text: 'One word at a time. Know it? It is set aside. New to you? "Learn it" adds it to your daily reviews, where it moves through 5 boxes. Keys: ← know, → learn, Space translation, S skip, Z undo, P listen.',
       },
       filters: { title: "Filters", text: "Pick topics or parts of speech to get only the words you want." },
-      words: { title: "My words", text: "All your words. Add your own word here, or open the ones you already know." },
-      today: { title: "Review", text: "Come back daily and review the words waiting for you." },
     },
   },
 

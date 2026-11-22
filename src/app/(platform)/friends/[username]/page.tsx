@@ -33,13 +33,22 @@ export default async function FriendProfilePage({ params }: Props) {
 
   return (
     <div className="space-y-8">
-      <BackLink href="/friends" label={t.friends.back} />
       <div className="rise" style={riseStyle(0)}>
         {friend.stats ? (
-          <ProfileCard username={friend.username} stats={friend.stats} today={utcDay()} locale={locale} t={t} />
+          <ProfileCard
+            username={friend.username}
+            stats={friend.stats}
+            today={utcDay()}
+            locale={locale}
+            t={t}
+            action={<BackLink href="/friends" label={t.friends.back} />}
+          />
         ) : (
           <div className="space-y-2">
-            <p className="text-2xl font-black break-all">@{friend.username}</p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-2xl font-black break-all">@{friend.username}</p>
+              <BackLink href="/friends" label={t.friends.back} />
+            </div>
             <p className="font-semibold text-muted">{t.profile.nothingYet}</p>
           </div>
         )}

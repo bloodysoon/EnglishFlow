@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Award, Flame, Pin, Tags, TrendingUp } from "lucide-react";
 
 import { badgeIcons, trackIcons } from "@/components/achievements/icons";
@@ -18,11 +19,12 @@ type ProfileCardProps = {
   today: string;
   locale: Locale;
   t: PlatformDictionary;
+  action?: ReactNode; // e.g. the way back, at the card's top right
 };
 
 // Everything a profile shows, the same for the owner and for visitors:
 // level, current streak, badges and milestone levels.
-export function ProfileCard({ username, stats, today, locale, t }: ProfileCardProps) {
+export function ProfileCard({ username, stats, today, locale, t, action }: ProfileCardProps) {
   const a = t.achievements;
   const p = t.profile;
   const streak = currentStreak(stats, today);
@@ -74,6 +76,7 @@ export function ProfileCard({ username, stats, today, locale, t }: ProfileCardPr
             </li>
           </ul>
         </div>
+        {action && <div className="self-start">{action}</div>}
       </section>
 
       <section aria-labelledby="profile-badges">

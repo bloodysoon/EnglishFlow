@@ -35,13 +35,15 @@ export default async function HardWordsPage({ searchParams }: PageProps<"/learn/
 
   return (
     <div className="space-y-8">
-      <BackLink href="/dashboard" label={t.nav.dashboard} />
-      <header className="space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
-        <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
-          {d.hardWords}
-          <span className="text-primary">.</span>
-        </h1>
-        <p className="max-w-xl font-semibold text-muted">{d.hardWordsHint}</p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="min-w-0 space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
+          <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
+            {d.hardWords}
+            <span className="text-primary">.</span>
+          </h1>
+          <p className="max-w-xl font-semibold text-muted">{d.hardWordsHint}</p>
+        </div>
+        <BackLink href="/dashboard" label={t.nav.dashboard} />
       </header>
 
       {words.length === 0 ? (

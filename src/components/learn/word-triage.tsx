@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, ChevronRight, Plus, Sparkles, Undo2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, Eye, Plus, Sparkles, Undo2 } from "lucide-react";
 
 import { countInSession } from "@/components/learn/learn-session";
-import { WordExample, WordHead, WordTranslation, speak } from "@/components/learn/word-card";
+import { WordExample, WordHead, WordTranslation, speak, wordBadge } from "@/components/learn/word-card";
 import { Button } from "@/components/ui/button";
 import { fill } from "@/features/i18n/locales";
 import type { PlatformDictionary } from "@/features/i18n/platform";
@@ -209,7 +209,7 @@ export function WordTriage({
           listenLabel={t.listen}
           translateLabel={t.translateTo}
         >
-          {card.level && <span className="border-2 border-line px-2 py-0.5 text-xs font-black">{card.level}</span>}
+          {card.level && <span className={wordBadge}>{card.level}</span>}
         </WordHead>
 
         {(translatedDefinition ?? card.definition) && (
@@ -228,8 +228,9 @@ export function WordTriage({
               type="button"
               onClick={() => setRevealed(true)}
               aria-keyshortcuts="Space"
-              className="min-h-11 cursor-pointer text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark"
+              className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 border-[2px] border-dashed border-line text-sm font-black uppercase hover:border-solid hover:bg-surface"
             >
+              <Eye className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
               {t.show}
             </button>
           )}

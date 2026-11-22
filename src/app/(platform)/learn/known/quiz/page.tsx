@@ -24,11 +24,13 @@ export default async function KnownQuizPage({ searchParams }: PageProps<"/learn/
 
   return (
     <div className="space-y-8">
-      <BackLink href="/learn/known" label={t.quiz.back} />
-      <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
-        {t.quiz.title}
-        <span className="text-primary">.</span>
-      </h1>
+      <header className="flex items-start justify-between gap-3">
+        <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
+          {t.quiz.title}
+          <span className="text-primary">.</span>
+        </h1>
+        <BackLink href="/learn/known" label={t.quiz.back} />
+      </header>
       {/* Each round is its own URL, so "Another quiz" starts fresh with new words. */}
       <KnownQuiz
         key={roundNumber}

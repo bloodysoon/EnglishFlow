@@ -43,6 +43,11 @@ export const ro: PlatformDictionary = {
     friends: "Prieteni",
     duels: "Dueluri",
     timeline: "Cronologie",
+    newWords: "Cuvinte noi",
+    myWords: "Cuvintele mele",
+    review: "Recapitulare",
+    due: { one: "{n} cuvânt de repetat", few: "{n} cuvinte de repetat", other: "{n} de cuvinte de repetat" },
+    nothingDue: "Nimic de repetat",
     soon: "Curând",
     admin: "Admin",
     yourAccount: "Contul tău",
@@ -139,7 +144,6 @@ export const ro: PlatformDictionary = {
     known: "Știute",
     title: "Învață",
     // Header button; {n} is how many words wait for review.
-    review: "Recapitulare ({n})",
     today: "Învățat azi",
     hidePanel: "Ascunde: {panel}",
     showPanel: "Arată: {panel}",
@@ -148,9 +152,7 @@ export const ro: PlatformDictionary = {
       few: "{n} cuvinte noi adăugate azi",
       other: "{n} de cuvinte noi adăugate azi",
     },
-    yourWords: "Cuvintele tale",
     addWord: "Adaugă",
-    myWords: "Cuvintele mele",
   },
 
   tour: {
@@ -166,8 +168,6 @@ export const ro: PlatformDictionary = {
         text: "Câte un cuvânt pe rând. Îl știi? Se pune deoparte. E nou? „Învăț” îl adaugă la recapitularea zilnică, unde trece prin 5 cutii. Taste: ← știu, → învăț, Spațiu traducere, S sari, Z anulează, P ascultă.",
       },
       filters: { title: "Filtre", text: "Alege teme sau părți de vorbire ca să primești doar cuvintele dorite." },
-      words: { title: "Cuvintele mele", text: "Toate cuvintele tale. Aici adaugi un cuvânt nou sau le deschizi pe cele pe care le știi." },
-      today: { title: "Recapitulare", text: "Revino zilnic și recapitulează cuvintele care te așteaptă." },
     },
   },
 

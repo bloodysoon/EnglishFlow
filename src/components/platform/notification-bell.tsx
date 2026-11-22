@@ -66,9 +66,11 @@ const KIND_LABELS: Record<NoticeKind, (l: PlatformDictionary["notifications"]) =
 type NotificationBellProps = {
   labels: PlatformDictionary["notifications"];
   locale: Locale;
+  // The sidebar shows the same count on Learn, without a second request.
+  onDueCount?: (count: number) => void;
 };
 
-export function NotificationBell({ labels, locale }: NotificationBellProps) {
+export function NotificationBell({ labels, locale, onDueCount }: NotificationBellProps) {
   const pathname = usePathname();
   const [data, setData] = useState<Notifications | null>(null);
   const [fresh, setFresh] = useState<AchievementNotice[]>([]);
@@ -89,6 +91,7 @@ export function NotificationBell({ labels, locale }: NotificationBellProps) {
         const { userId, achievements } = result.notifications;
         setFailed(false);
         setData(result.notifications);
+        onDueCount?.(result.notifications.dueCount);
         if (!achievements) return setFresh([]);
         const seen = readSeen(userId);
         if (seen === null) writeSeen(userId, achievements.map((n) => n.key));
@@ -98,7 +101,7 @@ export function NotificationBell({ labels, locale }: NotificationBellProps) {
     return () => {
       live = false;
     };
-  }, [pathname]);
+  }, [pathname, onDueCount]);
 
   // Closing the panel marks the achievements in it as seen.
   const close = useCallback(

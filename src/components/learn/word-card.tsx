@@ -18,6 +18,9 @@ export function speak(lemma: string) {
   window.speechSynthesis.speak(utterance);
 }
 
+// Static badges beside the word (level, Leitner box): flat, so they never look tappable.
+export const wordBadge = "inline-flex items-center border-2 border-line px-2 py-0.5 text-xs font-black uppercase";
+
 // The word with its listen button, then the badges (children) and the RU/RO switch.
 export function WordHead({
   lemma,
@@ -56,7 +59,7 @@ export function WordHead({
             aria-label={listenLabel}
             title={listenLabel}
             aria-keyshortcuts="P"
-            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center border-[2px] border-line bg-raised hover:bg-box-2 hover:text-on-box"
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center border-[2px] border-line bg-raised shadow-brutal-sm hover:bg-box-2 hover:text-on-box active:translate-x-0.5 active:translate-y-0.5 active:shadow-none motion-reduce:transition-none"
           >
             <Volume2 className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
           </button>
@@ -65,18 +68,23 @@ export function WordHead({
           {[ipa, partOfSpeech].filter(Boolean).join(" · ")}
         </p>
       </div>
-      {/* Badges and the RU/RO switch: badge-sized on desktop, finger-sized on phones. */}
-      <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-        {children}
+      {/* Phones: badges left, switch right, on one row. Desktop: both top right, badge-sized.
+          Tappable things carry a border and a hard shadow; the badges stay flat. */}
+      <div className="flex shrink-0 items-center gap-1.5 sm:justify-end sm:gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">{children}</div>
         {onLanguage && (
-          <div role="group" aria-label={translateLabel} className="flex border-[2px] border-line">
+          <div
+            role="group"
+            aria-label={translateLabel}
+            className="ml-auto flex divide-x-2 divide-line border-[2px] border-line shadow-brutal-sm sm:ml-0"
+          >
             {(["ru", "ro", "id"] as const).map((code) => (
               <button
                 key={code}
                 type="button"
                 aria-pressed={language === code}
                 onClick={() => onLanguage(code)}
-                className={`min-h-11 min-w-11 cursor-pointer px-2 text-xs font-black uppercase sm:min-h-0 sm:min-w-0 sm:py-0.5 ${
+                className={`min-h-11 min-w-10 cursor-pointer px-2 text-xs font-black uppercase sm:min-h-0 sm:min-w-0 sm:py-0.5 ${
                   language === code ? "bg-chip text-on-box" : "bg-raised text-fg hover:bg-surface"
                 }`}
               >

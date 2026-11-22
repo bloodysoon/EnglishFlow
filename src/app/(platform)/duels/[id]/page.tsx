@@ -35,7 +35,9 @@ export default async function DuelPage({ params }: Props) {
 
   return (
     <div className="space-y-8">
-      <BackLink href="/duels" label={t.duels.back} />
+      <div className="flex justify-end">
+        <BackLink href="/duels" label={t.duels.back} />
+      </div>
       <DuelMatch initial={state.data} t={t.duels} common={t.common} />
     </div>
   );

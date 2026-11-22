@@ -53,7 +53,7 @@ const exercises = [
     key: "vocabulary",
     icon: Layers3,
     tone: "bg-box-5 text-on-box-5",
-    href: "/learn",
+    href: "/learn/new-words",
   },
   { key: "grammar", icon: BookOpen, tone: "bg-raised text-fg", href: null },
   {
@@ -132,8 +132,8 @@ export default async function DashboardPage() {
           href: "/learn/review",
         }
       : total === 0
-        ? { title: d.pickFirst, cta: d.chooseSet, href: "/learn" }
-        : { title: d.allDone, cta: d.browseSets, href: "/learn" };
+        ? { title: d.pickFirst, cta: d.chooseSet, href: "/learn/new-words" }
+        : { title: d.allDone, cta: d.browseSets, href: "/learn/new-words" };
 
   return (
     <div className="space-y-10">

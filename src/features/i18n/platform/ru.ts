@@ -43,6 +43,11 @@ export const ru: PlatformDictionary = {
     friends: "Друзья",
     duels: "Дуэли",
     timeline: "Хроника",
+    newWords: "Новые слова",
+    myWords: "Мои слова",
+    review: "Повторение",
+    due: { one: "{n} слово к повторению", few: "{n} слова к повторению", many: "{n} слов к повторению", other: "{n} слова к повторению" },
+    nothingDue: "Нечего повторять",
     soon: "Скоро",
     admin: "Админ",
     yourAccount: "Ваш аккаунт",
@@ -145,7 +150,6 @@ export const ru: PlatformDictionary = {
     known: "Знаю",
     title: "Учить",
     // Header button; {n} is how many words wait for review.
-    review: "Повторение ({n})",
     today: "Сегодня",
     hidePanel: "Скрыть: {panel}",
     showPanel: "Показать: {panel}",
@@ -155,9 +159,7 @@ export const ru: PlatformDictionary = {
       many: "{n} новых слов добавлено сегодня",
       other: "{n} новых слова добавлено сегодня",
     },
-    yourWords: "Ваши слова",
     addWord: "Добавить",
-    myWords: "Мои слова",
   },
 
   tour: {
@@ -173,8 +175,6 @@ export const ru: PlatformDictionary = {
         text: "По одному слову. Знаете? Оно откладывается. Новое? «Учить» добавит его в ежедневные повторения, где оно проходит 5 коробок. Клавиши: ← знаю, → учить, Пробел перевод, S пропустить, Z отменить, P послушать.",
       },
       filters: { title: "Фильтры", text: "Выберите темы или части речи, чтобы получать только нужные слова." },
-      words: { title: "Мои слова", text: "Все ваши слова. Здесь же можно добавить своё слово и открыть те, что вы уже знаете." },
-      today: { title: "Повторение", text: "Возвращайтесь каждый день и повторяйте слова, которые вас ждут." },
     },
   },
 

@@ -40,7 +40,6 @@ export default async function MyWordsPage() {
 
   return (
     <div className="space-y-8">
-      <BackLink href="/learn" label={t.common.learn} />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
           <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
@@ -53,6 +52,7 @@ export default async function MyWordsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <BackLink href="/learn/new-words" label={t.common.learn} />
           <Link href="/learn/known" className={buttonClasses({ variant: "secondary" })}>
             {t.learn.known}
           </Link>

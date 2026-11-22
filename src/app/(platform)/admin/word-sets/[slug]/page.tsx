@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 
+import { BackLink } from "@/components/learn/back-link";
 import { PublishToggle } from "@/components/admin/publish-toggle";
 import { WordEditor } from "@/components/admin/word-editor";
 import { getAdmin } from "@/features/admin/server";
@@ -22,16 +21,9 @@ export default async function AdminWordSetPage({ params }: PageProps<"/admin/wor
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/admin/word-sets"
-        className="group inline-flex min-h-11 items-center gap-2 text-sm font-black uppercase underline decoration-[3px] underline-offset-4 hover:decoration-mark"
-      >
-        <ArrowLeft
-          className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1 motion-reduce:transition-none"
-          aria-hidden="true"
-        />
-        All word sets
-      </Link>
+      <div className="flex justify-end">
+        <BackLink href="/admin/word-sets" label="All word sets" />
+      </div>
 
       <div className="flex flex-wrap items-start justify-between gap-4 border-[3px] border-line bg-surface p-5 shadow-brutal">
         <div>

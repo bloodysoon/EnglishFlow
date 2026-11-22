@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, ChevronRight, PartyPopper, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, PartyPopper, RotateCcw, TrendingUp, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
-import { WordExample, WordHead, WordTranslation, speak } from "@/components/learn/word-card";
+import { Collapsible, HideButton, useHidden } from "@/components/learn/learn-panels";
+import { WordExample, WordHead, WordTranslation, speak, wordBadge } from "@/components/learn/word-card";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { fill, type Locale } from "@/features/i18n/locales";
@@ -20,6 +21,9 @@ import { levelTitle } from "@/features/rewards/levels";
 
 type Answer = { wordId: string; lemma: string; remembered: boolean; xp: number; newBox: number; mastered: boolean };
 
+// The header slot never moves, so nothing to listen to.
+const noSubscribe = () => () => {};
+
 export function ReviewSession({
   cards,
   language,
@@ -29,6 +33,7 @@ export function ReviewSession({
   sessionEnded,
   startXp,
   rewards,
+  panelLabels,
 }: {
   cards: ReviewCard[];
   language: "ru" | "ro" | "id";
@@ -39,7 +44,12 @@ export function ReviewSession({
   // XP before this session, to notice a level-up as it happens.
   startXp: number;
   rewards: PlatformDictionary["rewards"];
+  panelLabels: PlatformDictionary["learn"]; // hide / show panel
 }) {
+  const { hidden, toggle } = useHidden();
+  const panelHidden = hidden.includes("review");
+  // The page header's slot for the chip of the hidden panel (none on the server).
+  const chipSlot = useSyncExternalStore(noSubscribe, () => document.getElementById("review-chips"), () => null);
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -211,7 +221,7 @@ export function ReviewSession({
           <Link href="/dashboard" className={buttonClasses()}>
             {t.goDashboard}
           </Link>
-          <Link href="/learn" className={buttonClasses({ variant: "secondary" })}>
+          <Link href="/learn/new-words" className={buttonClasses({ variant: "secondary" })}>
             {t.newWords}
           </Link>
         </div>
@@ -237,13 +247,38 @@ export function ReviewSession({
 
   return (
     <div>
-      {/* Progress, in the same box as "Today's learning" on Learn. */}
+      {/* Progress, in the same box as "Today's learning" on Learn; like it,
+          it can fold into a chip in the page header. */}
+      {panelHidden &&
+        chipSlot &&
+        createPortal(
+          <button
+            type="button"
+            onClick={() => toggle("review")}
+            aria-label={fill(panelLabels.showPanel, {
+              panel: `${fill(t.wordOf, { current: index + 1, total: cards.length })}, +${xpEarned} XP`,
+            })}
+            title={t.progressAria}
+            className={buttonClasses({ size: "toolbar", variant: "secondary", className: "chip-pop gap-1.5" })}
+          >
+            <TrendingUp className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+            <span className="text-xs">
+              {index + 1}/{cards.length}
+              <span className="text-primary"> +{xpEarned}</span>
+            </span>
+          </button>,
+          chipSlot,
+        )}
+      <Collapsible open={!panelHidden}>
       <div className="border-[3px] border-line bg-raised p-4 sm:p-5">
-        <div className="flex items-baseline justify-between gap-3">
+        <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-black tracking-widest uppercase">
             {fill(t.wordOf, { current: index + 1, total: cards.length })}
           </p>
-          <p className="font-display text-xl font-black">+{xpEarned} XP</p>
+          <div className="flex items-center gap-3">
+            <p className="font-display text-xl font-black whitespace-nowrap">+{xpEarned} XP</p>
+            <HideButton label={fill(panelLabels.hidePanel, { panel: t.progressAria })} onClick={() => toggle("review")} />
+          </div>
         </div>
         <ProgressBar
           label={t.progressAria}
@@ -254,6 +289,7 @@ export function ReviewSession({
         />
         {levelUp}
       </div>
+      </Collapsible>
 
       {/* The card: the word first, the answer after "Show translation". */}
       <div key={card.wordId} className="card-in mt-6 border-[3px] border-line bg-raised p-5 shadow-brutal sm:p-7">
@@ -267,11 +303,11 @@ export function ReviewSession({
           translateLabel={c.translateTo}
         >
           <span
-            className={`border-2 border-line px-2 py-0.5 text-xs font-black uppercase ${leitnerBoxStyles[card.box]}`}
+            className={`${wordBadge} ${leitnerBoxStyles[card.box]}`}
           >
             {fill(t.box, { box: card.box })}
           </span>
-          {card.level && <span className="border-2 border-line px-2 py-0.5 text-xs font-black">{card.level}</span>}
+          {card.level && <span className={wordBadge}>{card.level}</span>}
         </WordHead>
 
         {/* Live region exists before the reveal, so screen readers announce the answer while focus moves to the buttons. */}

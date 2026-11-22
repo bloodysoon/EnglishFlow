@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
+import { LearnPanelsProvider } from "@/components/learn/learn-panels";
 import { ReviewSession } from "@/components/learn/review-session";
 import { buttonClasses } from "@/components/ui/button";
 import { riseStyle } from "@/components/ui/rise";
 import { getLearningOverview, getReviewQueue } from "@/features/learning/queries";
+import { LEARN_HIDDEN_COOKIE, parseHiddenPanels } from "@/features/learning/learn-panels";
 import { introduceTodaysWords } from "@/features/learning/server";
 import { fill } from "@/features/i18n/locales";
 import { dateLocale, getPlatformI18n } from "@/features/i18n/platform";
@@ -43,8 +45,10 @@ export default async function ReviewPage() {
     month: "long",
     timeZone: "UTC",
   });
+  const hiddenPanels = parseHiddenPanels((await cookies()).get(LEARN_HIDDEN_COOKIE)?.value);
 
   return (
+    <LearnPanelsProvider initialHidden={hiddenPanels}>
     <div className="space-y-6 sm:space-y-8">
       {/* Same header as Learn: title, then the one way back. */}
       <header className="rise flex flex-wrap items-center justify-between gap-3" style={riseStyle(0)}>
@@ -54,10 +58,10 @@ export default async function ReviewPage() {
         </h1>
         {/* The empty state has its own "Back to Learn", so only one way back shows. */}
         {cards.length > 0 && (
-          <Link href="/learn" className={buttonClasses({ size: "toolbar", variant: "secondary" })}>
-            <ArrowLeft className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-            {t.common.learn}
-          </Link>
+          <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
+            {/* The progress panel's chip lands here once it is hidden (ReviewSession). */}
+            <div id="review-chips" className="contents" />
+          </div>
         )}
       </header>
 
@@ -71,6 +75,7 @@ export default async function ReviewPage() {
           sessionEnded={t.common.sessionEnded}
           startXp={overview.xpTotal}
           rewards={t.rewards}
+          panelLabels={t.learn}
         />
       ) : (
         <section className="max-w-xl border-[3px] border-line bg-raised p-6 shadow-brutal sm:p-8">
@@ -84,11 +89,12 @@ export default async function ReviewPage() {
                   ? r.arriveTomorrow
                   : r.startAnother}
           </p>
-          <Link href="/learn" className={buttonClasses({ className: "mt-6" })}>
+          <Link href="/learn/new-words" className={buttonClasses({ className: "mt-6" })}>
             {overview.total === 0 ? r.getWords : r.backToLearn}
           </Link>
         </section>
       )}
     </div>
+    </LearnPanelsProvider>
   );
 }

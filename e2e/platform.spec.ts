@@ -4,7 +4,7 @@ import { hasTestAccount } from "./test-account";
 
 test.skip(!hasTestAccount(), "E2E_EMAIL / E2E_PASSWORD not set");
 
-const PAGES = ["/dashboard", "/learn", "/statistics", "/achievements", "/settings"];
+const PAGES = ["/dashboard", "/learn/new-words", "/statistics", "/achievements", "/settings"];
 
 for (const path of PAGES) {
   test(`${path} renders without errors`, async ({ page }) => {
@@ -49,7 +49,7 @@ for (const [width, height] of [
         document.head.append(style);
       });
     });
-    await page.goto("/learn");
+    await page.goto("/learn/new-words");
 
     const target = page.locator('[data-tour="today"]').first();
     const spotlight = page.locator("[data-tour-spotlight]");
@@ -77,7 +77,7 @@ test("settings does not steal focus on load", async ({ page }) => {
 test("a long word fits the learn card at 320px", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.addInitScript(() => localStorage.setItem("ef-learn-tour-seen", "1"));
-  await page.goto("/learn");
+  await page.goto("/learn/new-words");
 
   const word = page.locator('.card-in p[lang="en"]').first();
   await expect(word).toBeVisible();
@@ -99,7 +99,7 @@ test("a long word fits the learn card at 320px", async ({ page }) => {
 test("the learn answer buttons keep one-line labels at 320px", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.addInitScript(() => localStorage.setItem("ef-learn-tour-seen", "1"));
-  await page.goto("/learn");
+  await page.goto("/learn/new-words");
 
   for (const name of [/i know it/i, /learn it/i]) {
     const button = page.getByRole("button", { name });

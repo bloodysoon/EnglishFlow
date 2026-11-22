@@ -83,7 +83,9 @@ export default async function WordPage({ params }: Props) {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <BackLink href={word.known ? "/learn/known" : "/learn/words"} label={word.known ? t.learn.known : m.title} />
+      <div className="flex justify-end">
+        <BackLink href={word.known ? "/learn/known" : "/learn/words"} label={word.known ? t.learn.known : m.title} />
+      </div>
 
       <section className="rise border-[3px] border-line bg-raised p-5 shadow-brutal sm:p-7" style={riseStyle(0)}>
         <h1 className="sr-only">{card.lemma}</h1>

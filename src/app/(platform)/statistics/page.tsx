@@ -54,20 +54,31 @@ import { createClient } from "@/lib/supabase/server";
 const card = "border-[3px] border-line shadow-brutal";
 
 // Heatmap steps: one hue, light → dark (0 = nothing that day).
-const heatTone = ["bg-canvas", "bg-primary/25", "bg-primary/50", "bg-primary/75", "bg-primary"] as const;
+const heatTone = [
+  "bg-canvas",
+  "bg-primary/25",
+  "bg-primary/50",
+  "bg-primary/75",
+  "bg-primary",
+] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getPlatformI18n();
   return { title: t.meta.statistics };
 }
 
-const formatDay = (locale: Locale, day: string, options: Intl.DateTimeFormatOptions) =>
+const formatDay = (
+  locale: Locale,
+  day: string,
+  options: Intl.DateTimeFormatOptions,
+) =>
   new Intl.DateTimeFormat(dateLocale(locale), {
     ...options,
     timeZone: "UTC",
   }).format(new Date(`${day}T00:00:00Z`));
 
-const percent = (value: number | null) => (value === null ? "—" : `${Math.round(value * 100)}%`);
+const percent = (value: number | null) =>
+  value === null ? "—" : `${Math.round(value * 100)}%`;
 
 function StatCard({
   label,
@@ -88,7 +99,9 @@ function StatCard({
         <h3 className="text-xs font-black tracking-wide uppercase">{label}</h3>
         {icon}
       </div>
-      <p className="font-display mt-4 text-3xl font-black tracking-tight break-words sm:text-4xl">{value}</p>
+      <p className="font-display mt-4 text-3xl font-black tracking-tight break-words sm:text-4xl">
+        {value}
+      </p>
       {hint && <p className="mt-2 text-sm font-semibold">{hint}</p>}
     </article>
   );
@@ -96,7 +109,14 @@ function StatCard({
 
 export default async function StatisticsPage() {
   const supabase = await createClient();
-  const [stats, overview, { locale, t }, wordsByLevel, wordsByType, wordsByTopic] = await Promise.all([
+  const [
+    stats,
+    overview,
+    { locale, t },
+    wordsByLevel,
+    wordsByType,
+    wordsByTopic,
+  ] = await Promise.all([
     getStatistics(supabase),
     getLearningOverview(supabase),
     getPlatformI18n(),
@@ -109,17 +129,25 @@ export default async function StatisticsPage() {
   const number = (n: number) => n.toLocaleString(dateLocale(locale));
 
   // Words by level and by type share one look: known, mastered, learning.
-  const wordParts = (w: { known: number; mastered: number; learning: number }): BarPart[] => [
+  const wordParts = (w: {
+    known: number;
+    mastered: number;
+    learning: number;
+  }): BarPart[] => [
     { tone: "bg-box-4", label: s.knownWords, value: w.known },
     { tone: "bg-box-5", label: s.masteredWords, value: w.mastered },
     { tone: "bg-box-2", label: s.learningWords, value: w.learning },
   ];
-  const describe = (parts: BarPart[]) => parts.map((p) => `${p.label} ${number(p.value)}`).join(", ");
+  const describe = (parts: BarPart[]) =>
+    parts.map((p) => `${p.label} ${number(p.value)}`).join(", ");
   const legend = (
     <ul className="mt-3 mb-5 flex flex-wrap gap-x-4 gap-y-1 text-xs font-black uppercase">
       {wordParts({ known: 0, mastered: 0, learning: 0 }).map((p) => (
         <li key={p.label} className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className={`h-3 w-3 border-[2px] border-line ${p.tone}`} />
+          <span
+            aria-hidden="true"
+            className={`h-3 w-3 border-[2px] border-line ${p.tone}`}
+          />
           {p.label}
         </li>
       ))}
@@ -129,9 +157,11 @@ export default async function StatisticsPage() {
   const typeName = (type: string) => posNames[type] ?? type;
   const topicNames = t.topics as Record<string, string>;
 
-
   const header = (
-    <header className="rise space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0" style={riseStyle(0)}>
+    <header
+      className="rise space-y-3 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0"
+      style={riseStyle(0)}
+    >
       <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
         {s.title}
         <span className="text-primary">.</span>
@@ -147,7 +177,7 @@ export default async function StatisticsPage() {
         {header}
         <div className={`max-w-xl space-y-5 bg-raised p-6 ${card}`}>
           <p className="font-semibold">{s.empty}</p>
-          <Link href="/learn" className={buttonClasses({})}>
+          <Link href="/learn/new-words" className={buttonClasses({})}>
             {s.startLearning}
           </Link>
         </div>
@@ -155,38 +185,49 @@ export default async function StatisticsPage() {
     );
   }
 
-  const shortDate = (day: string) => formatDay(locale, day, { day: "numeric", month: "short" });
-  const fullDate = (day: string) => formatDay(locale, day, { day: "numeric", month: "short", year: "numeric" });
+  const shortDate = (day: string) =>
+    formatDay(locale, day, { day: "numeric", month: "short" });
+  const fullDate = (day: string) =>
+    formatDay(locale, day, { day: "numeric", month: "short", year: "numeric" });
 
   const longest = longestStreak(days.map((d) => d.day));
-  const learningDays = summary.firstDay ? daysBetween(summary.firstDay, today) + 1 : 0;
+  const learningDays = summary.firstDay
+    ? daysBetween(summary.firstDay, today) + 1
+    : 0;
 
   // Last 30 days, stacked: remembered at the bottom, forgot on top.
   const recent = lastNDays(days, today, 30);
   const recentMax = Math.max(1, ...recent.map(reviewsOf));
   const trend = accuracyTrend(days, today, 30);
   const trendPoints =
-    trend.current !== null && trend.previous !== null ? Math.round((trend.current - trend.previous) * 100) : null;
+    trend.current !== null && trend.previous !== null
+      ? Math.round((trend.current - trend.previous) * 100)
+      : null;
 
   // Heatmap
   const weeks = heatmapWeeks(days, today);
-  const heatMax = Math.max(0, ...weeks.flat().map((cell) => cell?.reviews ?? 0));
+  const heatMax = Math.max(
+    0,
+    ...weeks.flat().map((cell) => cell?.reviews ?? 0),
+  );
   const monthOf = (week: (typeof weeks)[number]) => week[0]?.day.slice(0, 7);
 
   // Weekdays, Monday first (2026-11-16 is a Monday).
   const weekdays = weekdayTotals(days);
   const weekdayPeak = peakIndex(weekdays);
-  const weekdayName = (i: number, weekday: "short" | "long") => formatDay(locale, `2026-11-${16 + i}`, { weekday });
+  const weekdayName = (i: number, weekday: "short" | "long") =>
+    formatDay(locale, `2026-11-${16 + i}`, { weekday });
 
   return (
     <div className="space-y-10">
       {header}
 
       {/* Records */}
-      <section aria-labelledby="records-heading" className="rise" style={riseStyle(1)}>
-        <h2 id="records-heading" className="mb-4 text-xl font-black uppercase">
-          {s.records}
-        </h2>
+      <section
+        aria-labelledby="records-heading"
+        className="rise"
+        style={riseStyle(1)}
+      >
         {/* A card left alone on the last row of three spans the row. */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:[&>*:last-child:nth-child(3n+1)]:col-span-3">
           <StatCard
@@ -197,7 +238,11 @@ export default async function StatisticsPage() {
           />
           <StatCard
             label={s.longestStreak}
-            value={longest ? plural(locale, longest.length, t.dashboard.days) : s.notYet}
+            value={
+              longest
+                ? plural(locale, longest.length, t.dashboard.days)
+                : s.notYet
+            }
             hint={
               longest &&
               (longest.length > 1
@@ -229,7 +274,11 @@ export default async function StatisticsPage() {
           />
           <StatCard
             label={s.bestDay}
-            value={summary.bestDay ? plural(locale, reviewsOf(summary.bestDay), s.reviewsCount) : s.notYet}
+            value={
+              summary.bestDay
+                ? plural(locale, reviewsOf(summary.bestDay), s.reviewsCount)
+                : s.notYet
+            }
             hint={summary.bestDay && fullDate(summary.bestDay.day)}
             icon={<Sparkles className="h-6 w-6" aria-hidden="true" />}
             tone="bg-box-4 text-on-box"
@@ -260,8 +309,16 @@ export default async function StatisticsPage() {
           />
           <StatCard
             label={s.toMaster}
-            value={stats.mastery.avgDays === null ? "—" : stats.mastery.avgDays.toLocaleString(dateLocale(locale))}
-            hint={stats.mastery.avgDays === null ? s.toMasterNone : plural(locale, stats.mastery.count, s.toMasterHint)}
+            value={
+              stats.mastery.avgDays === null
+                ? "—"
+                : stats.mastery.avgDays.toLocaleString(dateLocale(locale))
+            }
+            hint={
+              stats.mastery.avgDays === null
+                ? s.toMasterNone
+                : plural(locale, stats.mastery.count, s.toMasterHint)
+            }
             icon={<Hourglass className="h-6 w-6" aria-hidden="true" />}
             tone="bg-box-1 text-on-box"
           />
@@ -278,7 +335,11 @@ export default async function StatisticsPage() {
       </section>
 
       {/* Activity heatmap */}
-      <section aria-labelledby="activity-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(2)}>
+      <section
+        aria-labelledby="activity-heading"
+        className={`rise bg-raised p-5 sm:p-6 ${card}`}
+        style={riseStyle(2)}
+      >
         <h2 id="activity-heading" className="text-xl font-black uppercase">
           {s.activity}
         </h2>
@@ -287,7 +348,11 @@ export default async function StatisticsPage() {
         </p>
         {/* rtl: on narrow screens the scroller starts at today, on the right. */}
         <div dir="rtl" className="mt-1 overflow-x-auto pt-10 pb-2">
-          <div dir="ltr" className="inline-flex flex-col gap-1" aria-hidden="true">
+          <div
+            dir="ltr"
+            className="inline-flex flex-col gap-1"
+            aria-hidden="true"
+          >
             <div className="flex gap-[3px]">
               {weeks.map((week, w) => (
                 <span
@@ -324,35 +389,53 @@ export default async function StatisticsPage() {
             </div>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-end gap-1 text-xs font-bold text-muted" aria-hidden="true">
+        <div
+          className="mt-3 flex items-center justify-end gap-1 text-xs font-bold text-muted"
+          aria-hidden="true"
+        >
           {s.less}
           {heatTone.map((tone) => (
-            <span key={tone} className={`h-3 w-3 border border-line/40 ${tone}`} />
+            <span
+              key={tone}
+              className={`h-3 w-3 border border-line/40 ${tone}`}
+            />
           ))}
           {s.more}
         </div>
       </section>
 
       {/* Last 30 days */}
-      <section aria-labelledby="recent-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(3)}>
+      <section
+        aria-labelledby="recent-heading"
+        className={`rise bg-raised p-5 sm:p-6 ${card}`}
+        style={riseStyle(3)}
+      >
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
           <h2 id="recent-heading" className="text-xl font-black uppercase">
             {s.last30}
           </h2>
           <ul className="flex gap-4 text-xs font-bold">
             <li className="flex items-center gap-1.5">
-              <span className="h-3 w-3 border-[2px] border-line bg-box-4" aria-hidden="true" />
+              <span
+                className="h-3 w-3 border-[2px] border-line bg-box-4"
+                aria-hidden="true"
+              />
               {s.remembered}
             </li>
             <li className="flex items-center gap-1.5">
-              <span className="h-3 w-3 border-[2px] border-line bg-box-1" aria-hidden="true" />
+              <span
+                className="h-3 w-3 border-[2px] border-line bg-box-1"
+                aria-hidden="true"
+              />
               {s.forgot}
             </li>
           </ul>
         </div>
         {trend.current !== null && (
           <p className="mt-1 text-sm font-semibold">
-            <span className="font-black">{fill(s.accuracy30, { pct: Math.round(trend.current * 100) })}</span>
+            <span className="font-black">
+              {fill(s.accuracy30, { pct: Math.round(trend.current * 100) })}
+            </span>
             {trendPoints !== null && (
               <span className="text-muted">
                 {" · "}
@@ -394,14 +477,21 @@ export default async function StatisticsPage() {
             );
           })}
         </ol>
-        <div className="mt-1 flex justify-between text-[10px] font-bold text-muted sm:text-xs" aria-hidden="true">
+        <div
+          className="mt-1 flex justify-between text-[10px] font-bold text-muted sm:text-xs"
+          aria-hidden="true"
+        >
           <span>{shortDate(recent[0].day)}</span>
           <span>{shortDate(recent[recent.length - 1].day)}</span>
         </div>
       </section>
 
       {/* When */}
-      <section aria-labelledby="when-heading" className="rise" style={riseStyle(4)}>
+      <section
+        aria-labelledby="when-heading"
+        className="rise"
+        style={riseStyle(4)}
+      >
         <h2 id="when-heading" className="mb-4 text-xl font-black uppercase">
           {s.when}
         </h2>
@@ -411,7 +501,10 @@ export default async function StatisticsPage() {
             <BarChart
               values={weekdays}
               labels={weekdays.map((_, i) => weekdayName(i, "short"))}
-              titles={weekdays.map((n, i) => `${weekdayName(i, "long")} · ${plural(locale, n, s.reviewsCount)}`)}
+              titles={weekdays.map(
+                (n, i) =>
+                  `${weekdayName(i, "long")} · ${plural(locale, n, s.reviewsCount)}`,
+              )}
               peak={weekdayPeak}
             />
             {weekdayPeak >= 0 && (
@@ -422,29 +515,49 @@ export default async function StatisticsPage() {
           </article>
           <article className={`bg-raised p-5 sm:p-6 ${card}`}>
             <h3 className="mb-4 text-sm font-black uppercase">{s.byHour}</h3>
-            <HourChart hoursUtc={stats.hoursUtc} locale={locale} reviewsCount={s.reviewsCount} peakLabel={s.peakHour} />
+            <HourChart
+              hoursUtc={stats.hoursUtc}
+              locale={locale}
+              reviewsCount={s.reviewsCount}
+              peakLabel={s.peakHour}
+            />
           </article>
         </div>
       </section>
 
       {/* My words per level, out of the dictionary */}
       {wordsByLevel.some((l) => l.known + l.mastered + l.learning > 0) && (
-        <section aria-labelledby="words-level-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+        <section
+          aria-labelledby="words-level-heading"
+          className={`rise bg-raised p-5 sm:p-6 ${card}`}
+          style={riseStyle(5)}
+        >
           <div className="flex items-center justify-between gap-3">
-            <h2 id="words-level-heading" className="text-xl font-black uppercase">
+            <h2
+              id="words-level-heading"
+              className="text-xl font-black uppercase"
+            >
               {s.wordsByLevel}
             </h2>
             <Layers className="h-6 w-6 text-primary" aria-hidden="true" />
           </div>
-          <p className="mt-1 text-sm font-semibold text-muted">{s.wordsByLevelLead}</p>
+          <p className="mt-1 text-sm font-semibold text-muted">
+            {s.wordsByLevelLead}
+          </p>
           {legend}
           <ul className="space-y-4">
             {wordsByLevel.map((l) => {
               const parts = wordParts(l);
               const mine = l.known + l.mastered + l.learning;
-              const heading = fill(s.ofDictionary, { n: number(mine), total: number(l.dictionary) });
+              const heading = fill(s.ofDictionary, {
+                n: number(mine),
+                total: number(l.dictionary),
+              });
               return (
-                <li key={l.level} className="grid grid-cols-[2.75rem_1fr] items-center gap-3">
+                <li
+                  key={l.level}
+                  className="grid grid-cols-[2.75rem_1fr] items-center gap-3"
+                >
                   <span className="border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box">
                     {l.level}
                   </span>
@@ -465,23 +578,41 @@ export default async function StatisticsPage() {
 
       {/* My words per part of speech, out of the dictionary */}
       {wordsByType.length > 0 && (
-        <section aria-labelledby="words-type-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+        <section
+          aria-labelledby="words-type-heading"
+          className={`rise bg-raised p-5 sm:p-6 ${card}`}
+          style={riseStyle(5)}
+        >
           <div className="flex items-center justify-between gap-3">
-            <h2 id="words-type-heading" className="text-xl font-black uppercase">
+            <h2
+              id="words-type-heading"
+              className="text-xl font-black uppercase"
+            >
               {s.wordsByType}
             </h2>
             <Shapes className="h-6 w-6 text-primary" aria-hidden="true" />
           </div>
-          <p className="mt-1 text-sm font-semibold text-muted">{s.wordsByTypeLead}</p>
+          <p className="mt-1 text-sm font-semibold text-muted">
+            {s.wordsByTypeLead}
+          </p>
           {legend}
           <ul className="space-y-4">
             {wordsByType.map((w) => {
               const parts = wordParts(w);
               const mine = w.known + w.mastered + w.learning;
               const name = typeName(w.type);
-              const heading = w.dictionary > 0 ? fill(s.ofDictionary, { n: number(mine), total: number(w.dictionary) }) : number(mine);
+              const heading =
+                w.dictionary > 0
+                  ? fill(s.ofDictionary, {
+                      n: number(mine),
+                      total: number(w.dictionary),
+                    })
+                  : number(mine);
               return (
-                <li key={w.type} className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]">
+                <li
+                  key={w.type}
+                  className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]"
+                >
                   <span className="truncate border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box uppercase">
                     {name}
                   </span>
@@ -502,23 +633,38 @@ export default async function StatisticsPage() {
 
       {/* My words per topic, out of the dictionary */}
       {wordsByTopic.length > 0 && (
-        <section aria-labelledby="words-topic-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+        <section
+          aria-labelledby="words-topic-heading"
+          className={`rise bg-raised p-5 sm:p-6 ${card}`}
+          style={riseStyle(5)}
+        >
           <div className="flex items-center justify-between gap-3">
-            <h2 id="words-topic-heading" className="text-xl font-black uppercase">
+            <h2
+              id="words-topic-heading"
+              className="text-xl font-black uppercase"
+            >
               {s.wordsByTopic}
             </h2>
             <Tags className="h-6 w-6 text-primary" aria-hidden="true" />
           </div>
-          <p className="mt-1 text-sm font-semibold text-muted">{s.wordsByTopicLead}</p>
+          <p className="mt-1 text-sm font-semibold text-muted">
+            {s.wordsByTopicLead}
+          </p>
           {legend}
           <ul className="space-y-4">
             {wordsByTopic.map((w) => {
               const parts = wordParts(w);
               const mine = w.known + w.mastered + w.learning;
               const name = topicNames[w.topic] ?? w.topic;
-              const heading = fill(s.ofDictionary, { n: number(mine), total: number(w.dictionary) });
+              const heading = fill(s.ofDictionary, {
+                n: number(mine),
+                total: number(w.dictionary),
+              });
               return (
-                <li key={w.topic} className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]">
+                <li
+                  key={w.topic}
+                  className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 sm:grid-cols-[9rem_1fr]"
+                >
                   <span className="truncate border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box uppercase">
                     {name}
                   </span>
@@ -539,19 +685,31 @@ export default async function StatisticsPage() {
 
       {/* CEFR levels */}
       {stats.levels.length > 0 && (
-        <section aria-labelledby="levels-heading" className={`rise bg-raised p-5 sm:p-6 ${card}`} style={riseStyle(5)}>
+        <section
+          aria-labelledby="levels-heading"
+          className={`rise bg-raised p-5 sm:p-6 ${card}`}
+          style={riseStyle(5)}
+        >
           <div className="flex items-center justify-between gap-3">
             <h2 id="levels-heading" className="text-xl font-black uppercase">
               {s.levels}
             </h2>
-            <GraduationCap className="h-6 w-6 text-primary" aria-hidden="true" />
+            <GraduationCap
+              className="h-6 w-6 text-primary"
+              aria-hidden="true"
+            />
           </div>
-          <p className="mt-1 mb-5 text-sm font-semibold text-muted">{s.levelsLead}</p>
+          <p className="mt-1 mb-5 text-sm font-semibold text-muted">
+            {s.levelsLead}
+          </p>
           <ul className="space-y-3">
             {stats.levels.map((level) => {
               const accuracy = accuracyOf(level) ?? 0;
               return (
-                <li key={level.level} className="grid grid-cols-[2.75rem_1fr_3rem] items-center gap-3">
+                <li
+                  key={level.level}
+                  className="grid grid-cols-[2.75rem_1fr_3rem] items-center gap-3"
+                >
                   <span className="border-[2px] border-line bg-chip px-1.5 py-0.5 text-center text-xs font-black text-on-box">
                     {level.level}
                   </span>
@@ -564,7 +722,10 @@ export default async function StatisticsPage() {
                   >
                     <span className="block h-5 border-[2px] border-line bg-canvas">
                       {/* Primary, not box-4: box-4 means "Known" in the Words by level chart above. */}
-                      <span className="block h-full bg-primary" style={{ width: `${accuracy * 100}%` }} />
+                      <span
+                        className="block h-full bg-primary"
+                        style={{ width: `${accuracy * 100}%` }}
+                      />
                     </span>
                     <span
                       aria-hidden="true"
@@ -574,7 +735,10 @@ export default async function StatisticsPage() {
                     </span>
                   </span>
                   {/* "—" when there are no reviews yet: 0% would read as "forgot everything". */}
-                  <span aria-hidden="true" className="text-right text-sm font-black tabular-nums">
+                  <span
+                    aria-hidden="true"
+                    className="text-right text-sm font-black tabular-nums"
+                  >
                     {accuracyOf(level) === null ? "—" : percent(accuracy)}
                   </span>
                 </li>

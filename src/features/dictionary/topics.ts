@@ -57,5 +57,5 @@ export function toggleFilterHref(
   if (next.topics.length) params.set("topics", next.topics.join(","));
   if (next.partsOfSpeech.length) params.set("pos", next.partsOfSpeech.join(","));
   const query = params.toString().replace(/%2C/g, ",");
-  return query ? `/learn?${query}` : "/learn";
+  return query ? `/learn/new-words?${query}` : "/learn/new-words";
 }

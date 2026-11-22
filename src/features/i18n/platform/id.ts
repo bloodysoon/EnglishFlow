@@ -46,6 +46,11 @@ export const id: PlatformDictionary = {
     friends: "Teman",
     duels: "Duel",
     timeline: "Linimasa",
+    newWords: "Kata baru",
+    myWords: "Kataku",
+    review: "Ulasan",
+    due: n("{n} kata untuk diulang"),
+    nothingDue: "Tidak ada yang perlu diulang",
     soon: "Segera",
     admin: "Admin",
     yourAccount: "Akunmu",
@@ -137,14 +142,11 @@ export const id: PlatformDictionary = {
   learn: {
     known: "Dikenal",
     title: "Belajar",
-    review: "Ulangi ({n})",
     today: "Belajar hari ini",
     hidePanel: "Sembunyikan {panel}",
     showPanel: "Tampilkan {panel}",
     addedToday: n("{n} kata baru ditambahkan hari ini"),
-    yourWords: "Kata-katamu",
     addWord: "Tambah kata",
-    myWords: "Kataku",
   },
 
   tour: {
@@ -160,8 +162,6 @@ export const id: PlatformDictionary = {
         text: 'Satu kata setiap kali. Sudah tahu? Kata itu disisihkan. Masih baru? "Pelajari" menambahkannya ke ulangan harianmu, tempat kata itu bergerak melewati 5 kotak. Tombol: ← tahu, → pelajari, Spasi terjemahan, S lewati, Z batalkan, P dengarkan.',
       },
       filters: { title: "Filter", text: "Pilih topik atau jenis kata agar hanya muncul kata yang kamu mau." },
-      words: { title: "Kataku", text: "Semua katamu. Tambahkan katamu sendiri di sini, atau buka kata yang sudah kamu kenal." },
-      today: { title: "Ulangan", text: "Kembalilah setiap hari dan ulangi kata yang menunggumu." },
     },
   },
 

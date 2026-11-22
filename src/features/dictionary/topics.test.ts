@@ -13,9 +13,9 @@ describe("card filters", () => {
 
   it("toggles a value in the URL", () => {
     const filters = { topics: ["sport"], partsOfSpeech: [] };
-    expect(toggleFilterHref(filters, "topics", "travel")).toBe("/learn?topics=sport,travel");
-    expect(toggleFilterHref(filters, "topics", "sport")).toBe("/learn");
-    expect(toggleFilterHref(filters, "partsOfSpeech", "verb")).toBe("/learn?topics=sport&pos=verb");
-    expect(toggleFilterHref(filters, "topics", null)).toBe("/learn");
+    expect(toggleFilterHref(filters, "topics", "travel")).toBe("/learn/new-words?topics=sport,travel");
+    expect(toggleFilterHref(filters, "topics", "sport")).toBe("/learn/new-words");
+    expect(toggleFilterHref(filters, "partsOfSpeech", "verb")).toBe("/learn/new-words?topics=sport&pos=verb");
+    expect(toggleFilterHref(filters, "topics", null)).toBe("/learn/new-words");
   });
 });

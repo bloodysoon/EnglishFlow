@@ -68,20 +68,21 @@ export function CardFilterMenu({
     { kind: "partsOfSpeech" as const, label: t.filterPos, values: [...TOPIC_PARTS_OF_SPEECH], names: posNames },
   ].filter((group) => group.values.length > 0);
 
+  // Not relative: the panel anchors to the page header, so it fits a phone screen.
   return (
-    <details ref={ref} data-tour="filters" className="group relative">
+    <details ref={ref} data-tour="filters" className="group">
       <summary
         aria-label={t.filters}
         className={buttonClasses({
-          size: "toolbar",
+          size: "compact",
           variant: "secondary",
           className:
             "cursor-pointer list-none select-none group-open:bg-box-2 group-open:text-on-box [&::-webkit-details-marker]:hidden",
         })}
       >
-        <SlidersHorizontal className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
+        <SlidersHorizontal className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={3} aria-hidden="true" />
         <span className="hidden sm:inline">{t.filters}</span>
-        {count > 0 && <span className="border-[2px] border-line bg-box-2 px-1.5 text-xs text-on-box">{count}</span>}
+        {count > 0 && <span className="border-[2px] border-line bg-box-2 px-1 text-xs leading-none text-on-box sm:px-1.5 sm:leading-normal">{count}</span>}
         <ChevronDown
           className="hidden h-4 w-4 transition-transform group-open:rotate-180 sm:block"
           strokeWidth={3}
@@ -89,7 +90,7 @@ export function CardFilterMenu({
         />
       </summary>
 
-      <div className="absolute right-0 z-30 mt-3 max-h-[70vh] w-[min(34rem,calc(100vw-2rem))] space-y-4 overflow-y-auto border-[3px] border-line bg-raised p-4 shadow-brutal">
+      <div className="absolute left-0 z-30 mt-3 max-h-[70vh] w-[min(34rem,calc(100vw-2rem))] space-y-4 overflow-y-auto border-[3px] border-line bg-raised p-4 shadow-brutal">
         {groups.map(({ kind, label, values, names }) => (
           <div key={kind} role="group" aria-label={label}>
             <p className="mb-2 text-xs font-black tracking-widest text-muted uppercase">{label}</p>
@@ -152,7 +153,7 @@ export function ActiveFilterChips({
       ))}
       {active.length > 1 && (
         <Link
-          href="/learn"
+          href="/learn/new-words"
           className="inline-flex min-h-11 items-center px-1 text-xs font-black uppercase underline decoration-2 underline-offset-4 hover:decoration-mark"
         >
           {t.clearFilters}

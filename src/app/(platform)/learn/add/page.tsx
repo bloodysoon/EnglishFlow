@@ -15,12 +15,14 @@ export default async function AddWordPage() {
 
   return (
     <div className="space-y-8">
-      <BackLink href="/learn" label={t.common.learn} />
-      <header className="lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
-        <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
-          {t.addWord.title}<span className="text-primary">.</span>
-        </h1>
-        <p className="mt-2 font-semibold text-muted lg:mt-0">{t.addWord.lead}</p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="min-w-0 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-5 lg:space-y-0">
+          <h1 className="text-3xl font-black tracking-tight uppercase sm:text-4xl">
+            {t.addWord.title}<span className="text-primary">.</span>
+          </h1>
+          <p className="mt-2 font-semibold text-muted lg:mt-0">{t.addWord.lead}</p>
+        </div>
+        <BackLink href="/learn/new-words" label={t.common.learn} />
       </header>
       <AddWordForm language={settings.translationLanguage} t={t.addWord} common={t.common} />
     </div>
