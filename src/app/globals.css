@@ -958,6 +958,19 @@ html {
     transform: scaleX(calc(1 - var(--k) * var(--drain, 0.8)));
   }
 
+  /* Phones: scenes are taller than the screen, so each scrolls until its
+     bottom is in view, then holds there for --len extra screens while it
+     plays (--pin-h is set by ScrollScene). */
+  .scene-pin {
+    position: sticky;
+    top: min(var(--navbar-height), calc(100svh - var(--pin-h, 0px)));
+  }
+
+  .scene-spacer {
+    display: block;
+    height: calc(var(--len, 1) * 100svh);
+  }
+
   @media (min-width: 64rem) {
     /* Pinned: the scene holds at the top for --len extra screens (the
        spacer after it) while it plays. At least a screen tall; a taller

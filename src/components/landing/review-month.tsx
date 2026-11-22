@@ -56,15 +56,13 @@ export function ReviewMonth({
   boxLabel: string; // "Box {box}"
   boxWord: string; // "Box"
 }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   // Days into the stretch, with the fraction of the current one.
   const [pos, setPos] = useState(0);
 
   useEffect(() => {
-    const wrap = wrapRef.current;
     const root = rootRef.current;
-    if (!wrap || !root) return;
+    if (!root) return;
     // Reduced motion: no scrubbing, the finished stretch shows at once.
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const track = root.closest<HTMLElement>(".scene-track");
@@ -75,18 +73,12 @@ export function ReviewMonth({
       frame = 0;
       if (still) return setPos(PLAN_DAYS);
       const range = track && pin ? track.offsetHeight - pin.offsetHeight : 0;
-      let p: number;
-      if (track && pin && range > 1) {
-        // From lg: the days run while the section is pinned.
-        const top = parseFloat(getComputedStyle(pin).top) || 0;
-        p = (top - track.getBoundingClientRect().top) / range;
-      } else {
-        // Phones: the calendar sticks while its tall wrapper scrolls by.
-        const top = parseFloat(getComputedStyle(root!).top) || 0;
-        p =
-          (top - wrap!.getBoundingClientRect().top) /
-          Math.max(1, wrap!.offsetHeight - root!.offsetHeight);
-      }
+      // The days run while the section is pinned (on every width).
+      const top = pin ? parseFloat(getComputedStyle(pin).top) || 0 : 0;
+      const p =
+        track && range > 1
+          ? (top - track.getBoundingClientRect().top) / range
+          : 1;
       // The last day ends right as the hold does, so the next bit of
       // scroll moves on to the next section.
       setPos(Math.round(clamp01(p) * PLAN_DAYS * 200) / 200);
@@ -140,14 +132,8 @@ export function ReviewMonth({
   );
 
   return (
-    // Below lg the section doesn't pin, so the calendar sticks on its own
-    // for a while; from lg the section's pin does that. Neither happens
-    // under reduced motion.
-    <div ref={wrapRef} className="motion-safe:max-lg:h-[220svh]">
-      <div
-        ref={rootRef}
-        className="mx-auto w-full max-w-[560px] motion-safe:max-lg:sticky motion-safe:max-lg:top-[calc(var(--navbar-height)+0.5rem)]"
-      >
+    <div>
+      <div ref={rootRef} className="mx-auto w-full max-w-[560px]">
         <p className="font-display text-4xl leading-none font-black tabular-nums uppercase sm:text-5xl">
           {fill(t.day, { n: day })}
         </p>

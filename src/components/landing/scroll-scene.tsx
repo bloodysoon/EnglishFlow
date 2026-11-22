@@ -7,7 +7,8 @@ const SMOOTHING = 0.1; // share of the gap closed each frame: lower is lazier
 // A landing section played by scrolling. Writes the scroll progress (0 to 1,
 // eased so it trails the wheel a little) to `--p` on the scene; the pieces
 // inside animate from it in CSS (.scene-* in globals.css, timed with
-// sceneStyle). From lg the scene also pins for `length` extra screens:
+// sceneStyle). The scene also pins for `length` extra screens (at the top
+// from lg; on phones, where it is taller than the screen, at its bottom):
 // progress runs from the moment it enters the screen to the end of the pin.
 // Reduced motion: no pin, and the .scene-* rules don't apply, so all shows.
 export function ScrollScene({
@@ -15,7 +16,7 @@ export function ScrollScene({
   className = "",
   children,
 }: {
-  length?: number; // extra scroll while pinned, in screen heights (lg only)
+  length?: number; // extra scroll while pinned, in screen heights
   className?: string;
   children: ReactNode;
 }) {
@@ -32,6 +33,7 @@ export function ScrollScene({
     let frame = 0;
 
     function measure() {
+      pin!.style.setProperty("--pin-h", `${pin!.offsetHeight}px`);
       const rect = track!.getBoundingClientRect();
       const range = track!.offsetHeight - pin!.offsetHeight;
       const top = parseFloat(getComputedStyle(pin!).top) || 0;
