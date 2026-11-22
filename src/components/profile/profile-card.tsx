@@ -52,16 +52,16 @@ export function ProfileCard({ username, stats, today, locale, t, action }: Profi
           {(username ?? "?").charAt(0)}
         </span>
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-2xl font-black tracking-tight sm:text-4xl">
+          <h2 className="text-2xl font-black tracking-tight break-all sm:text-4xl">
             {username ? `@${username}` : p.noUsername}
           </h2>
           <ul className="mt-3 flex flex-wrap gap-2">
-            <li className="inline-flex items-center gap-1.5 border-[2px] border-line bg-raised px-3 py-1 text-sm font-black text-fg uppercase shadow-brutal-sm">
+            <li className="inline-flex items-center gap-1.5 whitespace-nowrap border-[2px] border-line bg-raised px-3 py-1 text-sm font-black text-fg uppercase shadow-brutal-sm">
               <TrendingUp className="h-4 w-4" aria-hidden="true" />
               {fill(t.dashboard.level, { level: stats.level })}
             </li>
             <li
-              className={`inline-flex items-center gap-1.5 border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${
+              className={`inline-flex items-center gap-1.5 whitespace-nowrap border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${
                 frame ? medalStyles[frame] : "bg-raised text-fg"
               }`}
             >
@@ -69,14 +69,14 @@ export function ProfileCard({ username, stats, today, locale, t, action }: Profi
               <span className="sr-only">{t.rewards.title}:</span>
               {title}
             </li>
-            <li className="inline-flex items-center gap-1.5 border-[2px] border-line bg-raised px-3 py-1 text-sm font-black text-fg uppercase shadow-brutal-sm">
+            <li className="inline-flex items-center gap-1.5 whitespace-nowrap border-[2px] border-line bg-raised px-3 py-1 text-sm font-black text-fg uppercase shadow-brutal-sm">
               <Flame className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">{p.currentStreak}:</span>
               {plural(locale, streak, t.dashboard.days)}
             </li>
           </ul>
         </div>
-        {action && <div className="self-start">{action}</div>}
+        {action && <div className="max-sm:order-first max-sm:w-full sm:self-start">{action}</div>}
       </section>
 
       <section aria-labelledby="profile-badges">
@@ -124,7 +124,7 @@ export function ProfileCard({ username, stats, today, locale, t, action }: Profi
             {stats.topics.map((topic) => (
               <li
                 key={topic}
-                className={`inline-flex items-center gap-1.5 border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${medalStyles.gold}`}
+                className={`inline-flex items-center gap-1.5 whitespace-nowrap border-[2px] border-line px-3 py-1 text-sm font-black uppercase shadow-brutal-sm ${medalStyles.gold}`}
               >
                 <Tags className="h-4 w-4" aria-hidden="true" />
                 {t.topics[topic]}
