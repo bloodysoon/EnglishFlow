@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { Navbar } from "@/components/landing/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { WordMarquee } from "@/components/landing/word-marquee";
 import { FallingWords } from "@/components/landing/falling-words";
 import { MotionToggle } from "@/components/landing/motion-toggle";
@@ -83,11 +82,6 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         {/* First screen: hero, the way down, and the word ticker. */}
         <div className="flex min-h-[calc(100dvh-var(--navbar-height))] flex-col">
           <HeroSection dict={dict} />
-          <SectionScrollLink
-            href="#new-words"
-            label={dict.scroll.toWords}
-            className="mb-8"
-          />
           {/* The pause sits on the ticker it stops (WCAG 2.2.2), on the
               first screen rather than at the foot of the page. */}
           <div className="relative">

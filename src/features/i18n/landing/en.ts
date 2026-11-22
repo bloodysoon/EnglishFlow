@@ -29,28 +29,13 @@ export const en: LandingDictionary = {
 
   pauseMotion: "Pause animations",
 
-  scroll: {
-    toMethod: "See the method",
-    toReview: "See a review",
-    toWords: "Where words come from",
-    toSentences: "Then use it",
-    toDuels: "Or play it",
-    toStart: "Ready to start?",
-    toTop: "Back to top",
-  },
-
   hero: {
     titleLine1: "Learn words.",
     titleLine2: "Remember forever.",
     lead: "Pick a ready-made word set, write your own sentences with each word, and every word comes back right before you would forget it.",
     ctaStart: "Start learning free",
     ctaMethod: "See the method",
-    facts: [
-      "Ready-made sets",
-      "Your own sentences",
-      "RU & RO translations",
-      "Free to start",
-    ],
+    facts: ["Ready-made sets", "Your own sentences", "Free to start"],
   },
 
   card: {
@@ -77,8 +62,6 @@ export const en: LandingDictionary = {
       5: "Mastered",
     },
     review: "Review {interval}",
-    progressNew: "New",
-    progressMastered: "Mastered",
     rememberedTitle: "Remembered it?",
     rememberedText: "It moves up a box and comes back later.",
     forgotTitle: "Forgot it?",
@@ -196,21 +179,14 @@ export const en: LandingDictionary = {
     known: "Known: {n}",
     toLearn: "To learn: {n}",
     falling: [
-      { word: "reviews", box: 1, place: "lead" },
+      { word: "straight", box: 1, place: "lead" },
       { word: "Know", box: 1, place: "points.0.title" },
       { word: "daily", box: 1, place: "points.2.text", nudge: -0.12 },
-      { word: "way", box: 1, place: "lead", front: true, nudge: -0.06 },
-      { word: "words", box: 1, place: "title", nudge: -0.08 },
-      { word: "sorted", box: 1, place: "title", nudge: -0.02 },
-      {
-        word: "short",
-        box: 2,
-        place: "points.2.text",
-        right: true,
-        nudge: -0.07,
-      },
-      { word: "straight", box: 2, place: "lead", right: true, nudge: -0.07 },
-      { word: "See", box: 3, place: "method" },
+      { word: "way", box: 1, place: "lead", front: true, nudge: 0.04 },
+      { word: "sorted", box: 1, place: "title", nudge: -0.1 },
+      { word: "reviews", box: 1, place: "points.2.text" },
+      { word: "words", box: 2, place: "title" },
+      { word: "reviews", box: 2, place: "lead" },
       { word: "scrolling", box: 4, place: "hint", nudge: -0.12 },
       { word: "wonder", box: 4, place: "card" },
       { word: "word", box: 5, place: "question" },

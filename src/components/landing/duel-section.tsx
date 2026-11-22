@@ -3,7 +3,6 @@ import { Check, Swords, Timer, Users, Zap } from "lucide-react";
 
 import { SceneText, sceneStyle } from "@/components/landing/scene";
 import { ScrollScene } from "@/components/landing/scroll-scene";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { WordTranslation } from "@/components/landing/word-translation";
 import { fill } from "@/features/i18n/locales";
 import type { LandingDictionary } from "@/features/i18n/landing";
@@ -185,11 +184,6 @@ export function DuelSection({ dict }: { dict: LandingDictionary }) {
           </div>
         </div>
 
-        <SectionScrollLink
-          href="#sentence-practice"
-          label={dict.scroll.toSentences}
-          className="mt-14 lg:mt-10"
-        />
       </ScrollScene>
     </section>
   );

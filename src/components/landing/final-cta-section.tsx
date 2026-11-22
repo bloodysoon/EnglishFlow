@@ -3,7 +3,6 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
 import { SceneText, sceneStyle } from "@/components/landing/scene";
 import { ScrollScene } from "@/components/landing/scroll-scene";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import type { LandingDictionary } from "@/features/i18n/landing";
 import { fill, localePath, type Locale } from "@/features/i18n/locales";
 
@@ -15,7 +14,8 @@ type FinalCtaSectionProps = {
 
 // The ending: the call to action beside a receipt that prints out as the
 // section scrolls in, adding up what the page showed (total: free), then gets
-// stamped. No hold: right above the footer, a pin would leave a blank screen.
+// stamped. Like the sections before it, it holds at the top (from lg),
+// and the receipt prints only once it is held.
 export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSectionProps) {
   const { cta } = dict;
   const { receipt } = cta;
@@ -24,9 +24,9 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
     <section
       id="join-us"
       aria-labelledby="join-us-title"
-      className="relative scroll-mt-(--navbar-height) overflow-hidden border-t-[3px] border-line bg-cta text-on-cta"
+      className="relative scroll-mt-(--navbar-height) overflow-clip border-t-[3px] border-line bg-cta text-on-cta"
     >
-      <ScrollScene length={0} className="flex flex-col justify-center px-4 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-8">
+      <ScrollScene length={1.3} className="flex flex-col justify-center px-4 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-8">
         <div className="mx-auto grid w-full max-w-[1200px] items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div className="flex flex-col items-center gap-7 text-center lg:items-start lg:text-left">
             <h2
@@ -82,7 +82,7 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
               first, and gets its stamp once it is all out. */}
           <div className="mx-auto w-full max-w-sm">
             <div className="overflow-hidden px-3 pt-4">
-              <div className="scene-print relative" style={sceneStyle(0.15, 0.65)}>
+              <div className="scene-print relative" style={sceneStyle(0.45, 0.85)}>
                 <div aria-hidden="true" className="receipt-edge h-2.5" />
                 <div className="border-x-[3px] border-line bg-raised px-5 pt-3 pb-6 font-mono text-sm text-fg">
                   <p className="text-center font-display text-xl font-black tracking-tight">ELEVO✳</p>
@@ -113,7 +113,7 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
                       thank-you line stay readable. */}
                   <p
                     className="scene-slam absolute bottom-14 left-3 rotate-[-8deg] border-[3px] border-line bg-box-3 px-2 py-1 font-display text-sm font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-base text-on-box-3 uppercase shadow-brutal-sm"
-                    style={sceneStyle(0.68, 0.76)}
+                    style={sceneStyle(0.88, 0.96)}
                   >
                     {receipt.stamp}
                   </p>
@@ -128,7 +128,6 @@ export function FinalCtaSection({ isAuthenticated, locale, dict }: FinalCtaSecti
           </div>
         </div>
 
-        <SectionScrollLink href="#top" label={dict.scroll.toTop} direction="up" className="mt-12" />
       </ScrollScene>
     </section>
   );

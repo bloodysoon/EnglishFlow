@@ -29,16 +29,6 @@ export const ro: LandingDictionary = {
 
   pauseMotion: "Oprește animațiile",
 
-  scroll: {
-    toMethod: "Cum funcționează",
-    toReview: "Vezi o recapitulare",
-    toWords: "De unde vin cuvintele",
-    toSentences: "Apoi folosește-l",
-    toDuels: "Sau joacă",
-    toStart: "Gata să începi?",
-    toTop: "Sus",
-  },
-
   hero: {
     titleLine1: "Învață cuvinte.",
     titleLine2: "Ține-le minte.",
@@ -77,8 +67,6 @@ export const ro: LandingDictionary = {
       5: "Învățate",
     },
     review: "Recapitulare {interval}",
-    progressNew: "Nou",
-    progressMastered: "Învățat",
     rememberedTitle: "Ți-ai amintit?",
     rememberedText: "Urcă o cutie și revine mai târziu.",
     forgotTitle: "Ai uitat?",
@@ -210,7 +198,6 @@ export const ro: LandingDictionary = {
         nudge: -0.07,
       },
       { word: "direct", box: 2, place: "lead", right: true, nudge: -0.07 },
-      { word: "funcționează", box: 3, place: "method" },
       { word: "Derulează", box: 4, place: "hint", nudge: -0.12 },
       { word: "wonder", box: 4, place: "card" },
       { word: "cuvântul", box: 5, place: "question" },

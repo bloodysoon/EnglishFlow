@@ -8,7 +8,6 @@ import {
 
 import { SceneText, sceneStyle } from "@/components/landing/scene";
 import { ScrollScene } from "@/components/landing/scroll-scene";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import type { LandingDictionary } from "@/features/i18n/landing";
 
 const POINT_ICONS = [PenLine, SpellCheck, Clock];
@@ -237,11 +236,6 @@ export function SentenceSection({ dict }: { dict: LandingDictionary }) {
           </div>
         </div>
 
-        <SectionScrollLink
-          href="#join-us"
-          label={dict.scroll.toStart}
-          className="mt-14 lg:mt-10"
-        />
       </ScrollScene>
     </section>
   );

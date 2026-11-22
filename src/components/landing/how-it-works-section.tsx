@@ -3,7 +3,6 @@ import { ArrowUp, RotateCcw } from "lucide-react";
 import { LeitnerCrate } from "@/components/landing/leitner-crate";
 import { SceneText, sceneStyle } from "@/components/landing/scene";
 import { ScrollScene } from "@/components/landing/scroll-scene";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { leitnerBoxStyles } from "@/components/landing/leitner-box-styles";
 import { LEITNER_BOXES } from "@/features/leitner/boxes";
 import { fill, type Locale } from "@/features/i18n/locales";
@@ -62,7 +61,7 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
 
           {/* The shelf: column on phones, row from md up. The crates rise,
               open, and the words falling from the first screen land in them as
-              cards (FallingWords); the track under them fills meanwhile. */}
+              cards (FallingWords). */}
           <ol className="grid gap-4 md:grid-cols-5">
             {LEITNER_BOXES.map(({ box, intervalDays }, index) => {
               const words = MARQUEE_WORDS.filter((w) => w.box === box);
@@ -120,7 +119,8 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
                       </span>
                     </p>
 
-                    <div className="min-w-0 flex-1 px-4 py-3 md:pt-4 md:pb-8">
+                    {/* pr-12: keeps the label clear of the count badge (top right). */}
+                    <div className="min-w-0 flex-1 py-3 pr-12 pl-4 md:px-4 md:pt-4 md:pb-8">
                       <p className="font-black uppercase">
                         {how.boxLabels[box]}
                       </p>
@@ -145,25 +145,6 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
             })}
           </ol>
 
-          {/* Progress from new to mastered, filling as the words land. */}
-          <div
-            aria-hidden="true"
-            className="scene-fade mt-6 hidden items-center gap-4 md:flex"
-            style={sceneStyle(0.12, 0.2)}
-          >
-            <span className="text-xs font-black tracking-widest uppercase">
-              {how.progressNew}
-            </span>
-            <div className="h-4 flex-1 overflow-hidden border-[3px] border-line bg-raised">
-              <div
-                className="scene-grow h-full w-full bg-[linear-gradient(90deg,var(--box-1),var(--box-2),var(--box-3),var(--box-4),var(--box-5))]"
-                style={sceneStyle(0.2, 0.6)}
-              />
-            </div>
-            <span className="text-xs font-black tracking-widest uppercase">
-              {how.progressMastered}
-            </span>
-          </div>
 
           {/* The one rule that drives the whole method. */}
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -207,11 +188,6 @@ export function HowItWorksSection({ locale, dict }: HowItWorksSectionProps) {
           </div>
         </div>
 
-        <SectionScrollLink
-          href="#daily-review"
-          label={dict.scroll.toReview}
-          className="mt-12"
-        />
       </ScrollScene>
     </section>
   );

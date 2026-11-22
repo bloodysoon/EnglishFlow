@@ -599,30 +599,6 @@ html {
 }
 
 /* Scroll arrow: a short downward nudge with a pause. */
-@keyframes scroll-nudge {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-
-  30% {
-    transform: translateY(6px);
-  }
-}
-
-@keyframes scroll-nudge-up {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-
-  30% {
-    transform: translateY(-6px);
-  }
-}
-
 /* Review demo: the answered card leaves up (got it) or sideways (forgot),
    the next one drops onto the stack. */
 @keyframes card-in {
@@ -877,7 +853,7 @@ html {
 
 /* MotionToggle on the landing stops every looping animation. Scroll-driven
    ones (.scroll-tilt) stay: they only move while the visitor scrolls. */
-[data-motion-paused] :is(.bob, .flip-card, .marquee-track, .leitner-hop, .box-active, .track-fill, .scroll-nudge, .scroll-nudge-up, .flame) {
+[data-motion-paused] :is(.bob, .flip-card, .marquee-track, .leitner-hop, .box-active, .track-fill, .flame) {
   animation-play-state: paused;
 }
 
@@ -923,7 +899,7 @@ html {
   /* Scroll scenes (ScrollScene): each .scene-* piece plays while the
      scene's --p goes from its --a to its --b; --k is its own 0 to 1.
      Without --p (no JS yet) everything shows. */
-  :is(.scene-rise, .scene-pop, .scene-slam, .scene-print, .scene-fade, .scene-word, .scene-letter, .scene-left, .scene-right, .scene-drain, .scene-grow, .scene-underline) {
+  :is(.scene-rise, .scene-pop, .scene-slam, .scene-print, .scene-fade, .scene-word, .scene-letter, .scene-left, .scene-right, .scene-drain, .scene-underline) {
     --k: clamp(0, (var(--p, 1) - var(--a, 0)) / (var(--b, 1) - var(--a, 0)), 1);
   }
 
@@ -976,15 +952,10 @@ html {
     transform: translateY(calc((1 - var(--k)) * 100%));
   }
 
-  /* A bar that empties (timer) or fills (progress) with the scene. */
+  /* A bar that empties (timer) with the scene. */
   .scene-drain {
     transform-origin: left;
     transform: scaleX(calc(1 - var(--k) * var(--drain, 0.8)));
-  }
-
-  .scene-grow {
-    transform-origin: left;
-    transform: scaleX(var(--k));
   }
 
   @media (min-width: 64rem) {
@@ -1052,14 +1023,6 @@ html {
 
   .track-fill {
     animation: track-fill 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-  }
-
-  .scroll-nudge {
-    animation: scroll-nudge 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-  }
-
-  .scroll-nudge-up {
-    animation: scroll-nudge-up 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
   .card-in {

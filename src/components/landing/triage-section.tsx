@@ -1,5 +1,4 @@
 import { FallText } from "@/components/landing/fall-text";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import { WordBadge } from "@/components/landing/word-badge";
 import type { LandingDictionary } from "@/features/i18n/landing";
 
@@ -96,19 +95,6 @@ export function TriageSection({ dict }: { dict: LandingDictionary }) {
             <Points points={t.points} falling={t.falling} />
           </div>
         }
-      />
-
-      <SectionScrollLink
-        href="#how-it-works"
-        label={
-          <FallText
-            text={dict.scroll.toMethod}
-            place="method"
-            falling={t.falling}
-            phones
-          />
-        }
-        className="mt-6"
       />
     </section>
   );

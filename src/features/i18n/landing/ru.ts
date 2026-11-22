@@ -29,16 +29,6 @@ export const ru: LandingDictionary = {
 
   pauseMotion: "Остановить анимации",
 
-  scroll: {
-    toMethod: "Как это работает",
-    toReview: "Как проходит повтор",
-    toWords: "Откуда берутся слова",
-    toSentences: "А теперь в предложение",
-    toDuels: "Или сыграй",
-    toStart: "Начнём?",
-    toTop: "Наверх",
-  },
-
   hero: {
     titleLine1: "Учи слова.",
     titleLine2: "Помни всегда.",
@@ -77,8 +67,6 @@ export const ru: LandingDictionary = {
       5: "Выучены",
     },
     review: "Повтор {interval}",
-    progressNew: "Новое",
-    progressMastered: "Выучено",
     rememberedTitle: "Помнишь?",
     rememberedText: "Слово переезжает в следующую коробку и вернётся позже.",
     forgotTitle: "Не помнишь?",
@@ -194,21 +182,26 @@ export const ru: LandingDictionary = {
     known: "Знаю: {n}",
     toLearn: "Учить: {n}",
     falling: [
-      { word: "повторение", box: 1, place: "lead" },
+      { word: "сразу", box: 1, place: "lead" },
       { word: "Знаешь", box: 1, place: "points.0.title" },
-      { word: "день", box: 1, place: "points.2.text", nudge: -0.12 },
-      { word: "мешать", box: 1, place: "lead", front: true, nudge: -0.06 },
-      { word: "слова", box: 1, place: "title", nudge: -0.08 },
-      { word: "секунды", box: 1, place: "title", nudge: -0.02 },
       {
-        word: "коротким",
+        word: "день",
+        box: 1,
+        place: "points.2.text",
+        front: true,
+        nudge: 0.3,
+      },
+      { word: "мешать", box: 1, place: "lead", front: true, nudge: 0.1 },
+      { word: "повторение", box: 1, place: "lead", nudge: -0.02 },
+      { word: "слова", box: 2, place: "title", right: true, nudge: -0.25 },
+      {
+        word: "держит",
         box: 2,
         place: "points.2.text",
         right: true,
-        nudge: -0.07,
+        nudge: -0.7,
       },
-      { word: "сразу", box: 2, place: "lead", right: true, nudge: -0.07 },
-      { word: "работает", box: 3, place: "method" },
+
       { word: "Листай", box: 4, place: "hint", nudge: -0.12 },
       { word: "wonder", box: 4, place: "card" },
       { word: "слово", box: 5, place: "question" },

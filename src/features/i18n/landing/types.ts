@@ -30,16 +30,6 @@ export type LandingDictionary = {
   // Button that stops the looping animations (WCAG 2.2.2).
   pauseMotion: string;
 
-  scroll: {
-    toMethod: string;
-    toReview: string;
-    toWords: string;
-    toSentences: string;
-    toDuels: string;
-    toStart: string;
-    toTop: string;
-  };
-
   hero: {
     titleLine1: string;
     titleLine2: string;
@@ -67,8 +57,6 @@ export type LandingDictionary = {
     boxOf: string; // {total}
     boxLabels: Record<1 | 2 | 3 | 4 | 5, string>;
     review: string; // {interval}
-    progressNew: string;
-    progressMastered: string;
     rememberedTitle: string;
     rememberedText: string;
     forgotTitle: string;
@@ -140,7 +128,7 @@ export type LandingDictionary = {
     toLearn: string; // {n}
     // Words of this section that fall into the boxes of "How it works":
     // the word, the box it lands in from lg (0: phones only), and where it
-    // sits ("title", "lead", "points.0.title", "method", "card", "hint",
+    // sits ("title", "lead", "points.0.title", "card", "hint",
     // "counter"). See FallText and FallingWords.
     // In each box, cards stand left to right in this list's order;
     // `right` packs that box's cards against its right side, half over each

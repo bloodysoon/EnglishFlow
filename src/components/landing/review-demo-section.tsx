@@ -1,7 +1,6 @@
 import { ReviewMonth } from "@/components/landing/review-month";
 import { SceneText, sceneStyle } from "@/components/landing/scene";
 import { ScrollScene } from "@/components/landing/scroll-scene";
-import { SectionScrollLink } from "@/components/landing/section-scroll-link";
 import type { LandingDictionary } from "@/features/i18n/landing";
 
 // "A review takes minutes": a sample month of reviews (ReviewMonth).
@@ -70,11 +69,6 @@ export function ReviewDemoSection({ dict }: { dict: LandingDictionary }) {
           </div>
         </div>
 
-        <SectionScrollLink
-          href="#duels"
-          label={dict.scroll.toDuels}
-          className="mt-14 lg:mt-10"
-        />
       </ScrollScene>
     </section>
   );

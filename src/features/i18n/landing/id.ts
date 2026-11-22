@@ -29,16 +29,6 @@ export const id: LandingDictionary = {
 
   pauseMotion: "Jeda animasi",
 
-  scroll: {
-    toMethod: "Lihat metodenya",
-    toReview: "Lihat satu ulangan",
-    toWords: "Dari mana kata-katanya",
-    toSentences: "Lalu pakai",
-    toDuels: "Atau bermain",
-    toStart: "Siap mulai?",
-    toTop: "Kembali ke atas",
-  },
-
   hero: {
     titleLine1: "Pelajari kata.",
     titleLine2: "Ingat selamanya.",
@@ -77,8 +67,6 @@ export const id: LandingDictionary = {
       5: "Dikuasai",
     },
     review: "Ulangi {interval}",
-    progressNew: "Baru",
-    progressMastered: "Dikuasai",
     rememberedTitle: "Ingat?",
     rememberedText: "Kata naik satu kotak dan kembali nanti.",
     forgotTitle: "Lupa?",
@@ -196,12 +184,19 @@ export const id: LandingDictionary = {
     known: "Sudah tahu: {n}",
     toLearn: "Dipelajari: {n}",
     falling: [
-      { word: "ulangan", box: 1, place: "lead" },
-      { word: "tahu", box: 1, place: "points.0.title" },
-      { word: "hari", box: 1, place: "points.2.text", nudge: -0.12 },
+      { word: "langsung", box: 1, place: "lead" },
+      {
+        word: "tahu",
+        box: 1,
+        place: "points.0.title",
+        front: true,
+        nudge: 0.2,
+      },
       { word: "mengganggu", box: 1, place: "lead", front: true, nudge: 0.02 },
       { word: "Kata", box: 1, place: "title", nudge: -0.08 },
       { word: "dipilah", box: 1, place: "title", nudge: -0.02 },
+      { word: "hari", box: 1, place: "points.2.text", nudge: 0.1 },
+      { word: "ulangan", box: 1, place: "lead", nudge: 0.1 },
       {
         word: "singkat",
         box: 2,
@@ -209,8 +204,6 @@ export const id: LandingDictionary = {
         right: true,
         nudge: -0.07,
       },
-      { word: "langsung", box: 2, place: "lead", right: true, nudge: -0.07 },
-      { word: "metodenya", box: 3, place: "method" },
       { word: "Gulir", box: 4, place: "hint", nudge: -0.12 },
       { word: "wonder", box: 4, place: "card" },
       { word: "kata", box: 5, place: "question" },
