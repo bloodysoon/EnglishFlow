@@ -13,6 +13,6 @@ setup("log in with the test account", async ({ page }) => {
   await page.locator("#password").fill(process.env.E2E_PASSWORD!);
   await page.getByRole("button", { name: /log in/i }).click();
 
-  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page).toHaveURL(/\/learn\/new-words/);
   await page.context().storageState({ path: AUTH_FILE });
 });

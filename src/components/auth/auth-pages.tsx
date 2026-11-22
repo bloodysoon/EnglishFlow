@@ -27,14 +27,14 @@ export function authMetadata(locale: Locale, page: AuthPage): Metadata {
   };
 }
 
-// Already logged in? Go to the dashboard instead.
+// Already logged in? Go where logging in goes: new words.
 async function redirectIfSignedIn() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) redirect("/dashboard");
+  if (user) redirect("/learn/new-words");
 }
 
 function Lead({ text, highlight }: { text: string; highlight: string }) {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { Navbar } from "@/components/landing/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
@@ -59,7 +60,9 @@ export async function LandingPage({ locale }: { locale: Locale }) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthenticated = Boolean(user);
+  // Signed in: opening the site goes straight to new words, like logging in.
+  if (user) redirect("/learn/new-words");
+
   const dict = getLandingDictionary(locale);
 
   // The theme itself is on <html> (root layout); the toggle needs it too.
@@ -71,8 +74,10 @@ export async function LandingPage({ locale }: { locale: Locale }) {
     // every route; this sets the language for everything on the page.
     <div lang={locale} className="min-h-dvh overflow-x-clip bg-canvas text-fg">
       <Navbar
-        isAuthenticated={isAuthenticated}
-        email={user?.email ?? ""}
+        // shortcut: signed-in visitors are redirected above, so the Navbar and
+        // FinalCta signed-in branches are dead; drop them when next touching those.
+        isAuthenticated={false}
+        email=""
         themePreference={themePreference}
         locale={locale}
         dict={dict.nav}
@@ -108,7 +113,7 @@ export async function LandingPage({ locale }: { locale: Locale }) {
         <SentenceSection dict={dict} />
 
         <FinalCtaSection
-          isAuthenticated={isAuthenticated}
+          isAuthenticated={false}
           locale={locale}
           dict={dict}
         />

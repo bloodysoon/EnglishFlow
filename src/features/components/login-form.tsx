@@ -53,9 +53,9 @@ export function LoginForm({ locale, dict, initialError = null }: LoginFormProps)
         return;
       }
 
-      // Stay in the loading state while the dashboard loads, so the button
+      // Straight to new words. Stay in the loading state while they load, so the button
       // doesn't flash back to "Log in" after a successful login.
-      router.replace("/dashboard");
+      router.replace("/learn/new-words");
       router.refresh();
     } catch {
       setError("unexpected");
