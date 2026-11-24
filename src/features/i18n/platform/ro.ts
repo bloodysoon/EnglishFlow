@@ -19,6 +19,7 @@ export const ro: PlatformDictionary = {
     addWord: "Adaugă un cuvânt",
     review: "Recapitulare",
     myWords: "Cuvintele mele",
+    boxes: "Cutii",
     statistics: "Statistici",
     achievements: "Realizări",
     inventory: "Inventar",
@@ -45,6 +46,7 @@ export const ro: PlatformDictionary = {
     timeline: "Cronologie",
     newWords: "Cuvinte noi",
     myWords: "Cuvintele mele",
+    boxes: "Cutii",
     review: "Recapitulare",
     due: { one: "{n} cuvânt de repetat", few: "{n} cuvinte de repetat", other: "{n} de cuvinte de repetat" },
     nothingDue: "Nimic de repetat",
@@ -303,6 +305,19 @@ export const ro: PlatformDictionary = {
       num: "Numeral",
       phrase: "Expresie",
     },
+  },
+
+  boxes: {
+    title: "Cutii",
+    lead: "Fiecare cuvânt stă într-una din cele cinci cutii. Apasă pe o cutie ca să vezi când revin cuvintele ei.",
+    pick: "Apasă pe o cutie ca să vezi cuvintele ei.",
+    empty: "Încă nu sunt cuvinte în această cutie.",
+    count: { one: "{n} cuvânt", few: "{n} cuvinte", other: "{n} de cuvinte" },
+    dueToday: "Gata de repetat",
+    inTime: "peste {time}",
+    unitDays: "{n} z",
+    unitHours: "{n} h",
+    unitMinutes: "{n} min",
   },
 
   myWords: {

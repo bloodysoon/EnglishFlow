@@ -48,6 +48,7 @@ const learnLinks = [
   { key: "newWords", href: "/learn/new-words" },
   { key: "myWords", href: "/learn/words" },
   { key: "review", href: "/learn/review" },
+  { key: "boxes", href: "/learn/boxes" },
 ] as const;
 
 type PlatformSidebarProps = {

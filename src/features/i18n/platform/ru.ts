@@ -19,6 +19,7 @@ export const ru: PlatformDictionary = {
     addWord: "Добавить слово",
     review: "Повторение",
     myWords: "Мои слова",
+    boxes: "Ящики",
     statistics: "Статистика",
     achievements: "Достижения",
     inventory: "Инвентарь",
@@ -45,6 +46,7 @@ export const ru: PlatformDictionary = {
     timeline: "Хроника",
     newWords: "Новые слова",
     myWords: "Мои слова",
+    boxes: "Ящики",
     review: "Повторение",
     due: { one: "{n} слово к повторению", few: "{n} слова к повторению", many: "{n} слов к повторению", other: "{n} слова к повторению" },
     nothingDue: "Нечего повторять",
@@ -309,6 +311,19 @@ export const ru: PlatformDictionary = {
       num: "Числительное",
       phrase: "Фраза",
     },
+  },
+
+  boxes: {
+    title: "Ящики",
+    lead: "Каждое слово лежит в одном из пяти ящиков. Нажмите на ящик, чтобы увидеть, когда его слова вернутся.",
+    pick: "Нажмите на ящик, чтобы увидеть его слова.",
+    empty: "В этом ящике пока нет слов.",
+    count: { one: "{n} слово", few: "{n} слова", many: "{n} слов", other: "{n} слова" },
+    dueToday: "Можно повторить",
+    inTime: "через {time}",
+    unitDays: "{n} д",
+    unitHours: "{n} ч",
+    unitMinutes: "{n} мин",
   },
 
   myWords: {

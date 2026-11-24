@@ -23,6 +23,7 @@ export const id: PlatformDictionary = {
     addWord: "Tambah kata",
     review: "Ulangan",
     myWords: "Kataku",
+    boxes: "Kotak",
     statistics: "Statistik",
     achievements: "Pencapaian",
     inventory: "Inventaris",
@@ -48,6 +49,7 @@ export const id: PlatformDictionary = {
     timeline: "Linimasa",
     newWords: "Kata baru",
     myWords: "Kataku",
+    boxes: "Kotak",
     review: "Ulasan",
     due: n("{n} kata untuk diulang"),
     nothingDue: "Tidak ada yang perlu diulang",
@@ -292,6 +294,19 @@ export const id: PlatformDictionary = {
       num: "Bilangan",
       phrase: "Frasa",
     },
+  },
+
+  boxes: {
+    title: "Kotak",
+    lead: "Setiap kata ada di salah satu dari lima kotak. Ketuk kotak untuk melihat kapan katanya kembali.",
+    pick: "Ketuk kotak untuk melihat katanya.",
+    empty: "Belum ada kata di kotak ini.",
+    count: n("{n} kata"),
+    dueToday: "Siap diulang",
+    inTime: "dalam {time}",
+    unitDays: "{n} hr",
+    unitHours: "{n} j",
+    unitMinutes: "{n} mnt",
   },
 
   myWords: {

@@ -25,6 +25,7 @@ export const en = {
     addWord: "Add a word",
     review: "Review",
     myWords: "My words",
+    boxes: "Boxes",
     statistics: "Statistics",
     achievements: "Achievements",
     inventory: "Inventory",
@@ -50,6 +51,7 @@ export const en = {
     timeline: "Timeline",
     newWords: "New words",
     myWords: "My words",
+    boxes: "Boxes",
     review: "Review",
     due: p({ one: "{n} word to review", other: "{n} words to review" }),
     nothingDue: "Nothing to review",
@@ -298,6 +300,19 @@ export const en = {
       num: "Number",
       phrase: "Phrase",
     },
+  },
+
+  boxes: {
+    title: "Boxes",
+    lead: "Every word sits in one of five boxes. Tap a box to see when its words come back.",
+    pick: "Tap a box to see its words.",
+    empty: "No words in this box yet.",
+    count: p({ one: "{n} word", other: "{n} words" }),
+    dueToday: "Ready to review",
+    inTime: "in {time}",
+    unitDays: "{n} d",
+    unitHours: "{n} h",
+    unitMinutes: "{n} min",
   },
 
   myWords: {
