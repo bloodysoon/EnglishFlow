@@ -78,7 +78,7 @@ export function Navbar({
   return (
     <header
       className={`
-        sticky top-0 z-50 w-full shrink-0
+        sticky top-0 z-50 w-full shrink-0 pt-[env(safe-area-inset-top)]
         border-b-[3px] border-line bg-canvas text-fg
       `}
     >

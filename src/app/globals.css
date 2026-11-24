@@ -50,8 +50,9 @@
 
   /* Rendered height of the sticky landing navbar (measured: 93px at
      320–1440px). Full-screen sections subtract it; anchors offset by it.
-     Update if the navbar's padding or button size changes. */
-  --navbar-height: 93px;
+     Update if the navbar's padding or button size changes. Plus the
+     status-bar inset the navbar pads itself by (0 outside the native app). */
+  --navbar-height: calc(93px + env(safe-area-inset-top, 0px));
 }
 
 /* Dark values appear twice: once for an explicit choice, once for
@@ -308,6 +309,12 @@ body {
   background: var(--canvas);
   color: var(--fg);
   font-family: var(--font-sans);
+  /* viewport-fit=cover (layout.tsx): keep content off the landscape notch.
+     Top: each page header pads itself, so the inset sits inside the sticky
+     headers' background. Bottom: page padding already clears the home
+     indicator; fixed bottom elements add the inset themselves. */
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
 }
 
 html {
@@ -750,7 +757,7 @@ html {
    that shimmer, shown while a page streams in (app/(platform)/loading.tsx). */
 .top-loader {
   position: fixed;
-  inset: 0 0 auto;
+  inset: env(safe-area-inset-top, 0px) 0 auto;
   z-index: 60;
   height: 4px;
   overflow: hidden;

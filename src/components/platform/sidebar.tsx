@@ -102,7 +102,7 @@ export function PlatformSidebar({
     "flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center border-[2px] border-line bg-raised text-fg shadow-brutal-sm hover:bg-box-2 hover:text-on-box lg:hidden";
 
   return (
-    <aside className="sticky top-0 z-40 border-b-[3px] border-line bg-surface lg:flex lg:h-dvh lg:w-64 lg:shrink-0 lg:flex-col lg:border-r-[3px] lg:border-b-0">
+    <aside className="sticky top-0 z-40 pt-[env(safe-area-inset-top)] border-b-[3px] border-line bg-surface lg:flex lg:h-dvh lg:w-64 lg:shrink-0 lg:flex-col lg:border-r-[3px] lg:border-b-0">
       {/* Logo and theme */}
       <div className="flex items-center justify-between gap-3 border-b-[3px] border-line px-5 py-4">
         <Link
@@ -147,7 +147,7 @@ export function PlatformSidebar({
       <div
         id="platform-menu"
         onClick={(e) => (e.target as HTMLElement).closest("a") && setOpen(false)}
-        className={`fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col overflow-y-auto border-r-[3px] border-line bg-surface transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none lg:visible lg:static lg:w-auto lg:flex-1 lg:translate-x-0 lg:border-r-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col overflow-y-auto max-lg:pt-[env(safe-area-inset-top)] max-lg:pb-[env(safe-area-inset-bottom)] border-r-[3px] border-line bg-surface transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none lg:visible lg:static lg:w-auto lg:flex-1 lg:translate-x-0 lg:border-r-0 ${
           open ? "visible translate-x-0" : "invisible -translate-x-full"
         }`}
       >

@@ -78,7 +78,7 @@ export function ReviewSession({
       ? createPortal(
           <div
             role="status"
-            className="stamp fixed inset-x-0 top-4 z-[80] mx-auto flex w-[min(28rem,calc(100vw-2rem))] items-center gap-3 border-[3px] border-line bg-medal-gold p-3 font-black text-on-box shadow-brutal"
+            className="stamp fixed inset-x-0 top-[calc(--spacing(4)+env(safe-area-inset-top))] z-[80] mx-auto flex w-[min(28rem,calc(100vw-2rem))] items-center gap-3 border-[3px] border-line bg-medal-gold p-3 font-black text-on-box shadow-brutal"
           >
             <PartyPopper className="h-7 w-7 shrink-0" aria-hidden="true" />
             <span className="min-w-0 flex-1">

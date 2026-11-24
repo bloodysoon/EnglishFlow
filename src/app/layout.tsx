@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo, Onest, Unbounded } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
@@ -40,6 +40,16 @@ export const metadata: Metadata = {
   },
   description:
     "Learn English vocabulary with spaced repetition and the Leitner system. Practice a little every day.",
+};
+
+// cover: the page draws under the status bar / home indicator (Capacitor's
+// full-screen WebView) and env(safe-area-inset-*) reports their size; the
+// page shells pad themselves by it. Browsers report 0 except Safari's
+// landscape notch, which globals.css handles on <body>.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

@@ -42,8 +42,8 @@ export default async function PublicProfilePage({ params }: Props) {
   const canAdd = me !== null && me.username !== profile.username;
 
   return (
-    <div lang={locale} className="min-h-dvh bg-canvas px-4 py-6 text-fg sm:px-8 lg:py-10">
-      <div className="mx-auto w-full max-w-5xl space-y-8">
+    <div lang={locale} className="min-h-dvh bg-canvas px-4 pt-[env(safe-area-inset-top)] text-fg sm:px-8">
+      <div className="mx-auto w-full max-w-5xl space-y-8 py-6 lg:py-10">
         <LogoLink />
         {profile.stats ? (
           <ProfileCard username={profile.username} stats={profile.stats} today={utcDay()} locale={locale} t={t} />

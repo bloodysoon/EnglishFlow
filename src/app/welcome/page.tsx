@@ -28,7 +28,7 @@ export default async function WelcomePage() {
   if (data?.username) redirect("/dashboard");
 
   return (
-    <div lang={locale} className="flex min-h-dvh flex-col bg-canvas text-fg">
+    <div lang={locale} className="flex min-h-dvh flex-col bg-canvas pt-[env(safe-area-inset-top)] text-fg">
       <header className="flex items-center justify-between gap-3 border-b-[3px] border-line px-4 py-5 sm:px-8 lg:px-10">
         <LogoLink />
         <form action={logoutAction}>

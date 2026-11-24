@@ -31,7 +31,7 @@ export async function AuthShell({ locale, page, sticker, titleLine1, titleLine2,
   return (
     // lang: the root layout's <html lang="en"> is shared by every route.
     <div lang={locale} className="flex min-h-dvh flex-col overflow-x-clip bg-canvas text-fg">
-      <header className="border-b-[3px] border-line">
+      <header className="border-b-[3px] border-line pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-5 sm:px-8 lg:px-10">
           <LogoLink href={localePath(locale, "home")} label={nav.home} />
 

@@ -46,7 +46,7 @@ export function DuelInviteListener({ userId, t }: { userId: string; t: PlatformD
   return (
     <div
       role="status"
-      className="fixed inset-x-4 bottom-4 z-50 flex items-center gap-3 border-[3px] border-line bg-box-2 p-3 text-on-box shadow-brutal sm:left-auto sm:max-w-sm"
+      className="fixed inset-x-4 bottom-[calc(--spacing(4)+env(safe-area-inset-bottom))] z-50 flex items-center gap-3 border-[3px] border-line bg-box-2 p-3 text-on-box shadow-brutal sm:left-auto sm:max-w-sm"
     >
       <Swords className="h-6 w-6 shrink-0" aria-hidden="true" />
       <p className="min-w-0 flex-1 font-black break-words">{fill(t.toast, { name: invite.name })}</p>
