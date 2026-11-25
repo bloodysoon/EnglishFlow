@@ -1,0 +1,14 @@
+-- Schema drift fix.
+--
+-- 20261114180000_word_triage.sql created public.pick_new_words(integer);
+-- 20261114190000_dictionary_pool.sql dropped it. Production still has it
+-- (word_triage's body, security invoker, EXECUTE for authenticated), though
+-- both migrations are recorded as applied: it was re-created outside the
+-- chain. Neither app calls it; no function, view or other object depends on
+-- it (checked 2026-11-26). This repeats the intended drop.
+--
+-- RESTRICT (never CASCADE): if anything did depend on it, this fails
+-- instead of removing that too. Idempotent.
+-- Rollback: englishflow-mobile repo, backend-proposals/migration-baseline/rollback_20261126110000_pick_new_words.sql
+-- (production's exact definition and grants).
+drop function if exists public.pick_new_words(integer) restrict;
