@@ -212,7 +212,7 @@ export async function pickNewWordsAction(
 
 export async function forgetKnownWordAction(
   input: unknown,
-): Promise<{ success: true } | Failure<"invalid_data" | "not_signed_in" | "unexpected">> {
+): Promise<{ success: true; queued: boolean } | Failure<"invalid_data" | "not_signed_in" | "unexpected">> {
   const parsed = z.object({ wordId: z.uuid() }).safeParse(input);
   if (!parsed.success) return { success: false, error: "invalid_data" };
 
@@ -225,7 +225,16 @@ export async function forgetKnownWordAction(
     return { success: false, error: "unexpected" };
   }
 
+  // The database starts the word today while the plan's daily new-word limit
+  // allows; past it, the word waits in the learning queue (no due day yet).
+  const { data: row } = await session.supabase
+    .from("user_words")
+    .select("due_on")
+    .eq("user_id", session.user.id)
+    .eq("word_id", parsed.data.wordId)
+    .maybeSingle<{ due_on: string | null }>();
+
   // No revalidation here: it would re-render the quiz page mid-round.
   // Learning pages are dynamic and fetch fresh data on the next visit.
-  return { success: true };
+  return { success: true, queued: row != null && row.due_on == null };
 }

@@ -244,6 +244,10 @@ export const en = {
       one: "{n} forgotten word is now in your reviews.",
       other: "{n} forgotten words are now in your reviews.",
     }),
+    forgottenQueued: p({
+      one: "{n} forgotten word is in your learning queue: today's new-word limit is reached.",
+      other: "{n} forgotten words are in your learning queue: today's new-word limit is reached.",
+    }),
     again: "Another quiz",
     back: "Known words",
     empty: "No known words to quiz yet.",
@@ -417,6 +421,7 @@ export const en = {
     lastUp: "{word} → box {box} · +{xp} XP",
     lastUpMastered: "{word} → box {box} (mastered) · +{xp} XP",
     lastBack: "{word} → back to box 1",
+    lastRepeat: "{word}: already reviewed today · no XP (back tomorrow)",
   },
 
   settings: {

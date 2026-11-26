@@ -19,7 +19,7 @@ import { LAST_BOX } from "@/features/leitner/boxes";
 import { learnerLevel } from "@/features/leitner/xp";
 import { levelTitle } from "@/features/rewards/levels";
 
-type Answer = { wordId: string; lemma: string; remembered: boolean; xp: number; newBox: number; mastered: boolean };
+type Answer = { wordId: string; lemma: string; remembered: boolean; xp: number; newBox: number; mastered: boolean; counted: boolean };
 
 // The header slot never moves, so nothing to listen to.
 const noSubscribe = () => () => {};
@@ -131,6 +131,7 @@ export function ReviewSession({
               xp: result.xp,
               newBox: result.newBox,
               mastered: result.mastered,
+              counted: result.counted,
             },
           ]);
         } else if (result.error === "not_due" || result.error === "not_found") {
@@ -233,15 +234,17 @@ export function ReviewSession({
 
   const lastText =
     last &&
-    (last.mastered
-      ? fill(t.lastMastered, { word: last.lemma, xp: last.xp })
-      : last.remembered
-        ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, {
-            word: last.lemma,
-            box: last.newBox,
-            xp: last.xp,
-          })
-        : fill(t.lastBack, { word: last.lemma, xp: last.xp }));
+    (!last.counted
+      ? fill(t.lastRepeat, { word: last.lemma })
+      : last.mastered
+        ? fill(t.lastMastered, { word: last.lemma, xp: last.xp })
+        : last.remembered
+          ? fill(last.newBox === LAST_BOX ? t.lastUpMastered : t.lastUp, {
+              word: last.lemma,
+              box: last.newBox,
+              xp: last.xp,
+            })
+          : fill(t.lastBack, { word: last.lemma, xp: last.xp }));
   const translation = card.translations[shownLanguage];
   const translatedDefinition = card.definitions[shownLanguage];
 

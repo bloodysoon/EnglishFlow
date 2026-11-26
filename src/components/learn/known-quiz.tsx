@@ -12,7 +12,8 @@ import { forgetKnownWordAction } from "@/features/learning/actions/word-list.act
 import type { WordCard } from "@/features/learning/queries";
 
 // Quiz on known words: "Knew it" changes nothing, "Forgot" moves the word
-// into today's reviews. No XP, so the quiz cannot be farmed.
+// into today's reviews, or into the learning queue once today's new-word
+// limit is reached. No XP, so the quiz cannot be farmed.
 export function KnownQuiz({
   cards,
   language,
@@ -31,6 +32,7 @@ export function KnownQuiz({
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [forgotten, setForgotten] = useState(0);
+  const [queued, setQueued] = useState(0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,6 +54,7 @@ export function KnownQuiz({
           return;
         }
         setForgotten((n) => n + 1);
+        if (result.queued) setQueued((n) => n + 1);
       } catch {
         setError(t.failed);
         return;
@@ -68,7 +71,8 @@ export function KnownQuiz({
       <section className="card-in max-w-xl border-[3px] border-line bg-raised p-6 shadow-brutal sm:p-8">
         <h2 className="font-display text-3xl font-black uppercase">{t.done}</h2>
         <p className="mt-4 text-lg font-black">{fill(t.result, { knew: cards.length - forgotten, total: cards.length })}</p>
-        {forgotten > 0 && <p className="mt-2 font-semibold text-muted">{plural(locale, forgotten, t.forgotten)}</p>}
+        {forgotten - queued > 0 && <p className="mt-2 font-semibold text-muted">{plural(locale, forgotten - queued, t.forgotten)}</p>}
+        {queued > 0 && <p className="mt-2 font-semibold text-muted">{plural(locale, queued, t.forgottenQueued)}</p>}
         <div className="mt-6 flex flex-wrap gap-3">
           <Link href={nextRoundHref} className={buttonClasses()}>
             {t.again}

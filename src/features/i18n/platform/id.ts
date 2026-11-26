@@ -238,6 +238,7 @@ export const id: PlatformDictionary = {
     done: "Kuis selesai ✓",
     result: "Kamu ingat {knew} dari {total}.",
     forgotten: n("{n} kata yang terlupa sekarang ada di ulanganmu."),
+    forgottenQueued: n("{n} kata yang terlupa ada di antrean belajar: batas kata baru hari ini sudah tercapai."),
     again: "Kuis lagi",
     back: "Kata yang dikenal",
     empty: "Belum ada kata yang dikenal untuk dikuis.",
@@ -408,6 +409,7 @@ export const id: PlatformDictionary = {
     lastUp: "{word} → kotak {box} · +{xp} XP",
     lastUpMastered: "{word} → kotak {box} (dikuasai) · +{xp} XP",
     lastBack: "{word} → kembali ke kotak 1",
+    lastRepeat: "{word}: sudah diulang hari ini · tanpa XP (lagi besok)",
   },
 
   settings: {

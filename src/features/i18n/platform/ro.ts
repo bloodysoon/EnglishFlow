@@ -248,6 +248,11 @@ export const ro: PlatformDictionary = {
       few: "{n} cuvinte uitate sunt acum în recapitulări.",
       other: "{n} de cuvinte uitate sunt acum în recapitulări.",
     },
+    forgottenQueued: {
+      one: "{n} cuvânt uitat e în coada de învățare: limita zilnică de cuvinte noi e atinsă.",
+      few: "{n} cuvinte uitate sunt în coada de învățare: limita zilnică de cuvinte noi e atinsă.",
+      other: "{n} de cuvinte uitate sunt în coada de învățare: limita zilnică de cuvinte noi e atinsă.",
+    },
     again: "Încă un quiz",
     back: "Cuvinte știute",
     empty: "Încă n-ai cuvinte știute pentru quiz.",
@@ -423,6 +428,7 @@ export const ro: PlatformDictionary = {
     lastUp: "{word} → cutia {box} · +{xp} XP",
     lastUpMastered: "{word} → cutia {box} (învățat) · +{xp} XP",
     lastBack: "{word} → înapoi în cutia 1",
+    lastRepeat: "{word}: deja recapitulat azi · fără XP (din nou mâine)",
   },
 
   settings: {

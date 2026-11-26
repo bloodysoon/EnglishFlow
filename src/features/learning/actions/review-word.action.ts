@@ -10,7 +10,8 @@ const inputSchema = z.object({ wordId: z.uuid(), remembered: z.boolean() });
 export type ReviewWordError = "invalid_data" | "not_signed_in" | "not_due" | "not_found" | "unexpected";
 
 type Result =
-  | { success: true; newBox: number; nextDueOn: string; xp: number; mastered: boolean }
+  // counted: false when the word was already reviewed today (no XP, no progress, due again tomorrow).
+  | { success: true; newBox: number; nextDueOn: string; xp: number; mastered: boolean; counted: boolean }
   | { success: false; error: ReviewWordError };
 
 // The database function does the work (box, due date, XP) and enforces
@@ -42,6 +43,8 @@ export async function reviewWordAction(input: unknown): Promise<Result> {
       nextDueOn: String(row.next_due_on),
       xp: Number(row.xp_awarded),
       mastered: Boolean(row.mastered),
+      // Servers before the review-integrity migration send no `counted`: those replies count.
+      counted: row.counted !== false,
     };
   } catch (error) {
     logSupabaseError("[Learn] Review failed", error);
